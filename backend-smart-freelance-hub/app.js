@@ -1,11 +1,24 @@
 const express = require('express');
-const app = express();
-const port = 3000;
+const cors = require('cors')
+const { MongoClient } = require('mongodb');
+const multer = require('multer');
+const client = require('./database/db').getConnectedClient;
+const routes = require('./routes/register');
 
-app.get('/', (req, res) => {
-    res.send('Started Working, Express!');
-    });
+const app = express()
+app.use(cors({
+    origin: '*',
+    methods: '*'
+}));
+app.use(express.json());
 
-app.listen(port, () => {
-    console.log(`Server listening at port: ${port}`);
-});
+const port = 3000
+
+app.use('/register', routes);
+var connectionString = 'mongodb://localhost:27017';
+
+app.listen(port, async () => {
+    console.log("Server running at port: ", port);
+})
+
+module.exports = client;
