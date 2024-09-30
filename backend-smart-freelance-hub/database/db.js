@@ -21,7 +21,7 @@ const getConnectedClient = () => {
 }
 
 const testConnection = connect()
-    .then((connection) => console.log("connection"));
+    .then((connection) => console.log("connected to DB"));
 
 
 module.exports = { connect, getConnectedClient };
