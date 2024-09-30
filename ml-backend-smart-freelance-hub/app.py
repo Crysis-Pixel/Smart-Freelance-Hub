@@ -16,7 +16,7 @@ def hello_world():
     content = request.json
     value = calculateSimilarity(content['input1'], content['input2'])
     result = checkMatch(value)
-    data = {'input1': str(value), 'input2': result}
+    data = {'Match Value': str(value), 'Result': result}
     return jsonify(data)
 
 def calculateSimilarity(text1, text2):
