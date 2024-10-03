@@ -3,13 +3,9 @@ const cors = require('cors')
 const { MongoClient } = require('mongodb');
 const multer = require('multer');
 const client = require('./database/db').getConnectedClient;
-const routes = require('./routes/register');
+const userRoutes = require('./routes/user');
 
 //added by Mostakim
-const updateUserRoutes = require('./routes/updateuser');
-const deleteUserRoutes = require('./routes/deleteuser');
-const getUsersRoutes = require('./routes/getusers');
-const getUserByIdRoutes = require('./routes/getuserbyid');
 const jobsRoutes = require('./routes/jobs');
 const proposalsRoutes = require('./routes/proposals');
 const messagesRoutes = require('./routes/messages');
@@ -18,7 +14,7 @@ const skillsRoutes = require('./routes/skills');
 const transactionsRoutes = require('./routes/transactions');
 const paymentsRoutes = require('./routes/payments');
 const contractsRoutes = require('./routes/contracts');
-//
+
 
 const app = express()
 app.use(cors({
@@ -32,10 +28,6 @@ const port = 3000
 app.use('/register', routes);
 
 //Added by Mostakim
-app.use('/updateuser', updateUserRoutes);
-app.use('/deleteuser', deleteUserRoutes);
-app.use('/getusers', getUsersRoutes);
-app.use('/getuser', getUserByIdRoutes);
 app.use('/jobs', jobsRoutes);
 app.use('/proposals', proposalsRoutes);
 app.use('/messages', messagesRoutes);
@@ -46,6 +38,7 @@ app.use('/payments', paymentsRoutes);
 app.use('/contracts', contractsRoutes);
 //
 
+app.use('/user', userRoutes);
 var connectionString = 'mongodb://localhost:27017';
 
 app.listen(port, async () => {
