@@ -11,8 +11,8 @@ export default function Signup() {
         phoneNumber: '',
     });
     const [passwordVisible, setPasswordVisible] = useState(false);
-    const [termsAccepted, setTermsAccepted] = useState(false); // For Terms and Conditions validation
-    const [formError, setFormError] = useState(''); // For form error handling
+    const [formError, setFormError] = useState(''); 
+    const [isChecked, setIsChecked] = useState(false); // Track checkbox state
 
     // Fetch country data from the REST Countries API
     useEffect(() => {
@@ -37,7 +37,7 @@ export default function Signup() {
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
         if (type === 'checkbox') {
-            setTermsAccepted(checked);
+            setIsChecked(checked); // Update checkbox state
         } else {
             setFormData({
                 ...formData,
@@ -48,21 +48,23 @@ export default function Signup() {
 
     // Validate the form before submission
     const validateForm = () => {
-        if (!formData.country) {
-            setFormError('Please select a country.');
-            return false;
-        }
-        if (!termsAccepted) {
-            setFormError('You must agree to the Terms and Conditions.');
-            return false;
-        }
-        return true;
+        // Check if all required fields are filled and checkbox is checked
+        return (
+            formData.firstName &&
+            formData.lastName &&
+            formData.email &&
+            formData.password &&
+            formData.country &&
+            formData.phoneNumber &&
+            isChecked 
+        );
     };
 
     // Handle form submission
     const handleSubmit = (e) => {
         e.preventDefault();
         if (!validateForm()) {
+            setFormError('Please fill in all fields and accept the terms.');
             return;
         }
 
@@ -103,6 +105,7 @@ export default function Signup() {
                         required
                     />
                 </label>
+
                 <label className="form-control w-full">
                     <div className="label">
                         <span className="label-text">Last Name</span>
@@ -117,6 +120,7 @@ export default function Signup() {
                         required
                     />
                 </label>
+
                 <label className="input input-bordered flex items-center gap-2 col-span-2">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -188,7 +192,7 @@ export default function Signup() {
                                     d="M2.458 12C3.732 7.943 7.455 5 12 5s8.268 2.943 9.542 7c-1.274 4.057-4.997 7-9.542 7S3.732 16.057 2.458 12z"
                                 />
                             </svg>
-                        ) : (
+                        ) :  (
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="none"
@@ -205,7 +209,7 @@ export default function Signup() {
                                 <path
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
-                                    d="M10.583 10.583A3 3 0 0 0 12 15a3 3 0 1 0 0-6 3 3 0 0 0-1.417 1.417"
+                                    d="M10.583 10.583A3 3 0 0 0 13.417 13.417M9.858 9.858A3.993 3.993 0 0 1 12 9a4 4 0 0 1 4 4m1.458 2.958C19.268 16.057 15.545 19 12 19c-4.545 0-8.268-2.943-9.542-7a12.683 12.683 0 0 1 1.86-3.162m7.06-3.06A12.683 12.683 0 0 1 12 5c4.545 0 8.268 2.943 9.542 7"
                                 />
                             </svg>
                         )}
@@ -219,7 +223,7 @@ export default function Signup() {
                         value={formData.country}
                         onChange={handleInputChange}
                     >
-                        <option value="">Select your country</option> {/* Country select FIELD*/}
+                        <option value="">Select your country</option>
                         {countries.map((country) => (
                             <option key={country.code} value={country.code}>
                                 {country.name}
@@ -240,23 +244,26 @@ export default function Signup() {
                     />
                 </label>
 
-                <label className="form-control col-span-2">
+                <label className="form-control w-full flex flex-row items-center">
                     <input
                         type="checkbox"
                         className="checkbox checkbox-primary"
-                        name="termsAccepted"
-                        checked={termsAccepted}
                         onChange={handleInputChange}
                     />
                     <span className="ml-2">I agree to the <a href="#" className="text-blue-600">Terms and Conditions</a></span>
                 </label>
 
+                {/*JORA TALI DEWA CODE cuz checkbox not working */}
+                {!isChecked && (
+                    <div className="col-span-2 text-red-500 mt-2">
+                        Please accept the terms and conditions.
+                    </div>
+                )}
+
                 <button
                     type="submit"
-                    className={`btn btn-primary col-span-2 ${
-                        !termsAccepted || !formData.country ? 'opacity-50 cursor-not-allowed' : ''
-                    }`}
-                    disabled={!termsAccepted || !formData.country}
+                    className={`btn btn-primary col-span-2 ${!validateForm() ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    disabled={!validateForm()}
                 >
                     Sign Up
                 </button>
