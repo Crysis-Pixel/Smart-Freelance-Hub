@@ -1,12 +1,15 @@
-import Header from './components/header.jsx'
-import Hero from './components/hero.jsx'
 import './index.css'
+import { BrowserRouter, Routes, Route} from 'react-router-dom'
+import Home from './pages/home'
 
 function App() {
     return (
       <>
-        <Header/>
-        <Hero/>
+        <BrowserRouter>
+          <Routes>
+            <Route index element={<Home />} />
+          </Routes>
+        </BrowserRouter>
       </>
     );
 }
