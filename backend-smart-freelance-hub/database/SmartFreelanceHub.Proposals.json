@@ -1,0 +1,18 @@
+[{
+  "_id": {
+    "$oid": "66fdc8081d2dcbcbb7ba07b9"
+  },
+  "jobId": {
+    "$oid": "66fdc8081d2dcbcbb7ba07b7"
+  },
+  "freelancerId": {
+    "$oid": "66fdc8081d2dcbcbb7ba07b8"
+  },
+  "bidAmount": 100,
+  "createdAt": {
+    "$date": "2024-10-02T22:24:08.421Z"
+  },
+  "status": "Pending",
+  "deliveryTime": "2024-12-15",
+  "coverLetter": "Optional file data"
+}]

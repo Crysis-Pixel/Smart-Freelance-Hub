@@ -1,0 +1,17 @@
+[{
+  "_id": {
+    "$oid": "66fdbfd463c6546062416c39"
+  },
+  "title": "Sample Job",
+  "description": "This is a sample job description.",
+  "budget": 100,
+  "deadline": "2024-12-31",
+  "status": "Open",
+  "clientId": {
+    "$oid": "66fdbfd463c6546062416c38"
+  },
+  "creationDate": {
+    "$date": "2024-10-02T21:49:08.732Z"
+  },
+  "skillsRequired": "JavaScript, Node.js"
+}]

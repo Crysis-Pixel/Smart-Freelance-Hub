@@ -1,0 +1,10 @@
+[{
+  "_id": {
+    "$oid": "66fe699d147f4ec81f26a91a"
+  },
+  "name": "Skill Name",
+  "experience": 5,
+  "freelancerId": {
+    "$oid": "66fe699d147f4ec81f26a919"
+  }
+}]

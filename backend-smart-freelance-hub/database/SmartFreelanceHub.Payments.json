@@ -1,0 +1,10 @@
+[{
+  "_id": {
+    "$oid": "66fe6c5c2155235e3cd4dec0"
+  },
+  "bankName": "Bank Asia",
+  "paymentMethod": "Bkash",
+  "userId": {
+    "$oid": "66fe6c5c2155235e3cd4debf"
+  }
+}]

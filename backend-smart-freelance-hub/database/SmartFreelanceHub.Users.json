@@ -1,0 +1,26 @@
+[{
+  "_id": {
+    "$oid": "66fdbbb740428fb85ae21a03"
+  },
+  "accountType": "freelancer",
+  "name": null,
+  "email": "john.doe@example.com",
+  "passwordhash": null,
+  "bio": "",
+  "skills": "",
+  "rating": 0,
+  "totalEarnings": 0
+},
+{
+  "_id": {
+    "$oid": "66fdbc14b92e39c76f78a32e"
+  },
+  "accountType": "freelancer",
+  "name": "john_doe2",
+  "email": "john.doe@example.com",
+  "passwordhash": "securepassword123",
+  "bio": "",
+  "skills": "",
+  "rating": 0,
+  "totalEarnings": 0
+}]

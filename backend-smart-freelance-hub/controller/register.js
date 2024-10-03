@@ -5,9 +5,9 @@ const collection_users = process.env.COLLECTION_USERS;
 
 exports.register = (req, res) => {
     const accountType = req.body.accountType;
-    const username = req.body.username
+    const name = req.body.name
     const email = req.body.email
-    const password = req.body.password
+    const passwordhash = req.body.passwordhash
     const bio = ""
     const skills = ""
     const rating = 0
@@ -20,15 +20,15 @@ try{
     const collection =  db.collection(collection_users);
     const result =  collection.insertOne({
         accountType: accountType,
-        username: username,
+        name: name,
         email: email,
-        password: password,
+        passwordhash: passwordhash,
         bio: bio,
         skills: skills,
         rating: rating,
         totalEarnings: totalEarnings,
     });
-    res.send(`${username} has been successfully registered`);
+    res.send(`${name} has been successfully registered`);
 } catch (err) {
     res.send(`Fail registration`);
 }

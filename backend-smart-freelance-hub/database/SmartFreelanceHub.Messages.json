@@ -1,0 +1,12 @@
+[{
+  "_id": {
+    "$oid": "66fdccf41721df47cb41e75e"
+  },
+  "senderId": null,
+  "receiverId": null,
+  "attachment": "Optional file data",
+  "timestamp": {
+    "$date": "2024-10-02T22:45:08.138Z"
+  },
+  "messageText": "Hello, this is a test message."
+}]
