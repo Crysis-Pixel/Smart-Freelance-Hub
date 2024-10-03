@@ -1,3 +1,4 @@
+import {Link} from 'react-router-dom'
 function Header() {
     return (
         <>
@@ -12,7 +13,7 @@ function Header() {
                         </ul>
                     </div>
                     <div className="navbar-end gap-5">
-                        <a className="btn bg-greenPrimary border-none">Sign-Up</a>
+                        <Link to='/signup' className="btn bg-greenPrimary border-none">Sign-Up</Link>
                         <a className="btn bg-greenPrimary border-none">Login</a>
                     </div>
                 </div>
