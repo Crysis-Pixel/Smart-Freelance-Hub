@@ -7,7 +7,7 @@ const {
     deleteContract,
     getAllContracts,
     getContractById
-} = require('../controllers/contracts');
+} = require('../controller/contracts');
 
 // Create a new contract
 router.post('/create', createContract);
