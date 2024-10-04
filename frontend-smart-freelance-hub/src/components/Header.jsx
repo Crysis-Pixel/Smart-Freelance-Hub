@@ -14,7 +14,7 @@ function Header() {
                     </div>
                     <div className="navbar-end gap-5">
                         <Link to='/signup' className="btn bg-greenPrimary border-none">Sign-Up</Link>
-                        <a className="btn bg-greenPrimary border-none">Login</a>
+                        <Link to='/profile' className="btn bg-greenPrimary border-none">Login</Link>
                     </div>
                 </div>
             </div>
