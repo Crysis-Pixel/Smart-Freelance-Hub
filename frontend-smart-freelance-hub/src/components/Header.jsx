@@ -5,7 +5,7 @@ function Header() {
             <div className="bg-grey">
                 <div className="navbar container mx-auto">
                     <div className="navbar-start">
-                        <a className="btn btn-ghost text-xl">LOGO</a>
+                        <Link to='/home'>LOGO</Link>
                         <ul className="menu menu-horizontal px-1 hidden lg:flex">
                             <li><a>Find Talent</a></li>
                             <li><a>Find Work</a></li>
