@@ -19,7 +19,7 @@ exports.createJob = async (req, res) => {
             budget,
             deadline,
             status,
-            clientId: new ObjectId(clientId), // Convert clientId to ObjectId
+            clientId, // Convert clientId to ObjectId
             creationDate: new Date(), // Set the current date
             skillsRequired,
         });
@@ -32,7 +32,7 @@ exports.createJob = async (req, res) => {
 };
 
 exports.updateJob = async (req, res) => {
-    const { id, title, description, budget, deadline, status, skillsRequired } = req.body;
+    const { id, title, description, budget, deadline, status, clientId, skillsRequired } = req.body;
 
     if (!ObjectId.isValid(id)) {
         return res.status(400).json({ message: 'Invalid job ID' });
@@ -45,7 +45,7 @@ exports.updateJob = async (req, res) => {
 
         const result = await collection.updateOne(
             { _id: new ObjectId(id) },
-            { $set: { title, description, budget, deadline, status, skillsRequired } }
+            { $set: { title, description, budget, deadline, status, clientId, skillsRequired } }
         );
 
         if (result.matchedCount === 0) {

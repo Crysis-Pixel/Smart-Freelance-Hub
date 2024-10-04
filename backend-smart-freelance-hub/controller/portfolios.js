@@ -14,7 +14,7 @@ exports.createPortfolio = async (req, res) => {
         const collection = db.collection(collection_portfolios);
 
         const newPortfolio = {
-            freelancerId: new ObjectId(freelancerId), // Convert freelancerId to ObjectId
+            freelancerId: (freelancerId), // Convert freelancerId to ObjectId
             title,
             description,
             attachments, // Optional file attached to the portfolio

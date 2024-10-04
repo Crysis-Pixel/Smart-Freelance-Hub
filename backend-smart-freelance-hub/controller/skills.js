@@ -16,7 +16,7 @@ exports.createSkill = async (req, res) => {
         const newSkill = {
             name,
             experience,
-            freelancerId: new ObjectId(freelancerId), // Convert freelancerId to ObjectId
+            freelancerId: (freelancerId), // Convert freelancerId to ObjectId
         };
 
         const result = await collection.insertOne(newSkill);

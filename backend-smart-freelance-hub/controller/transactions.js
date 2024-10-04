@@ -43,8 +43,8 @@ exports.updateTransaction = async (req, res) => {
 
         const updateData = {
             status,
-            contractId: contractId ? new ObjectId(contractId) : null,
-            paymentId: new ObjectId(paymentId),
+            contractId,
+            paymentId,
             date: new Date(date),
         };
 

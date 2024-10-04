@@ -32,9 +32,9 @@ exports.createContract = async (req, res) => {
             startDate: new Date(startDate),
             endDate: endDate ? new Date(endDate) : null,
             status,
-            freelancerId: new ObjectId(freelancerId),
-            clientId: new ObjectId(clientId),
-            jobId: new ObjectId(jobId)
+            freelancerId: (freelancerId),
+            clientId: (clientId),
+            jobId: (jobId)
         };
 
         const result = await collection.insertOne(newContract);
@@ -66,9 +66,9 @@ exports.updateContract = async (req, res) => {
             startDate: new Date(startDate),
             endDate: endDate ? new Date(endDate) : null,
             status,
-            freelancerId: new ObjectId(freelancerId),
-            clientId: new ObjectId(clientId),
-            jobId: new ObjectId(jobId)
+            freelancerId: (freelancerId),
+            clientId: (clientId),
+            jobId: (jobId)
         };
 
         const result = await collection.updateOne(

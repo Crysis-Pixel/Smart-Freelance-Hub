@@ -45,6 +45,7 @@ sklearn-env/
 
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/
+node_modules/
 
 # TypeScript cache
 *.tsbuildinfo

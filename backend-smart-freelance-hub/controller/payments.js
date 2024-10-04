@@ -16,7 +16,7 @@ exports.createPayment = async (req, res) => {
         const newPayment = {
             bankName,
             paymentMethod,
-            userId: new ObjectId(userId)  // Convert userId to ObjectId
+            userId: (userId)  // Convert userId to ObjectId
         };
 
         const result = await collection.insertOne(newPayment);
@@ -43,7 +43,7 @@ exports.updatePayment = async (req, res) => {
         const updateData = {
             bankName,
             paymentMethod,
-            userId: new ObjectId(userId)  // Convert userId to ObjectId
+            userId: (userId)  // Convert userId to ObjectId
         };
 
         const result = await collection.updateOne(

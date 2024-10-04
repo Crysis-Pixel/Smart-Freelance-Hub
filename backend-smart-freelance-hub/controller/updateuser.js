@@ -5,7 +5,7 @@ const db_name = process.env.DATABASE_NAME;
 const collection_users = process.env.COLLECTION_USERS;
 
 exports.updateuser = async (req, res) => {
-    const { userId, username, email, passwordHash, accountType, bio, profilePicture, totalEarnings } = req.body;
+    const { userId, username, email, passwordHash, accountType, bio, profilePicture, totalEarnings, isActive } = req.body;
 
     try {
         const client = getConnectedClient();
@@ -15,7 +15,7 @@ exports.updateuser = async (req, res) => {
         // Update the user in the database
         const result = await collection.updateOne(
             { _id: new ObjectId(userId) }, // Use the userId from the request body
-            { $set: { username, email, passwordHash, accountType, bio, profilePicture, totalEarnings } }
+            { $set: { username, email, passwordHash, accountType, bio, profilePicture, totalEarnings, isActive } }
         );
 
         if (result.modifiedCount === 0) {
