@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { fetchEx } from '../utils/common';
 
 export default function Signup() {
     const [countries, setCountries] = useState([]);
@@ -61,7 +62,7 @@ export default function Signup() {
     };
 
     // Handle form submission
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (!validateForm()) {
             setFormError('Please fill in all fields and accept the terms.');
@@ -71,10 +72,30 @@ export default function Signup() {
         setFormError(''); // Clear any previous error messages
         console.log('Form Data Submitted:', JSON.stringify(formData, null, 2));
         // Here, you can send this data to an API or handle it as needed
+        console.log(formData.firstName)
+        const response = await fetch('http://localhost:3000/user/register',{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+              },
+            body: JSON.stringify({
+                accountType: "Freelancer",
+                firstName : formData.firstName,
+                lastName : formData.lastName,
+                email : formData.email,
+                password : formData.password,
+                country : formData.country,
+                phoneNumber : formData.phoneNumber
+
+            })
+        }).then(response => response.json())
+        .then(data => console.log(data))
+        .catch(error => console.error('Error:', error));
     };
 
     return (
         <>
+       
             <div>
                 <h1 className="p-5 text-bold">LOGO</h1>
             </div>
@@ -90,6 +111,7 @@ export default function Signup() {
                 action=""
                 className="max-w-screen-sm grid md:grid-cols-2 grid-cols-1 mx-auto md:gap-4 gap-2"
                 onSubmit={handleSubmit}
+                
             >
                 <label className="form-control w-full">
                     <div className="label">
@@ -248,6 +270,7 @@ export default function Signup() {
                     <input
                         type="checkbox"
                         className="checkbox checkbox-primary"
+                        checked = {isChecked}
                         onChange={handleInputChange}
                     />
                     <span className="ml-2">I agree to the <a href="#" className="text-blue-600">Terms and Conditions</a></span>

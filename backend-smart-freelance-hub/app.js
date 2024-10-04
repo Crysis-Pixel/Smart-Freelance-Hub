@@ -5,6 +5,7 @@ const multer = require('multer');
 const client = require('./database/db').getConnectedClient;
 const userRoutes = require('./routes/user');
 
+
 //added by Mostakim
 const jobsRoutes = require('./routes/jobs');
 const proposalsRoutes = require('./routes/proposals');
@@ -22,11 +23,9 @@ app.use(cors({
     methods: '*'
 }));
 app.use(express.json());
-
 const port = 3000
 
-app.use('/register', routes);
-
+app.use('/user', userRoutes);
 //Added by Mostakim
 app.use('/jobs', jobsRoutes);
 app.use('/proposals', proposalsRoutes);
@@ -38,7 +37,6 @@ app.use('/payments', paymentsRoutes);
 app.use('/contracts', contractsRoutes);
 //
 
-app.use('/user', userRoutes);
 var connectionString = 'mongodb://localhost:27017';
 
 app.listen(port, async () => {
