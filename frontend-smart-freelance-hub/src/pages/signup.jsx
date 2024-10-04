@@ -269,7 +269,7 @@ export default function Signup() {
                 <label className="form-control w-full flex flex-row items-center">
                     <input
                         type="checkbox"
-                        className="checkbox checkbox-primary"
+                        className="checkbox"
                         checked = {isChecked}
                         onChange={handleInputChange}
                     />
