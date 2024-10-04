@@ -1,26 +1,108 @@
 [{
   "_id": {
-    "$oid": "66fdbbb740428fb85ae21a03"
+    "$oid": "66ff3124eeefa677a1e52a21"
   },
-  "accountType": "freelancer",
-  "name": null,
-  "email": "john.doe@example.com",
-  "passwordhash": null,
+  "accountType": "Freelancer",
+  "firstName": "Sakibul",
+  "lastName": "Alam",
+  "email": "sakibulalam36@gmail.com",
+  "passwordhash": "123",
+  "country": "BD",
+  "phoneNumber": "01735225285",
   "bio": "",
   "skills": "",
   "rating": 0,
-  "totalEarnings": 0
+  "totalEarnings": 0,
+  "lastActive": "04-10-2024",
+  "isActive": true
 },
 {
   "_id": {
-    "$oid": "66fdbc14b92e39c76f78a32e"
+    "$oid": "66ff3137eeefa677a1e52a22"
   },
-  "accountType": "freelancer",
-  "name": "john_doe2",
-  "email": "john.doe@example.com",
-  "passwordhash": "securepassword123",
+  "accountType": "Freelancer",
+  "firstName": "Sakibul",
+  "lastName": "Alam",
+  "email": "sakibulalam36@gmail.com",
+  "passwordhash": "123",
+  "country": "BD",
+  "phoneNumber": "01735225285",
+  "bio": "",
+  "skills": "C programmer, C++",
+  "rating": 0,
+  "totalEarnings": 0,
+  "lastActive": "04-10-2024",
+  "isActive": true
+},
+{
+  "_id": {
+    "$oid": "66ff3158eeefa677a1e52a23"
+  },
+  "accountType": "Freelancer",
+  "firstName": "Mostakim",
+  "lastName": "Hossain",
+  "email": "mostahosa@gmail.com",
+  "passwordhash": "321",
+  "country": "BD",
+  "phoneNumber": "015672531",
+  "bio": "",
+  "skills": "video editor, photoshop",
+  "rating": 0,
+  "totalEarnings": 0,
+  "lastActive": "04-10-2024",
+  "isActive": true
+},
+{
+  "_id": {
+    "$oid": "66ff3172eeefa677a1e52a24"
+  },
+  "accountType": "Freelancer",
+  "firstName": "Mostakim",
+  "lastName": "Hossain",
+  "email": "mostahosa@gmail.com",
+  "passwordhash": "321",
+  "country": "BD",
+  "phoneNumber": "015672531",
   "bio": "",
   "skills": "",
   "rating": 0,
-  "totalEarnings": 0
+  "totalEarnings": 0,
+  "lastActive": "04-10-2024",
+  "isActive": true
+},
+{
+  "_id": {
+    "$oid": "66ff322beeefa677a1e52a25"
+  },
+  "accountType": "Freelancer",
+  "firstName": "Sakibul",
+  "lastName": "Alam",
+  "email": "sakibulalam36@gmail.com",
+  "passwordhash": "123",
+  "country": "BD",
+  "phoneNumber": "01735225285",
+  "bio": "",
+  "skills": "",
+  "rating": 0,
+  "totalEarnings": 0,
+  "lastActive": "04-10-2024",
+  "isActive": true
+},
+{
+  "_id": {
+    "$oid": "66ff32a5fc5b9580dee5be9a"
+  },
+  "accountType": "Freelancer",
+  "firstName": "Sakibul",
+  "lastName": "Alam",
+  "email": "sakibulalam36@gmail.com",
+  "passwordhash": "123",
+  "country": "BD",
+  "phoneNumber": "01735225285",
+  "bio": "",
+  "skills": "",
+  "rating": 0,
+  "totalEarnings": 0,
+  "lastActive": "04-10-2024",
+  "isActive": true
 }]
