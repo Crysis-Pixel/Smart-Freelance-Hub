@@ -1,0 +1,38 @@
+[{
+  "_id": {
+    "$oid": "670215887b9861ead555066c"
+  },
+  "accountType": "Freelancer",
+  "firstName": "John",
+  "lastName": "Marston",
+  "email": "john@gmail.com",
+  "country": "BD",
+  "phoneNumber": "asdjkas",
+  "bio": "",
+  "skills": "c programming, c++",
+  "rating": 0,
+  "totalEarnings": 0,
+  "lastActive": "06-10-2024",
+  "jobsCompleted": 0,
+  "profilePicture": "",
+  "hashedPassword": "$2b$10$nI.LElaTD/a.E0z3DSr8zuPyauAVEU8NK/OUrRXJ/PahRsi0v5XgO"
+},
+{
+  "_id": {
+    "$oid": "67021cba20ac2dbf3e38d9c1"
+  },
+  "accountType": "Freelancer",
+  "firstName": "Jahin",
+  "lastName": "Rashid",
+  "email": "jahin@gmail.com",
+  "country": "AR",
+  "phoneNumber": "1234",
+  "bio": "",
+  "skills": "video editor, music editor, graphics designer",
+  "rating": 0,
+  "totalEarnings": 0,
+  "lastActive": "06-10-2024",
+  "jobsCompleted": 0,
+  "profilePicture": "",
+  "hashedPassword": "$2b$10$q9Nnu2SyXAQ7i81V6QnJAuTuchFfoAQKbxEnsr0KJfm2vjSciQq.G"
+}]
