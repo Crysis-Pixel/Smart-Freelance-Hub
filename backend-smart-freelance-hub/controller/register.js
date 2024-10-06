@@ -1,10 +1,12 @@
 const {getConnectedClient} = require('../database/db');
 require('dotenv').config();
+const bcrypt = require('bcrypt');
 const {isUserActive, currentDate} = require('../utils/date');
 const db_name = process.env.DATABASE_NAME;
 const collection_users = process.env.COLLECTION_USERS;
 
-exports.register = (req, res) => {
+exports.register = async(req, res) => {
+    // extract data from request body
     const accountType = req.body.accountType;
     console.log(req.body.accountType);
     const firstName = req.body.firstName
@@ -20,6 +22,11 @@ exports.register = (req, res) => {
     const isActive = true
 
 try{
+    // password hashing
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
+
+    // connect to database
     client = getConnectedClient();
     var db = client.db(db_name);
     const collection =  db.collection(collection_users);
@@ -28,7 +35,7 @@ try{
         firstName: firstName,
         lastName: lastName,
         email: email,
-        passwordhash: password,
+        hashedPassword: hashedPassword, //replace with hashedPassword or password for testing
         country: country,
         phoneNumber: phoneNumber,
         bio: bio,
@@ -36,7 +43,8 @@ try{
         rating: rating,
         totalEarnings: totalEarnings,
         lastActive: currentDate(),
-        isActive: isActive,
+        jobsCompleted: 0,
+        profilePicture:"",
     });
     
     res.json({ message: 'Success'});
