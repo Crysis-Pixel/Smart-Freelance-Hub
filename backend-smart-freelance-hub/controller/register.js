@@ -51,6 +51,7 @@ try{
     isUserActive();
     
 } catch (err) {
+    console.log(err);
     res.send(`Fail registration`);
 }
 };

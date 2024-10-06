@@ -5,9 +5,13 @@ import Signup from './pages/signup'
 import Profile from './pages/profile'
 import Login from './pages/login'
 
+//Added by Mostakim
+import {GoogleOAuthProvider} from '@react-oauth/google';
+//
+
 function App() {
     return (
-      <>
+      <GoogleOAuthProvider clientId="282275875531-a2cv3cpku9ncnmsaf0efdsa6dfe9srvi.apps.googleusercontent.com">
         <BrowserRouter>
           <Routes>
             <Route index element={<Home />} />
@@ -17,7 +21,7 @@ function App() {
             <Route path='/login' element={<Login />} />
           </Routes>
         </BrowserRouter>
-      </>
+      </GoogleOAuthProvider>
     );
 }
 

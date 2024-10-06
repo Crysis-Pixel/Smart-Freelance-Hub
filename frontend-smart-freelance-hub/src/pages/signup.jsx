@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { fetchEx } from '../utils/common';
+import GoogleLoginButton from '../components/GoogleLoginButton';
 
 export default function Signup() {
     const [countries, setCountries] = useState([]);
@@ -77,7 +78,7 @@ export default function Signup() {
             setFormError('Invalid email format.');
             return;
         }
-        
+
         const checkEmailResponse = await fetch('http://localhost:3000/user/checkUserEmail', {
             method: 'POST',
             headers: {
@@ -127,7 +128,10 @@ export default function Signup() {
 
             <div className="max-w-screen-sm grid md:grid-cols-2 grid-cols-1 mx-auto gap-8">
                 <button className="btn">Continue with Apple Account</button>
-                <button className="btn">Continue with GMAIL</button>
+
+                {/* Added by Mostakim */}
+                <GoogleLoginButton/>
+
             </div>
             <hr className="max-w-screen-sm mx-auto my-10" />
 
