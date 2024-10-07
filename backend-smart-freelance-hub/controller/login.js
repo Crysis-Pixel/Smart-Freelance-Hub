@@ -20,12 +20,12 @@ exports.login = async (req, res) => {
             // Verify the password
             if (await checkPassword(password, user.hashedPassword)) {
                 // User authenticated
-                return res.json({ message: 'Success' });
+                return res.status(200).json({ message: 'Success' });
             }
         }
         
         // If user not found or password incorrect
-        res.json({ message: 'Wrong Password' });
+        res.status(500).json({ message: 'Wrong Password' });
         
     } catch (err) {
         console.error('Error during login:', err);

@@ -8,7 +8,6 @@ const collection_users = process.env.COLLECTION_USERS;
 exports.register = async(req, res) => {
     // extract data from request body
     const accountType = req.body.accountType;
-    console.log(req.body.accountType);
     const firstName = req.body.firstName
     const lastName = req.body.lastName
     const email = req.body.email
@@ -19,13 +18,22 @@ exports.register = async(req, res) => {
     const skills = ""
     const rating = 0
     const totalEarnings = 0
-    const isActive = true
+    const lastActive = currentDate()
+    const jobsCompleted = 0
+    const profilePicture = ""
+    const accountCreated = currentDate()
 
 try{
+    //email already exists check
+    if(emailExist(email)){
+        throw("")
+    }
     // password hashing
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
-
+    const hashedPassword = "";
+    if(password != ""){
+        const saltRounds = 10;
+        hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
+    }
     // connect to database
     client = getConnectedClient();
     var db = client.db(db_name);
@@ -42,16 +50,39 @@ try{
         skills: skills,
         rating: rating,
         totalEarnings: totalEarnings,
-        lastActive: currentDate(),
-        jobsCompleted: 0,
-        profilePicture:"",
+        lastActive: lastActive,
+        jobsCompleted: jobsCompleted,
+        profilePicture: profilePicture,
+        accountCreated: accountCreated,
     });
     
-    res.json({ message: 'Success'});
-    isUserActive();
+    res.status(200).json({ message: 'Success'});
     
 } catch (err) {
     console.log(err);
-    res.send(`Fail registration`);
+    res.status(500).json({ message : "Fail registration" });
 }
+};
+
+//function made by mostakim
+async function emailExist(email) {
+    try{
+        const client = getConnectedClient();
+        const db = client.db(db_name);
+        const collection = db.collection(collection_users);
+
+        const user = await collection.findOne({ email });
+
+        if (user) {
+            console.log(`This email: ${email} already exists`)
+            return true
+        } else {
+            console.log(`This email: ${email} does not exist`)
+            return false
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to check email.' });
+    }
+    
 };
