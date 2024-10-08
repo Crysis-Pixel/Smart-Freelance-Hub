@@ -73,7 +73,6 @@ exports.register = async (req, res) => {
   }
 };
 
-//function made by mostakim
 async function emailExist(email) {
   try {
     const client = getConnectedClient();
