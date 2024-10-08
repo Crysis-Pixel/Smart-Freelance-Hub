@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { fetchEx } from '../utils/common';
 import GoogleLoginButton from '../components/GoogleLoginButton';
+import {Link} from 'react-router-dom'
 
 export default function Signup() {
     const [countries, setCountries] = useState([]);
@@ -122,16 +123,20 @@ export default function Signup() {
         <>
        
             <div>
+                <Link to='/home'>
                 <h1 className="p-5 text-bold">LOGO</h1>
+                </Link>
             </div>
             <h1 className="text-center text-6xl pb-10">Sign-Up to get started!</h1>
 
-            <div className="max-w-screen-sm grid md:grid-cols-2 grid-cols-1 mx-auto gap-8">
-                <button className="btn">Continue with Apple Account</button>
+            <div className="max-w-screen-sm flex flex-col justify-center mx-auto items-center gap-4">
+                {/* apple button hidden */}
+                {/* <button className="btn">Continue with Apple Account</button> */}
 
                 {/* Added by Mostakim */}
+                <h1 className='text-xl'>Sign-up with Google Account</h1>
                 <GoogleLoginButton/>
-
+                <h1 className='text-xl'>OR</h1>
             </div>
             <hr className="max-w-screen-sm mx-auto my-10" />
 
