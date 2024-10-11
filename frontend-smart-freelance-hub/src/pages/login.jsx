@@ -42,7 +42,7 @@ export default function Login() {
       sessionStorage.setItem("authToken", token);
 
       // Redirect user to the dashboard or homepage
-      navigate("/dashboard"); // Adjust the route as needed
+      navigate("/profile"); // Adjust the route as needed
     } catch (error) {
       setError("An error occurred. Please try again.");
       console.error(error);

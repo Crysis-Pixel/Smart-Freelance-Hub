@@ -4,6 +4,7 @@ import Home from "./pages/home";
 import Signup from "./pages/signup";
 import Profile from "./pages/profile";
 import Login from "./pages/login";
+import ClientProfile from "./pages/profileCl";
 
 //Added by Mostakim
 import { GoogleOAuthProvider } from "@react-oauth/google";
@@ -19,6 +20,7 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/profileCl" element={<ClientProfile />} />
         </Routes>
       </BrowserRouter>
     </GoogleOAuthProvider>
