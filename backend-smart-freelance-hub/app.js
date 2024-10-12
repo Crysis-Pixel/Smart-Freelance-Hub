@@ -1,8 +1,9 @@
 const express = require('express');
 const cors = require('cors')
 const { MongoClient } = require('mongodb');
-const multer = require('multer');
 const client = require('./database/db').getConnectedClient;
+
+
 const userRoutes = require('./routes/user');
 
 
@@ -39,7 +40,36 @@ app.use('/contracts', contractsRoutes);
 
 var connectionString = 'mongodb://localhost:27017';
 
-app.listen(port, async () => {
+
+/////////Added by Mostakim/////////////
+const http = require('http');
+const socketIo = require('socket.io');
+const server = http.createServer(app); // Create an HTTP server
+const io = socketIo(server, {
+    cors: {
+        origin: '*', // Allow all origins, modify if needed
+        methods: ['GET', 'POST']
+    }
+});
+
+// Added Socket.IO functionality
+io.on('connection', (socket) => {
+    console.log('A user connected:', socket.id);
+
+    // Listen for messages from clients
+    socket.on('sendMessage', (message) => {
+        console.log('Message received:', message);
+        io.emit('receiveMessage', message); // Broadcast the message to all clients
+    });
+
+    socket.on('disconnect', () => {
+        console.log('A user disconnected:', socket.id);
+    });
+});
+//////////////////////////////////////
+
+// Changed `app.listen` to `server.listen` so that it can handle Socket.IO
+server.listen(port, async () => {
     console.log("Server running at port: ", port);
 })
 

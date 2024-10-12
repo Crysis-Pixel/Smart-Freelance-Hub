@@ -8,6 +8,8 @@ import ClientProfile from "./pages/profileCl";
 
 //Added by Mostakim
 import { GoogleOAuthProvider } from "@react-oauth/google";
+//Testing
+import ChatComponent from "./components/ChatComponent";
 //
 
 function App() {
@@ -21,6 +23,11 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/login" element={<Login />} />
           <Route path="/profileCl" element={<ClientProfile />} />
+
+
+          {/* This is for test purpose added by Mostakim*/}
+          <Route path="/chattest" element={<ChatComponent />} />
+
         </Routes>
       </BrowserRouter>
     </GoogleOAuthProvider>
