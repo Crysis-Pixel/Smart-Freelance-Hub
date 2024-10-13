@@ -97,7 +97,7 @@ export default function Signup() {
     const data = await response.json();
 
     // If registration is successful
-    if (data.success) {
+    if (response.status === 200) {
       // Redirect based on account type
       if (formData.accountType === "Client") {
         navigate("/profileCl"); // Redirect to Client profile

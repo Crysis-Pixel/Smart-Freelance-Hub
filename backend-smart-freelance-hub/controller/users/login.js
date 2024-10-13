@@ -1,4 +1,4 @@
-const { getConnectedClient } = require('../database/db');
+const { getConnectedClient } = require('../../database/db');
 require('dotenv').config();
 const bcrypt = require('bcrypt');
 const db_name = process.env.DATABASE_NAME;
