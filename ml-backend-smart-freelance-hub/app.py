@@ -25,7 +25,7 @@ def recommendation():
     result = []
     for user in users:
         user_skills = user['skills']        
-        value = calculateSimilarity(requirement, user_skills)
+        value = calculateSimilarity(requirement.lower(), user_skills.lower())
         if(value > 0) : result.append({
                 'user': user,
                 'similarity_value': float(value)
@@ -55,18 +55,14 @@ def get_all_users():
 
 @app.route('/usersSkill', methods=['GET'])
 def get_all_userskills():
-    users = list(users_collection.find({}, {"skills" : 1}))
+    users = list(users_collection.find({"accountType": {"$in": ["Freelancer", "Both"]}}, {"_id" : 0, "accountType": 1, "email" : 1,"skills" : 1}))
     
-    # Convert the ObjectId to string to make it JSON serializable
-    for user in users:
-        user['_id'] = str(user['_id'])
     #app.logger.info(users)
     return users
 
 def calculateSimilarity(text1, text2):
     result = cosine_similarity([nlp(text1).vector],[nlp(text2).vector])
     value = result[0,0]
-    print(type(value))
     return value
 
 def checkMatch(value):
