@@ -1,4 +1,4 @@
-const { getConnectedClient } = require('../database/db');
+const { getConnectedClient } = require('../../database/db');
 const { ObjectId } = require('mongodb'); // Import ObjectId from mongodb
 require('dotenv').config();
 const db_name = process.env.DATABASE_NAME;

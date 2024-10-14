@@ -13,8 +13,8 @@ async function sendOTP(email, otp) {
             host: 'smtp.mailgun.org', // Mailgun SMTP server
             port: 587,                // Mailgun SMTP port (can also use 465 for SSL)
             auth: {
-                user: "postmaster@sandbox47654a8a44094d3594b36826457e9616.mailgun.org", // Mailgun SMTP login (username)
-                pass: "15a0d3284424dae064d467d14d92a876-5dcb5e36-5e9b33f2", // Mailgun SMTP password
+                user: process.env.MAILGUN_DEMO_USER, // Mailgun SMTP login (username)
+                pass: process.env.MAILGUN_PASS, // Mailgun SMTP password
             },
             tls: {
                 rejectUnauthorized: false,  // Disable TLS certificate validation for testing (enable for production)

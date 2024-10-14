@@ -1,5 +1,7 @@
-const { getConnectedClient } = require("../database/db");
+const { getConnectedClient } = require("../../../database/db");
 require("dotenv").config();
+const db_name = process.env.DATABASE_NAME;
+const collection_users = process.env.COLLECTION_USERS;
 
 exports.verifyOTP = async (req, res) => {
     const { email, otp } = req.body;

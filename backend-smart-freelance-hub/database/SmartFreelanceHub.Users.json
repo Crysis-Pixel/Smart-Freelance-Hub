@@ -1,108 +1,92 @@
 [{
   "_id": {
-    "$oid": "66ff3124eeefa677a1e52a21"
+    "$oid": "670bbe66f555bb8f3e2b592e"
   },
   "accountType": "Freelancer",
   "firstName": "Sakibul",
   "lastName": "Alam",
   "email": "sakibulalam36@gmail.com",
-  "passwordhash": "123",
+  "hashedPassword": "$2b$10$ri.IFvNihlKctJQlE.PekudamVGKUKiXeCD/INKSdkHiLgU84q4KG",
+  "country": "BD",
+  "phoneNumber": "01735225285",
+  "bio": "",
+  "skills": "Music Editor, Video Editor",
+  "rating": 0,
+  "totalEarnings": 0,
+  "lastActive": "13-10-2024",
+  "jobsCompleted": 0,
+  "profilePicture": "",
+  "accountCreated": "13-10-2024",
+  "otp": "243878",
+  "otpExpires": 1728823786284,
+  "isVerified": false
+},
+{
+  "_id": {
+    "$oid": "670bbedef555bb8f3e2b592f"
+  },
+  "accountType": "Freelancer",
+  "firstName": "Abdullah",
+  "lastName": "Al Raiyan",
+  "email": "abdullahalraiyan4@gmail.com",
+  "hashedPassword": "$2b$10$Qnek2kAb2vpsf86ccGqQlOmFFlQaohQ.xbiCEhcfmWpPvHTD74dpy",
+  "country": "BD",
+  "phoneNumber": "01300775307",
+  "bio": "",
+  "skills": "Video Editor, Programmer",
+  "rating": 0,
+  "totalEarnings": 0,
+  "lastActive": "13-10-2024",
+  "jobsCompleted": 0,
+  "profilePicture": "",
+  "accountCreated": "13-10-2024",
+  "otp": "480481",
+  "otpExpires": 1728823906604,
+  "isVerified": false
+},
+{
+  "_id": {
+    "$oid": "670bbf2ff555bb8f3e2b5930"
+  },
+  "accountType": "Client",
+  "firstName": "Jim",
+  "lastName": "Alam",
+  "email": "sakibulalam7296@gmail.com",
+  "hashedPassword": "$2b$10$rIXaMsneYJRDnz.peVgGSOIJD9xqe.58xDqhg8X7EpTIfla7jFu4q",
   "country": "BD",
   "phoneNumber": "01735225285",
   "bio": "",
   "skills": "",
   "rating": 0,
   "totalEarnings": 0,
-  "lastActive": "04-10-2024",
-  "isActive": true
+  "lastActive": "13-10-2024",
+  "jobsCompleted": 0,
+  "profilePicture": "",
+  "accountCreated": "13-10-2024",
+  "otp": "758537",
+  "otpExpires": 1728823987203,
+  "isVerified": false
 },
 {
   "_id": {
-    "$oid": "66ff3137eeefa677a1e52a22"
-  },
-  "accountType": "Freelancer",
-  "firstName": "Sakibul",
-  "lastName": "Alam",
-  "email": "sakibulalam36@gmail.com",
-  "passwordhash": "123",
-  "country": "BD",
-  "phoneNumber": "01735225285",
-  "bio": "",
-  "skills": "C programmer, C++",
-  "rating": 0,
-  "totalEarnings": 0,
-  "lastActive": "04-10-2024",
-  "isActive": true
-},
-{
-  "_id": {
-    "$oid": "66ff3158eeefa677a1e52a23"
+    "$oid": "670bbfbcf555bb8f3e2b5931"
   },
   "accountType": "Freelancer",
   "firstName": "Mostakim",
   "lastName": "Hossain",
-  "email": "mostahosa@gmail.com",
-  "passwordhash": "321",
+  "email": "guyawesome96@gmail.com",
+  "hashedPassword": "$2b$10$Qzy6m2O.dCCK6o5g1VcgAO3LJPZSU//6H8XHNDzYOvlonzUq0bI6i",
   "country": "BD",
-  "phoneNumber": "015672531",
+  "phoneNumber": "0132468465",
   "bio": "",
-  "skills": "video editor, photoshop",
+  "skills": "music editor, Java Developer",
   "rating": 0,
   "totalEarnings": 0,
-  "lastActive": "04-10-2024",
-  "isActive": true
-},
-{
-  "_id": {
-    "$oid": "66ff3172eeefa677a1e52a24"
-  },
-  "accountType": "Freelancer",
-  "firstName": "Mostakim",
-  "lastName": "Hossain",
-  "email": "mostahosa@gmail.com",
-  "passwordhash": "321",
-  "country": "BD",
-  "phoneNumber": "015672531",
-  "bio": "",
-  "skills": "",
-  "rating": 0,
-  "totalEarnings": 0,
-  "lastActive": "04-10-2024",
-  "isActive": true
-},
-{
-  "_id": {
-    "$oid": "66ff322beeefa677a1e52a25"
-  },
-  "accountType": "Freelancer",
-  "firstName": "Sakibul",
-  "lastName": "Alam",
-  "email": "sakibulalam36@gmail.com",
-  "passwordhash": "123",
-  "country": "BD",
-  "phoneNumber": "01735225285",
-  "bio": "",
-  "skills": "",
-  "rating": 0,
-  "totalEarnings": 0,
-  "lastActive": "04-10-2024",
-  "isActive": true
-},
-{
-  "_id": {
-    "$oid": "66ff32a5fc5b9580dee5be9a"
-  },
-  "accountType": "Freelancer",
-  "firstName": "Sakibul",
-  "lastName": "Alam",
-  "email": "sakibulalam36@gmail.com",
-  "passwordhash": "123",
-  "country": "BD",
-  "phoneNumber": "01735225285",
-  "bio": "",
-  "skills": "",
-  "rating": 0,
-  "totalEarnings": 0,
-  "lastActive": "04-10-2024",
-  "isActive": true
+  "lastActive": "13-10-2024",
+  "jobsCompleted": 0,
+  "profilePicture": "",
+  "accountCreated": "13-10-2024",
+  "otp": "833325",
+  "otpExpires": 1728824128629,
+  "isVerified": false
 }]

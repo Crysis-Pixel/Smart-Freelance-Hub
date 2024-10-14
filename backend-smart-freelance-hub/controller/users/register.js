@@ -1,8 +1,9 @@
-const { getConnectedClient } = require("../database/db");
+const { getConnectedClient } = require("../../database/db");
 require("dotenv").config();
 const bcrypt = require("bcrypt");
-const { isUserActive, currentDate } = require("../utils/date");
-const {generateOTP, sendOTP} = require("../utils/otp");
+const { isUserActive, currentDate } = require("../../utils/date");
+const {generateOTP, sendOTP} = require("../../utils/otp");
+const {emailExist} = require("../../utils/emailExist");
 const db_name = process.env.DATABASE_NAME;
 const collection_users = process.env.COLLECTION_USERS;
 
@@ -26,8 +27,8 @@ exports.register = async (req, res) => {
 
   try {
     //email already exists check
-    if (emailExist(email) == true) {
-      throw "";
+    if (await emailExist(email) == true) {
+      throw new Error("Email already exists");
     }
     // password hashing
     let hashedPassword = "";
@@ -64,32 +65,18 @@ exports.register = async (req, res) => {
       isVerified: false, // mark user as not verified yet
     });
     // Send OTP to user email
-    await sendOTP(email, otp);
+    try {
+      await sendOTP(email, otp);
+    } catch (error) {
+      console.log("OTP fail");
+    }
 
+    console.log("registration success");
     res.status(200).json({ message: "Success" });
   } catch (err) {
-    console.log(err);
+    console.log("registration fail");
     res.status(500).json({ message: "Fail registration" });
   }
 };
 
-async function emailExist(email) {
-  try {
-    const client = getConnectedClient();
-    const db = client.db(db_name);
-    const collection = db.collection(collection_users);
 
-    const user = await collection.findOne({ email });
-
-    if (user) {
-      console.log(`This email: ${email} already exists`);
-      return true;
-    } else {
-      console.log(`This email: ${email} does not exist`);
-      return false;
-    }
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to check email." });
-  }
-}
