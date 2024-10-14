@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import { ModalContext } from "../contexts/Modalcontext";
-
+import OTPModal from "./OTPmodal";
 function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null); // To store user data
@@ -24,6 +24,7 @@ function Header() {
     setUser(null);
   };
 
+  // needed for modal
   const { openModal } = useContext(ModalContext);
 
   return (
@@ -85,6 +86,9 @@ function Header() {
           </div>
         </div>
       </div>
+
+      {/* to verify the modal, put the OTP code that needs to be verified with 'correctOTP'  */}
+      <OTPModal correctOTP="111111" />
     </>
   );
 }

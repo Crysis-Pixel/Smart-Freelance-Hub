@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { fetchEx } from "../utils/common";
 import GoogleLoginButton from "../components/GoogleLoginButton";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { ModalContext } from "../contexts/Modalcontext";
+import OTPModal from "../components/OTPmodal";
 
 export default function Signup() {
   const [countries, setCountries] = useState([]);
@@ -19,6 +21,9 @@ export default function Signup() {
   const [formError, setFormError] = useState("");
   const [isChecked, setIsChecked] = useState(false); // Track checkbox state
   const navigate = useNavigate();
+
+  // needed for modal
+  const { openModal } = useContext(ModalContext);
 
   // Fetch country data from the REST Countries API
   useEffect(() => {
@@ -357,6 +362,7 @@ export default function Signup() {
                 !validateForm() ? "opacity-50 cursor-not-allowed" : ""
               }`}
               disabled={!validateForm()}
+              onClick={openModal}
             >
               Sign Up
             </button>
@@ -368,6 +374,7 @@ export default function Signup() {
           </form>
         </div>
       </div>
+      <OTPModal correctOTP="111111" />
     </>
   );
 }

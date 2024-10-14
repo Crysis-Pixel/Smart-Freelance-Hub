@@ -13,7 +13,6 @@ import ChatComponent from "./components/ChatComponent";
 
 // Import ModalProvider
 import { ModalProvider } from "./contexts/Modalcontext";
-import OTPModal from "./components/OTPmodal";
 
 function App() {
   return (
@@ -33,7 +32,6 @@ function App() {
           </Routes>
 
           {/* Place OTPModal outside the Routes to make it accessible from anywhere */}
-          <OTPModal correctOTP="123456" />
         </BrowserRouter>
       </ModalProvider>
     </GoogleOAuthProvider>
