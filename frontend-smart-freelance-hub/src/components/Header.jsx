@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
+import { ModalContext } from "../contexts/Modalcontext";
 
 function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -23,12 +24,17 @@ function Header() {
     setUser(null);
   };
 
+  const { openModal } = useContext(ModalContext);
+
   return (
     <>
       <div className="bg-grey">
         <div className="navbar container mx-auto">
           <div className="navbar-start">
-            <Link to="/home">LOGO</Link>
+            {/* <Link to="/home">LOGO</Link> */}
+            <button className="btn" onClick={openModal}>
+              Open Modal
+            </button>
             <ul className="menu menu-horizontal px-1 hidden lg:flex">
               <li>
                 <a>Find Talent</a>

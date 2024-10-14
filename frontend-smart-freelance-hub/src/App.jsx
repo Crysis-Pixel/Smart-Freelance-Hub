@@ -6,30 +6,36 @@ import Profile from "./pages/profile";
 import Login from "./pages/login";
 import ClientProfile from "./pages/profileCl";
 
-//Added by Mostakim
+// Added by Mostakim
 import { GoogleOAuthProvider } from "@react-oauth/google";
-//Testing
+// Testing
 import ChatComponent from "./components/ChatComponent";
-//
+
+// Import ModalProvider
+import { ModalProvider } from "./contexts/Modalcontext";
+import OTPModal from "./components/OTPmodal";
 
 function App() {
   return (
     <GoogleOAuthProvider clientId="282275875531-a2cv3cpku9ncnmsaf0efdsa6dfe9srvi.apps.googleusercontent.com">
-      <BrowserRouter>
-        <Routes>
-          <Route index element={<Home />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/profileCl" element={<ClientProfile />} />
+      <ModalProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route index element={<Home />} />
+            <Route path="/home" element={<Home />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/profileCl" element={<ClientProfile />} />
 
+            {/* This is for test purpose added by Mostakim */}
+            <Route path="/chattest" element={<ChatComponent />} />
+          </Routes>
 
-          {/* This is for test purpose added by Mostakim*/}
-          <Route path="/chattest" element={<ChatComponent />} />
-
-        </Routes>
-      </BrowserRouter>
+          {/* Place OTPModal outside the Routes to make it accessible from anywhere */}
+          <OTPModal correctOTP="123456" />
+        </BrowserRouter>
+      </ModalProvider>
     </GoogleOAuthProvider>
   );
 }

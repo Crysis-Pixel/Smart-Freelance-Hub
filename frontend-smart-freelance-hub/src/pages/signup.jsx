@@ -78,6 +78,28 @@ export default function Signup() {
 
     setFormError("");
 
+    //Added by Mostakim
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setFormError("Invalid email format.");
+      return;
+    }
+    const checkEmailResponse = await fetch(
+      "http://localhost:3000/user/checkUserEmail",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: formData.email }),
+      }
+    );
+    const emailCheckData = await checkEmailResponse.json();
+    if (emailCheckData.exists) {
+      setFormError("Email already exists. Please use a different email.");
+      return;
+    }
+
     const response = await fetch("http://localhost:3000/user/register", {
       method: "POST",
       headers: {
