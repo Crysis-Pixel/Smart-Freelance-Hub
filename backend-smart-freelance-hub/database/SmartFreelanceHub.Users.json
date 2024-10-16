@@ -18,8 +18,11 @@
   "profilePicture": "",
   "accountCreated": "13-10-2024",
   "otp": "243878",
-  "otpExpires": 1728823786284,
-  "isVerified": false
+  "otpExpires": {
+    "$numberLong": "1728823786284"
+  },
+  "isVerified": false,
+  "lookingForJob": true
 },
 {
   "_id": {
@@ -37,12 +40,15 @@
   "rating": 0,
   "totalEarnings": 0,
   "lastActive": "13-10-2024",
-  "jobsCompleted": 0,
+  "jobsCompleted": 1,
   "profilePicture": "",
   "accountCreated": "13-10-2024",
   "otp": "480481",
-  "otpExpires": 1728823906604,
-  "isVerified": false
+  "otpExpires": {
+    "$numberLong": "1728823906604"
+  },
+  "isVerified": false,
+  "lookingForJob": true
 },
 {
   "_id": {
@@ -64,8 +70,11 @@
   "profilePicture": "",
   "accountCreated": "13-10-2024",
   "otp": "758537",
-  "otpExpires": 1728823987203,
-  "isVerified": false
+  "otpExpires": {
+    "$numberLong": "1728823987203"
+  },
+  "isVerified": false,
+  "lookingForJob": true
 },
 {
   "_id": {
@@ -87,6 +96,31 @@
   "profilePicture": "",
   "accountCreated": "13-10-2024",
   "otp": "833325",
-  "otpExpires": 1728824128629,
-  "isVerified": false
+  "otpExpires": {
+    "$numberLong": "1728824128629"
+  },
+  "isVerified": false,
+  "lookingForJob": true
+},
+{
+  "_id": {
+    "$oid": "670f5ef2ec08ee996ea30875"
+  },
+  "accountType": "Freelancer",
+  "firstName": "sakibul",
+  "lastName": "alam",
+  "email": "sakibul.patwary@northsouth.edu",
+  "hashedPassword": "$2b$10$IzAc9w19pd/.OoePNOumseUcgXvlR67abcreFAfmkIv3W7TpkKgE.",
+  "country": "AF",
+  "phoneNumber": "012833246487",
+  "bio": "",
+  "skills": "",
+  "rating": 0,
+  "totalEarnings": 0,
+  "lastActive": "16-10-2024",
+  "jobsCompleted": 0,
+  "profilePicture": "",
+  "accountCreated": "16-10-2024",
+  "isVerified": true,
+  "lookingForJob": true
 }]
