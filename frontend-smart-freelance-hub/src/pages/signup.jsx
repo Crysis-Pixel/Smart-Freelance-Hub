@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from "react";
 import { fetchEx } from "../utils/common";
-import GoogleLoginButton from "../components/GoogleLoginButton";
+import GoogleLoginButton from "../components/GoogleSignUpButton";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { ModalContext } from "../contexts/Modalcontext";

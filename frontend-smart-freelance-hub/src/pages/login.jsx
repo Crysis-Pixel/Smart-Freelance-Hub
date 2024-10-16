@@ -58,10 +58,6 @@ export default function Login() {
         </h1>
 
         <div className="max-w-screen-sm flex flex-col justify-center mx-auto items-center gap-4">
-            {/* apple button hidden */}
-            {/* <button className="btn">Continue with Apple Account</button> */}
-
-            {/* Added by Mostakim */}
             <h1 className="text-xl">Sign-in with Google Account</h1>
             <GoogleLoginButton />
             <h1 className="text-xl">OR</h1>
