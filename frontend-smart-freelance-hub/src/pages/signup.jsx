@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from "react";
 import { fetchEx } from "../utils/common";
-import GoogleLoginButton from "../components/GoogleLoginButton";
+import GoogleLoginButton from "../components/GoogleSignUpButton";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { ModalContext } from "../contexts/Modalcontext";
@@ -336,27 +336,19 @@ export default function Signup() {
               </select>
             </label>
 
-            <label className="form-control w-full flex flex-row items-center">
+            {/* Checkbox for terms and conditions */}
+            <div className="col-span-2 flex items-center">
               <input
                 type="checkbox"
-                className="checkbox"
+                className="mr-2"
+                name="terms"
                 checked={isChecked}
                 onChange={handleInputChange}
               />
-              <span className="ml-2">
-                I agree to the{" "}
-                <a href="#" className="text-blue-600">
-                  Terms and Conditions
-                </a>
-              </span>
-            </label>
-
-            {/*JORA TALI DEWA CODE cuz checkbox not working */}
-            {!isChecked && (
-              <div className="col-span-2 text-red-500 mt-2">
-                Please accept the terms and conditions.
-              </div>
-            )}
+              <label htmlFor="terms">
+                I agree to the <Link to="/terms">Terms and Conditions</Link>
+              </label>
+            </div>
 
             <button
               type="submit"

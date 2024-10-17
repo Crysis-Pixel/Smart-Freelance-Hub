@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import GoogleLoginButton from "../components/GoogleLoginButton";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -55,6 +56,12 @@ export default function Login() {
         <h1 className="text-4xl font-semibold text-center text-gray-800 mb-8">
           Login to Smart Freelance Hub
         </h1>
+
+        <div className="max-w-screen-sm flex flex-col justify-center mx-auto items-center gap-4">
+            <h1 className="text-xl">Sign-in with Google Account</h1>
+            <GoogleLoginButton />
+            <h1 className="text-xl">OR</h1>
+          </div>
 
         {error && (
           <div className="text-red-600 text-sm mb-4 text-center">{error}</div>

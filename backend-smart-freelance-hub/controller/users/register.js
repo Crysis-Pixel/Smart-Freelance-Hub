@@ -24,6 +24,7 @@ exports.register = async (req, res) => {
   const jobsCompleted = 0;
   const profilePicture = "";
   const accountCreated = currentDate();
+  const lookingForJob = false;
 
   try {
     //email already exists check
@@ -60,6 +61,7 @@ exports.register = async (req, res) => {
       jobsCompleted: jobsCompleted,
       profilePicture: profilePicture,
       accountCreated: accountCreated,
+      lookingForJob: lookingForJob,
       otp, // storing OTP for later verification
       otpExpires: Date.now() + 15 * 60 * 1000, // OTP expiration time (15 minutes)
       isVerified: false, // mark user as not verified yet
