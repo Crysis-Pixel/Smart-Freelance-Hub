@@ -102,6 +102,7 @@ export default function Signup() {
     const emailCheckData = await checkEmailResponse.json();
     if (emailCheckData.exists) {
       setFormError("Email already exists. Please use a different email.");
+      alert("Email already exists. Please use a different email.");
       return;
     }
 
@@ -133,6 +134,7 @@ export default function Signup() {
       }
     } else {
       setFormError("Registration failed. Please try again.");
+      alert("Registration failed. Please try again.");
     }
   };
 
@@ -374,7 +376,9 @@ export default function Signup() {
           </form>
         </div>
       </div>
-      <OTPModal correctOTP="111111" />
+
+      {/* to verify the modal, put the OTP code that needs to be verified with 'correctOTP'  */}
+      <OTPModal email={formData.email} />
     </>
   );
 }

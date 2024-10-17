@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useContext } from "react";
-import { ModalContext } from "../contexts/ModalContext";
+import { ModalContext } from "../contexts/Modalcontext";
 
-const OTPModal = ({ correctOTP }) => {
+const OTPModal = ({ email }) => {
   const { isModalOpen, closeModal } = useContext(ModalContext);
   const [otp, setOtp] = useState(new Array(6).fill(""));
   const [isOtpValid, setIsOtpValid] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (element, index) => {
     if (isNaN(element.value)) return;
@@ -30,15 +31,35 @@ const OTPModal = ({ correctOTP }) => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const enteredOTP = otp.join("");
-    if (enteredOTP === correctOTP) {
-      alert("OTP Verified!");
-      setIsOtpValid(true);
-      closeModal();
-    } else {
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("http://localhost:3000/user/verifyOTP", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ otp: enteredOTP, email }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        alert("OTP Verified!");
+        setIsOtpValid(true);
+        closeModal();
+      } else {
+        setIsOtpValid(false);
+        setOtp(new Array(6).fill(""));
+      }
+    } catch (error) {
+      console.error("Error verifying OTP:", error);
       setIsOtpValid(false);
       setOtp(new Array(6).fill(""));
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -68,6 +89,7 @@ const OTPModal = ({ correctOTP }) => {
               onChange={(e) => handleChange(e.target, index)}
               onKeyDown={(e) => handleKeyDown(e, index)}
               onFocus={(e) => e.target.select()}
+              disabled={isSubmitting}
             />
           ))}
         </div>
@@ -79,12 +101,14 @@ const OTPModal = ({ correctOTP }) => {
         <button
           onClick={handleSubmit}
           className="w-full bg-greenPrimary hover:bg-green-800 text-white py-2 rounded-md transition duration-200"
+          disabled={isSubmitting}
         >
-          Verify
+          {isSubmitting ? "Verifying..." : "Verify"}
         </button>
         <button
           onClick={closeModal}
           className="mt-4 w-full bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 rounded-md transition duration-200"
+          disabled={isSubmitting}
         >
           Cancel
         </button>
