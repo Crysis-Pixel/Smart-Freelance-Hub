@@ -41,7 +41,7 @@ const OTPModal = ({ email }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ otp: enteredOTP, email }),
+        body: JSON.stringify({ otp: enteredOTP, email: email }),
       });
 
       const result = await response.json();
