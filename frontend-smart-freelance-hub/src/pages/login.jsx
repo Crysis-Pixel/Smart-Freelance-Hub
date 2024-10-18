@@ -35,18 +35,23 @@ export default function Login() {
         return;
       }
 
-      // Assuming backend returns user data along with a session token or user ID
-      const { userId, token } = data;
+      const userresponse = await fetch("http://localhost:3000/user/getUser", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+      const userdata = await userresponse.json();
 
-      // Store the user ID and token in session or localStorage
-      sessionStorage.setItem("userId", userId);
-      sessionStorage.setItem("authToken", token);
+      sessionStorage.setItem("user", JSON.stringify(userdata));
 
       // Redirect user to the dashboard or homepage
       navigate("/profile"); // Adjust the route as needed
     } catch (error) {
       setError("An error occurred. Please try again.");
       console.error(error);
+      alert("Login failed. Please check your credentials.");
     }
   };
 

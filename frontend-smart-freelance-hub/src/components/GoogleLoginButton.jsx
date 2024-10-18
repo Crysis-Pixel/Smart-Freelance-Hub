@@ -24,8 +24,38 @@ const GoogleLoginButton = ({ onSuccess, onError }) => {
         })
           .then((response) => response.json())
           .then((data) => console.log(data))
-          .catch((error) => console.error("Error:", error));
-          navigate("/profile");
+          .catch((error) => {
+            console.error("Error:", error);
+            alert("Error has occured.");
+            return;
+          });
+
+        const userresponse = fetch("http://localhost:3000/user/getUser", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email }),
+          });
+        
+        userresponse
+        .then((response) => {
+          if (!response.ok) {
+            alert("Network response was not ok");
+          }
+          return response.json(); // Convert response to JSON
+        })
+        .then((userdata) => {
+          sessionStorage.setItem("user", JSON.stringify(userdata)); // Store in sessionStorage
+          console.log(userdata); // Optional: log the userdata
+        })
+        .catch((error) => {
+          console.error("Error:", error); // Handle errors
+          alert("Error has occured.");
+          return;
+        });
+        
+        navigate("/profile");
       }}
       onError={() => {
         console.log("Login Failed");

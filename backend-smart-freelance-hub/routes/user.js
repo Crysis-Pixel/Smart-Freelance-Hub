@@ -18,7 +18,7 @@ const { checkUserEmail } = require('../controller/users/checkUserEmail')
 router.post('/register', register);
 router.post('/login', login);
 
-router.get('/getUser', getUser);
+router.post('/getUser', getUser);
 
 router.post('/updateUser', updateuser);
 

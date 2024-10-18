@@ -5,6 +5,11 @@ import UserType from "../components/usertype.jsx";
 import React, { useState, useEffect } from "react";
 
 export default function Profile() {
+
+  //Added by Mostakim - using this can fetch your everything on user
+  console.log(JSON.parse(sessionStorage.getItem("user")));
+  ////////////
+
   return (
     <>
       <Header />
