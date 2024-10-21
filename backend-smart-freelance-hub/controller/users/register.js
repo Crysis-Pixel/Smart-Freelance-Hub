@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const { isUserActive, currentDate } = require("../../utils/date");
 const {generateOTP, sendOTP} = require("../../utils/otp");
 const {emailExist} = require("../../utils/emailExist");
+const {hashedPassword} = require("../../utils/password");
 const db_name = process.env.DATABASE_NAME;
 const collection_users = process.env.COLLECTION_USERS;
 
@@ -16,9 +17,11 @@ exports.register = async (req, res) => {
   const password = req.body.password;
   const country = req.body.country;
   const phoneNumber = req.body.phoneNumber;
-  const bio = "";
+  const fBio = "";
+  const cBio = "";
   const skills = "";
-  const rating = 0;
+  const fRating = 0;
+  const cRating = 0;
   const totalEarnings = 0;
   const lastActive = currentDate();
   const jobsCompleted = 0;
@@ -34,8 +37,7 @@ exports.register = async (req, res) => {
     // password hashing
     let hashedPassword = "";
     if (password != "") {
-      const saltRounds = 10;
-      hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
+      hashedPassword = await hashedPassword(req.body.password);
     }
 
     // Generate OTP
@@ -53,9 +55,11 @@ exports.register = async (req, res) => {
       hashedPassword: hashedPassword, //replace with hashedPassword or password for testing
       country: country,
       phoneNumber: phoneNumber,
-      bio: bio,
+      fBio: fBio,
+      cBio: cBio,
       skills: skills,
-      rating: rating,
+      fRating: fRating,
+      cRating: cRating,
       totalEarnings: totalEarnings,
       lastActive: lastActive,
       jobsCompleted: jobsCompleted,

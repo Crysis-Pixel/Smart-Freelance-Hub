@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
   accountType: { type: String, enum: ['Freelancer', 'Client'], required: true },
   profileImage: { type: String },
   skills: [String],
-  bio: { type: String },
+  fBio: { type: String },
   location: { type: String },
   contactInfo: {
     phone: String,

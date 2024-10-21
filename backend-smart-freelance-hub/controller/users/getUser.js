@@ -6,7 +6,7 @@ const db_name = process.env.DATABASE_NAME;
 const collection_users = process.env.COLLECTION_USERS;
 
 exports.getUser = async (req, res) => {
-    const { email } = req.body; // Get the ID from the request body
+    const { email } = req.body; // Get the Email from the request body
 
     // Check if the ID is valid
     if (!emailExist(email)) {
@@ -18,7 +18,7 @@ exports.getUser = async (req, res) => {
         const db = client.db(db_name);
         const collection = db.collection(collection_users);
 
-        const user = await collection.findOne({ email: email }); // Retrieve user by ID
+        const user = await collection.findOne({ email: email }); // Retrieve user by Email
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
