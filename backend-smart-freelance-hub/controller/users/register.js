@@ -35,9 +35,9 @@ exports.register = async (req, res) => {
       throw new Error("Email already exists");
     }
     // password hashing
-    let hashedPassword = "";
+    let hashPassword = "";
     if (password != "") {
-      hashedPassword = await hashedPassword(req.body.password);
+      hashPassword = await hashedPassword(req.body.password);
     }
 
     // Generate OTP
@@ -52,7 +52,7 @@ exports.register = async (req, res) => {
       firstName: firstName,
       lastName: lastName,
       email: email,
-      hashedPassword: hashedPassword, //replace with hashedPassword or password for testing
+      hashedPassword: hashPassword, //replace with hashedPassword or password for testing
       country: country,
       phoneNumber: phoneNumber,
       fBio: fBio,

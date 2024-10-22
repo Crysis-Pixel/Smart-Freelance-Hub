@@ -14,7 +14,7 @@ async function checkPassword(plainPassword, hashedPassword) {
         return false;
     }
 }
-async function hashPassword(password) {
+async function hashedPassword(password) {
     return await bcrypt.hash(password, 10);
 }
-module.exports = {checkPassword, hashPassword};
+module.exports = {checkPassword, hashedPassword};
