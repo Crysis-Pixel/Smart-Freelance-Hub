@@ -143,7 +143,7 @@ export default function Signup() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({email: formData.email}),
       });
       const userdata = await userresponse.json();
 
