@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import io from 'socket.io-client';
 
 const socket = io('http://localhost:3000');
@@ -14,6 +14,8 @@ const ChatComponent = () => {
     const loggedInUser = JSON.parse(sessionStorage.getItem("user")); //session value of current logged in user
     const senderId = loggedInUser?.email; //email of user from session value (email is also unique)
     const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms)); //a sleep variable used for sleep functions
+    const recipientIdRef = useRef('');
+
 
     useEffect(() => {
         socket.emit('join', senderId); //calls socket join function in socket.js. Triggered when a user joins a socket.
@@ -62,7 +64,8 @@ const ChatComponent = () => {
             console.log("Handle recieve Message called.");
             console.log("newMessage.senderId:", newMessage.senderId);
             //sleep(1000); //sleep gives some time to sync data between two users properly and also avoids race conditions where a constant loop happens.
-            if (newMessage.senderId === recipientId) {
+            console.log("recipientID: ", recipientIdRef.current);
+            if (newMessage.senderId === recipientIdRef.current) {
                 setChatMessages((prevMessages) => [...prevMessages, newMessage]); //appends new messages
                 // Automatically mark as read if the recipient is the logged-in user
                 console.log("Receive message socket has been called.");
@@ -193,6 +196,15 @@ const ChatComponent = () => {
             }
         });
     }, [chatMessages]);
+
+    useEffect(() => {
+        console.log("Recipient ID updated:", recipientId);
+    }, [recipientId]);   
+    
+    useEffect(() => {
+        recipientIdRef.current = recipientId;
+    }, [recipientId]);
+    
     
     return (
         <>
@@ -207,8 +219,8 @@ const ChatComponent = () => {
                     value={recipientId}
                     // onChange is triggered when a user has selected whom to send a chat
                     onChange={(e) => {
-                        console.log("User has selected: ", e.target.value);
-                        setRecipientId(e.target.value);//sets the recipientId after selecting
+                            console.log("User has selected: ", e.target.value)
+                            setRecipientId(() => e.target.value)//sets the recipientId after selecting
                         }
                     }
                 >
