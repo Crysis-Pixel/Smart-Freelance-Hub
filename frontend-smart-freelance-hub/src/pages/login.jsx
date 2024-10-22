@@ -62,7 +62,7 @@ export default function Login() {
       // Determine where to navigate based on accountType
       if (userdata.accountType === "Client") {
         navigate("/profileCl"); // Navigate to client profile
-      } else if (userdata.accountType === "Freelance") {
+      } else if (userdata.accountType === "Freelancer") {
         navigate("/profile"); // Navigate to freelance profile
       } else if (userdata.accountType === "Both") {
         navigate("/home"); // Navigate to homepage for "both" users

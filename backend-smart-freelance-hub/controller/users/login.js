@@ -3,6 +3,7 @@ require('dotenv').config();
 const bcrypt = require('bcrypt');
 const { checkPassword } = require('../../utils/password');
 const {findUserByEmail} = require('../../utils/findUserByEmail');
+const {updateLastActive} = require('../../utils/updateLastActive');
 const db_name = process.env.DATABASE_NAME;
 const collection_users = process.env.COLLECTION_USERS;
 
@@ -22,6 +23,8 @@ exports.login = async (req, res) => {
             // Verify the password
             if (await checkPassword(password, user.hashedPassword)) {
                 // User authenticated
+                await updateLastActive(email);
+                console.log("Logged In!");
                 return res.status(200).json({ message: 'Success' });
             }
         }
