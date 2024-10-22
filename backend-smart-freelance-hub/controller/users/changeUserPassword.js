@@ -17,6 +17,9 @@ exports.changeUserPassword = async (req, res) => {
       // Verify the password
       if (await checkPassword(password, user.hashedPassword)) {
         // User authenticated
+        if(newPassword === password) {
+          return res.status(500).json({ message: "Cannot use old password" });
+        }
         // Hash the new password
         const hashedNewPassword = await hashedPassword(newPassword);
         const client = getConnectedClient();
@@ -35,7 +38,7 @@ exports.changeUserPassword = async (req, res) => {
     // If user not found or password incorrect
     res.status(500).json({ message: "Wrong Password" });
   } catch (err) {
-    console.error("Error during login:", err);
-    res.status(500).json({ message: "Login registration failed" });
+    console.error("Error during password change:", err);
+    res.status(500).json({ message: "Password change failed" });
   }
 };

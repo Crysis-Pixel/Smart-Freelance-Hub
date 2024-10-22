@@ -19,12 +19,12 @@ exports.updateUser = async (req, res) => {
         // Update the user in the database
         const result = await collection.updateOne(
             { email: email }, // Use the email from the request body
-            { $set: { firstName, lastName, email, country, phoneNumber, accountType, fBio, skills, fRating, profilePicture, totalEarnings, lastActive, 
+            { $set: { firstName, lastName, email, country, phoneNumber, accountType, fBio, cBio, skills, fRating, cRating, profilePicture, totalEarnings, lastActive, 
                 jobsCompleted } }
         );
         console.log(result);
 
-        res.send(`User with ${email} has been updated successfully`);
+        res.status(200).json(`User with ${email} has been updated successfully`);
     } catch (err) {
         res.status(500).send(`Failed to update user: ${err.message}`);
     }
