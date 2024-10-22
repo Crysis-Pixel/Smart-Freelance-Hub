@@ -28,6 +28,7 @@ export default function Login() {
     }
 
     try {
+      // Login request
       const response = await fetch("http://localhost:3000/user/login", {
         method: "POST",
         headers: {
@@ -44,6 +45,7 @@ export default function Login() {
         return;
       }
 
+      // Fetch user data after login
       const userresponse = await fetch("http://localhost:3000/user/getUser", {
         method: "POST",
         headers: {
@@ -51,12 +53,22 @@ export default function Login() {
         },
         body: JSON.stringify({ email }),
       });
+
       const userdata = await userresponse.json();
 
+      // Save user data in sessionStorage
       sessionStorage.setItem("user", JSON.stringify(userdata));
 
-      // Redirect user to the dashboard or homepage
-      navigate("/profile"); // Adjust the route as needed
+      // Determine where to navigate based on accountType
+      if (userdata.accountType === "Client") {
+        navigate("/profileCl"); // Navigate to client profile
+      } else if (userdata.accountType === "Freelance") {
+        navigate("/profile"); // Navigate to freelance profile
+      } else if (userdata.accountType === "Both") {
+        navigate("/home"); // Navigate to homepage for "both" users
+      } else {
+        setError("Invalid account type. Please contact support.");
+      }
     } catch (error) {
       setError("An error occurred. Please try again.");
       console.error(error);

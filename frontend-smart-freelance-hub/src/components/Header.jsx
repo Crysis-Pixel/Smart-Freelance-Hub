@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-unused-vars
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
@@ -21,7 +20,6 @@ function Header() {
   }, []);
 
   const handleLogout = () => {
-    // Remove user data from sessionStorage and update state
     sessionStorage.removeItem("user");
     setIsLoggedIn(false);
     setUser(null);
@@ -42,6 +40,18 @@ function Header() {
     } else {
       return "Go to Profile";
     }
+  };
+
+  // Handle navigation when the dropdown option is clicked
+  const handleDropdownNavigation = () => {
+    if (location.pathname === "/profile") {
+      navigate("/profileCl"); // Navigate to client profile if on freelancer profile
+    } else if (location.pathname === "/profileCl") {
+      navigate("/profile"); // Navigate to freelancer profile if on client profile
+    } else {
+      navigate("/profile"); // Default navigation to freelancer profile
+    }
+    setIsDropdownOpen(false); // Close the dropdown after navigation
   };
 
   return (
@@ -97,18 +107,13 @@ function Header() {
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
                       <ul className="py-1">
                         <li>
-                          <Link
-                            to={
-                              location.pathname === "/profile" ||
-                              location.pathname === "/profileCl"
-                                ? "#"
-                                : "/profile"
-                            }
-                            className="block px-4 py-2 text-gray-800 hover:bg-gray-200"
-                            onClick={() => setIsDropdownOpen(false)} // Close dropdown on click
+                          {/* Clicking this option will navigate accordingly */}
+                          <button
+                            onClick={handleDropdownNavigation}
+                            className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-200"
                           >
                             {getDropdownOption()}
-                          </Link>
+                          </button>
                         </li>
                         <li>
                           <button

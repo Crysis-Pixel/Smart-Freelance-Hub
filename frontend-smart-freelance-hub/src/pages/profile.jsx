@@ -7,8 +7,8 @@ import { useNavigate } from "react-router-dom";
 export default function Profile() {
   const [user, setUser] = useState({
     accountCreated: "",
-    accountType: "",
-    bio: "",
+    accountType: "", // Default as Freelancer based on the data
+    fBio: "",
     country: "",
     email: "",
     firstName: "",
@@ -19,7 +19,7 @@ export default function Profile() {
     lookingForJob: false,
     phoneNumber: "",
     profilePicture: "",
-    rating: 0,
+    fRating: 0,
     skills: "",
     totalEarnings: 0,
   });
@@ -209,7 +209,7 @@ export default function Profile() {
               </div>
               <div className="stat">
                 <div className="stat-title">Rating</div>
-                <div className="stat-value">{user.rating || "Not Rated"}</div>
+                <div className="stat-value">{user.fRating || "Not Rated"}</div>
               </div>
             </div>
             <div className="flex flex-col gap-10 p-10">
@@ -279,8 +279,8 @@ export default function Profile() {
                 <form onSubmit={handleSubmit}>
                   <div className="flex flex-col gap-4">
                     <textarea
-                      name="bio"
-                      value={formData.bio || ""}
+                      name="fBio"
+                      value={formData.fBio || ""} // Use fBio here
                       onChange={handleInputChange}
                       className="textarea textarea-bordered w-full"
                       placeholder="Update your bio"
@@ -299,7 +299,7 @@ export default function Profile() {
                 </form>
               ) : (
                 <div>
-                  <p>{user.bio || "Bio not available"}</p>
+                  <p>{user.fBio || "Bio not available"}</p> {/* Use fBio */}
                 </div>
               )}
             </div>
