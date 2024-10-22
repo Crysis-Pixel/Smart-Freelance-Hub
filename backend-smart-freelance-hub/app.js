@@ -1,11 +1,12 @@
 const express = require('express');
 const cors = require('cors')
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 const client = require('./database/db').getConnectedClient;
-
+const fs = require('fs');
+const path = require('path');
+const initializeSocket = require('./utils/socket');
 
 const userRoutes = require('./routes/user');
-
 
 //added by Mostakim
 const jobsRoutes = require('./routes/jobs');
@@ -16,7 +17,8 @@ const skillsRoutes = require('./routes/skills');
 const transactionsRoutes = require('./routes/transactions');
 const paymentsRoutes = require('./routes/payments');
 const contractsRoutes = require('./routes/contracts');
-
+const uploadRoutes = require('./routes/uploads')
+//
 
 const app = express()
 app.use(cors({
@@ -36,37 +38,18 @@ app.use('/skills', skillsRoutes);
 app.use('/transactions', transactionsRoutes);
 app.use('/payments', paymentsRoutes);
 app.use('/contracts', contractsRoutes);
+app.use('/uploads', uploadRoutes);
 //
 
 var connectionString = 'mongodb://localhost:27017';
 
-
 /////////Added by Mostakim/////////////
 const http = require('http');
-const socketIo = require('socket.io');
+const { send } = require('process');
 const server = http.createServer(app); // Create an HTTP server
-const io = socketIo(server, {
-    cors: {
-        origin: '*', // Allow all origins, modify if needed
-        methods: ['GET', 'POST']
-    }
-});
 
-// Added Socket.IO functionality
-io.on('connection', (socket) => {
-    console.log('A user connected:', socket.id);
-
-    // Listen for messages from clients
-    socket.on('sendMessage', (message) => {
-        console.log('Message received:', message);
-        io.emit('receiveMessage', message); // Broadcast the message to all clients
-    });
-
-    socket.on('disconnect', () => {
-        console.log('A user disconnected:', socket.id);
-    });
-});
-//////////////////////////////////////
+// Initialize Socket.IO
+initializeSocket(server);
 
 // Changed `app.listen` to `server.listen` so that it can handle Socket.IO
 server.listen(port, async () => {

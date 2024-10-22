@@ -5,8 +5,10 @@ const { ObjectId } = require('mongodb');
 const db_name = process.env.DATABASE_NAME;
 const collection_messages = process.env.COLLECTION_MESSAGES;
 
+// Create a new message
 exports.createMessage = async (req, res) => {
-    const { senderId, receiverId, attachment, messageText } = req.body;
+    const { senderId, receiverId, messageText, isRead } = req.body;
+    const attachment = req.file ? req.file.filename : null; // Handle file attachment
 
     try {
         const client = getConnectedClient();
@@ -14,22 +16,24 @@ exports.createMessage = async (req, res) => {
         const collection = db.collection(collection_messages);
 
         const newMessage = {
-            senderId: (senderId), // Convert senderId to ObjectId
-            receiverId: (receiverId), // Convert receiverId to ObjectId
-            attachment, // Optional file sent with the message
-            timestamp: new Date(), // Set the current date
+            senderId,
+            receiverId,
             messageText,
+            attachment,
+            timestamp: new Date(),
+            isRead: false // Initialize with unread status
         };
 
         const result = await collection.insertOne(newMessage);
 
-        res.status(201).json({ message: 'Message sent successfully', messageId: result.insertedId });
+        res.status(201).json({ message: 'Message sent successfully', lastId: result.insertedId, attachmentName: attachment });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Failed to send message' });
     }
 };
 
+// Update an existing message
 exports.updateMessage = async (req, res) => {
     const { id, attachment, messageText } = req.body;
 
@@ -63,6 +67,7 @@ exports.updateMessage = async (req, res) => {
     }
 };
 
+// Delete a message
 exports.deleteMessage = async (req, res) => {
     const { id } = req.body;
 
@@ -88,6 +93,7 @@ exports.deleteMessage = async (req, res) => {
     }
 };
 
+// Get all messages (for admin or debugging)
 exports.getAllMessages = async (req, res) => {
     try {
         const client = getConnectedClient();
@@ -103,9 +109,32 @@ exports.getAllMessages = async (req, res) => {
     }
 };
 
-exports.getMessageById = async (req, res) => {
-    const { id } = req.body;
+// Get chat messages between two users
+exports.getMessages = async (req, res) => {
+    const { userId, recipientId } = req.body;
 
+    try {
+        const client = getConnectedClient();
+        const db = client.db(db_name);
+        const collection = db.collection(collection_messages);
+
+        const messages = await collection.find({
+            $or: [
+                { senderId: userId, receiverId: recipientId },
+                { senderId: recipientId, receiverId: userId }
+            ]
+        }).sort({ timestamp: 1 }).toArray();
+
+        res.json(messages);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to fetch messages' });
+    }
+};
+
+// Mark a message as read
+exports.markAsRead = async (req, res) => {
+    const { id } = req.body;
     if (!ObjectId.isValid(id)) {
         return res.status(400).json({ message: 'Invalid message ID' });
     }
@@ -115,15 +144,18 @@ exports.getMessageById = async (req, res) => {
         const db = client.db(db_name);
         const collection = db.collection(collection_messages);
 
-        const message = await collection.findOne({ _id: new ObjectId(id) });
+        const result = await collection.updateOne(
+            { _id: new ObjectId(id) },
+            { $set: { isRead: true } }
+        );
 
-        if (!message) {
+        if (result.matchedCount === 0) {
             return res.status(404).json({ message: 'Message not found' });
         }
 
-        res.status(200).json(message);
+        res.status(200).json({ message: 'Message marked as read' });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: 'Failed to retrieve message' });
+        res.status(500).json({ error: 'Failed to mark message as read' });
     }
 };

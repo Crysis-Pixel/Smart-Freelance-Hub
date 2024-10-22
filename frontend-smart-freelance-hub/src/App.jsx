@@ -28,7 +28,7 @@ function App() {
             <Route path="/profileCl" element={<ClientProfile />} />
 
             {/* This is for test purpose added by Mostakim */}
-            <Route path="/chattest" element={<ChatComponent />} />
+            <Route path="/chattest" element={<ChatComponent/>} />
           </Routes>
 
           {/* Place OTPModal outside the Routes to make it accessible from anywhere */}
