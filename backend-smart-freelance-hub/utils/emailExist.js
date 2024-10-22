@@ -11,10 +11,10 @@ async function emailExist(email) {
       const user = await collection.findOne({ email });
   
       if (user) {
-        console.log(`This email: ${email} already exists`);
+        console.log(`This email: ${email} exists in DB`);
         return true;
       } else {
-        console.log(`This email: ${email} does not exist`);
+        console.log(`This email: ${email} does not exist in DB`);
         return false;
       }
     } catch (err) {

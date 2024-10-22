@@ -136,6 +136,20 @@ export default function Signup() {
 
     // If registration is successful
     if (response.status === 200) {
+
+      //Added by Mostakim
+      const userresponse = await fetch("http://localhost:3000/user/getUser", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+      const userdata = await userresponse.json();
+
+      sessionStorage.setItem("user", JSON.stringify(userdata));
+      //
+
       // Redirect based on account type
       <VerifyAccountPrompt />;
       console.log("Account Registered Successfully");
