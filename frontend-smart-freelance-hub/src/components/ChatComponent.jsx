@@ -61,7 +61,7 @@ const ChatComponent = () => {
         socket.on('receiveMessage', (newMessage) =>  { //this function checks whether the message recieved is for them and sets it as read if the message is for them.
             console.log("Handle recieve Message called.");
             console.log("newMessage.senderId:", newMessage.senderId);
-            sleep(1000); //sleep gives some time to sync data between two users properly and also avoids race conditions where a constant loop happens.
+            //sleep(1000); //sleep gives some time to sync data between two users properly and also avoids race conditions where a constant loop happens.
             if (newMessage.senderId === recipientId) {
                 setChatMessages((prevMessages) => [...prevMessages, newMessage]); //appends new messages
                 // Automatically mark as read if the recipient is the logged-in user
