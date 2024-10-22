@@ -1,12 +1,22 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import GoogleLoginButton from "../components/GoogleLoginButton";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordVisible, setPasswordVisible] = useState(false); // State to toggle password visibility
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  // Redirect user if user info is in sessionStorage
+  useEffect(() => {
+    const userData = sessionStorage.getItem("user");
+    if (userData) {
+      navigate("/home"); // Redirect to home if user data is present
+      return;
+    }
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,7 +28,6 @@ export default function Login() {
     }
 
     try {
-      // Making a POST request to the backend
       const response = await fetch("http://localhost:3000/user/login", {
         method: "POST",
         headers: {
@@ -63,10 +72,10 @@ export default function Login() {
         </h1>
 
         <div className="max-w-screen-sm flex flex-col justify-center mx-auto items-center gap-4">
-            <h1 className="text-xl">Sign-in with Google Account</h1>
-            <GoogleLoginButton />
-            <h1 className="text-xl">OR</h1>
-          </div>
+          <h1 className="text-xl">Sign-in with Google Account</h1>
+          <GoogleLoginButton />
+          <h1 className="text-xl">OR</h1>
+        </div>
 
         {error && (
           <div className="text-red-600 text-sm mb-4 text-center">{error}</div>
@@ -109,13 +118,60 @@ export default function Login() {
               />
             </svg>
             <input
-              type="password"
+              type={passwordVisible ? "text" : "password"} // Toggle password visibility
               className="grow bg-transparent focus:outline-none text-lg text-gray-800"
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
+            <button
+              type="button"
+              onClick={() => setPasswordVisible(!passwordVisible)} // Toggle state
+              className="focus:outline-none"
+            >
+              {passwordVisible ? (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  className="h-6 w-6 opacity-70"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M2.458 12C3.732 7.943 7.455 5 12 5s8.268 2.943 9.542 7c-1.274 4.057-4.997 7-9.542 7S3.732 16.057 2.458 12z"
+                  />
+                </svg>
+              ) : (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  className="h-6 w-6 opacity-70"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M3 3l18 18"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M10.583 10.583A3 3 0 0 0 13.417 13.417M9.858 9.858A3.993 3.993 0 0 1 12 9a4 4 0 0 1 4 4m1.458 2.958C19.268 16.057 15.545 19 12 19c-4.545 0-8.268-2.943-9.542-7a12.683 12.683 0 0 1 1.86-3.162m7.06-3.06A12.683 12.683 0 0 1 12 5c4.545 0 8.268 2.943 9.542 7"
+                  />
+                </svg>
+              )}
+            </button>
           </label>
 
           {/* Login Button */}
@@ -130,9 +186,9 @@ export default function Login() {
           <div className="flex justify-center">
             <a
               href="#"
-              className="text-indigo-600 text-sm hover:text-indigo-800 hover:underline transition-all duration-200"
+              className="text-indigo-600 text-sm hover:text-indigo-800"
             >
-              Forgot Password?
+              Forgot your password?
             </a>
           </div>
         </form>

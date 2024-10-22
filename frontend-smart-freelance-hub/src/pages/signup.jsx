@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { ModalContext } from "../contexts/Modalcontext";
 import OTPModal from "../components/OTPmodal";
+import VerifyAccountPrompt from "../components/VerifyAccountPrompt";
 
 export default function Signup() {
   const [countries, setCountries] = useState([]);
@@ -19,11 +20,20 @@ export default function Signup() {
   });
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [formError, setFormError] = useState("");
-  const [isChecked, setIsChecked] = useState(false); // Track checkbox state
+  const [isChecked, setIsChecked] = useState(false);
   const navigate = useNavigate();
 
   // needed for modal
   const { openModal } = useContext(ModalContext);
+
+  // Redirect user if user info is in sessionStorage
+  useEffect(() => {
+    const userData = sessionStorage.getItem("user");
+    if (userData) {
+      navigate("/home"); // Redirect to home if user data is present
+      return;
+    }
+  }, [navigate]);
 
   // Fetch country data from the REST Countries API
   useEffect(() => {
@@ -127,11 +137,14 @@ export default function Signup() {
     // If registration is successful
     if (response.status === 200) {
       // Redirect based on account type
-      if (formData.accountType === "Client") {
-        navigate("/profileCl"); // Redirect to Client profile
-      } else if (formData.accountType === "Freelancer") {
-        navigate("/profile"); // Redirect to Freelancer profile
-      }
+      <VerifyAccountPrompt />;
+      console.log("Account Registered Successfully");
+      <OTPModal email={formData.email} />;
+      // if (formData.accountType === "Client") {
+      //   navigate("/profileCl"); // Redirect to Client profile
+      // } else if (formData.accountType === "Freelancer") {
+      //   navigate("/profile"); // Redirect to Freelancer profile
+      // }
     } else {
       setFormError("Registration failed. Please try again.");
       alert("Registration failed. Please try again.");
@@ -153,9 +166,9 @@ export default function Signup() {
             {/* Added by Mostakim */}
             <h1 className="text-xl">Sign-up with Google Account</h1>
             <GoogleLoginButton />
-            <h1 className="text-xl">OR</h1>
+            <h1 className="text-xl divider">OR</h1>
           </div>
-          <hr className="max-w-screen-sm mx-auto my-10" />
+          <hr className="max-w-screen-sm mx-auto" />
 
           <form
             action=""
@@ -238,7 +251,7 @@ export default function Signup() {
                 onChange={handleInputChange}
                 required
                 minLength="6"
-                pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$" // Regex pattern for password complexity
+                // pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$" // Regex pattern for password complexity
                 title="Password must be at least 8 characters long, contain at least one lowercase letter, one uppercase letter, one number, and one special character (!@#$%^&*)."
               />
 
@@ -356,7 +369,8 @@ export default function Signup() {
                 !validateForm() ? "opacity-50 cursor-not-allowed" : ""
               }`}
               disabled={!validateForm()}
-              onClick={openModal}
+              // onClick={openModal}
+              // onClick={console.log("sign-up button clicked- data:", formData)}
             >
               Sign Up
             </button>
@@ -368,9 +382,6 @@ export default function Signup() {
           </form>
         </div>
       </div>
-
-      {/* to verify the modal, put the OTP code that needs to be verified with 'correctOTP'  */}
-      <OTPModal email={formData.email} />
     </>
   );
 }
