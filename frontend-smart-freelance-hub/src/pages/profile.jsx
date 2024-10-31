@@ -1,6 +1,7 @@
+// File: pages/Profile.jsx
+
 import Header from "../components/Header.jsx";
 import Footer from "../components/footer.jsx";
-// eslint-disable-next-line no-unused-vars
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -20,7 +21,7 @@ export default function Profile() {
     phoneNumber: "",
     profilePicture: "",
     fRating: 0,
-    skills: "",
+    skills: [],
     totalEarnings: 0,
   });
 
@@ -29,7 +30,19 @@ export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({});
   const [countries, setCountries] = useState([]); // State for storing country list
+  const [selectedSkills, setSelectedSkills] = useState([]);
   const navigate = useNavigate();
+
+  const availableSkills = [
+    "Web-Development",
+    "Video-Editor",
+    "Photo-Editor",
+    "UI/UX Design",
+    "Graphics Designer",
+    "Data Analyst",
+    "Application Developer",
+    "SEO Analyst",
+  ];
 
   // Redirect user if no user info is in sessionStorage
   useEffect(() => {
@@ -60,6 +73,7 @@ export default function Profile() {
         const userData = await response.json();
         setUser(userData);
         setFormData(userData);
+        setSelectedSkills(userData.skills ? userData.skills.split(", ") : []);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -98,10 +112,26 @@ export default function Profile() {
     }));
   };
 
+  const handleSkillSelect = (skill) => {
+    if (selectedSkills.length < 3 && !selectedSkills.includes(skill)) {
+      setSelectedSkills((prevSkills) => [...prevSkills, skill]);
+    }
+  };
+
+  const handleSkillRemove = (skill) => {
+    setSelectedSkills((prevSkills) =>
+      prevSkills.filter((selected) => selected !== skill)
+    );
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const updatedData = { ...user, ...formData }; // Merge original and form data
+      const updatedData = {
+        ...user,
+        ...formData,
+        skills: selectedSkills.join(", "),
+      }; // Update skills in user data
       const response = await fetch("http://localhost:3000/user/updateUser", {
         method: "POST",
         headers: {
@@ -110,22 +140,12 @@ export default function Profile() {
         body: JSON.stringify(updatedData),
       });
 
-      const text = await response.text();
-      let updatedUser;
-      try {
-        updatedUser = JSON.parse(text);
-
-        // eslint-disable-next-line no-unused-vars
-      } catch (error) {
-        throw new Error("Invalid JSON response");
-      }
-
       if (!response.ok) {
-        console.error("Server Error Message:", updatedUser);
-        throw new Error(updatedUser.message || "Failed to update user data");
+        const errorText = await response.text();
+        throw new Error(errorText);
       }
 
-      setUser(updatedUser); // Update user state with the new data
+      setUser(updatedData); // Update user state with the new data
       setIsEditing(false); // Exit edit mode
     } catch (err) {
       setError(err.message);
@@ -252,16 +272,46 @@ export default function Profile() {
               <div>
                 <h1 className="font-bold">Skills</h1>
                 {isEditing ? (
-                  <input
-                    type="text"
-                    name="skills"
-                    value={formData.skills || ""}
-                    onChange={handleInputChange}
-                    className="input input-bordered w-full"
-                    placeholder="Skills"
-                  />
+                  <div className="flex flex-col gap-2">
+                    <div className="dropdown">
+                      <button className="btn btn-secondary">
+                        Select Skill
+                      </button>
+                      <ul className="dropdown-content menu p-2 shadow bg-white rounded-box w-52">
+                        {availableSkills
+                          .filter((skill) => !selectedSkills.includes(skill))
+                          .map((skill) => (
+                            <li key={skill}>
+                              <button
+                                type="button"
+                                onClick={() => handleSkillSelect(skill)}
+                              >
+                                {skill}
+                              </button>
+                            </li>
+                          ))}
+                      </ul>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {selectedSkills.map((skill) => (
+                        <div
+                          key={skill}
+                          className="badge badge-primary cursor-pointer"
+                        >
+                          {skill}
+                          <span
+                            className="ml-1 text-xs"
+                            onClick={() => handleSkillRemove(skill)}
+                          >
+                            ✕
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 ) : (
-                  <p>{user.skills || "Skills not specified"}</p>
+                  <p>{selectedSkills.join(", ") || "Skills not specified"}</p>
                 )}
               </div>
             </div>

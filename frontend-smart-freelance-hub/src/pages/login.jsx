@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import GoogleLoginButton from "../components/GoogleLoginButton";
+import { toast, Slide } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -67,12 +69,36 @@ export default function Login() {
       } else if (userdata.accountType === "Both") {
         navigate("/home"); // Navigate to homepage for "both" users
       } else {
-        setError("Invalid account type. Please contact support.");
+        setError("Invalid account type.");
       }
+      toast.success(
+        `Logged in successfully! Welcome, ${userdata.firstName} ${userdata.lastName}`,
+        {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Slide,
+        }
+      );
     } catch (error) {
       setError("An error occurred. Please try again.");
       console.error(error);
-      alert("Login failed. Please check your credentials.");
+      toast.error("Login failed. Please check your credentials.", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Slide,
+      });
     }
   };
 

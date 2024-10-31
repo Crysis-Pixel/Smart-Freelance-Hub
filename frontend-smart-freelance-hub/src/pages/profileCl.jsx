@@ -185,6 +185,13 @@ export default function ClientProfile() {
               <p>{user.country || "Country not provided"}</p>
             )}
           </div>
+          {/* MANAGE JOBS */}
+          <button
+            className="btn btn-primary"
+            onClick={() => navigate("/manageJobs")}
+          >
+            Manage Jobs
+          </button>
           <button className="btn ml-auto" onClick={handleEditToggle}>
             {isEditing ? "CANCEL" : "EDIT"}
           </button>

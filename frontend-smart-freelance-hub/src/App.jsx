@@ -5,6 +5,10 @@ import Signup from "./pages/signup";
 import Profile from "./pages/profile";
 import Login from "./pages/login";
 import ClientProfile from "./pages/profileCl";
+import ManageJobs from "./pages/manageJobs";
+import Test from "./pages/test";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // Added by Mostakim
 import { GoogleOAuthProvider } from "@react-oauth/google";
@@ -19,6 +23,17 @@ function App() {
     <GoogleOAuthProvider clientId="282275875531-a2cv3cpku9ncnmsaf0efdsa6dfe9srvi.apps.googleusercontent.com">
       <ModalProvider>
         <BrowserRouter>
+          <ToastContainer
+            position="top-center"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+          />
           <Routes>
             <Route index element={<Home />} />
             <Route path="/home" element={<Home />} />
@@ -26,9 +41,10 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/login" element={<Login />} />
             <Route path="/profileCl" element={<ClientProfile />} />
-
+            <Route path="/manageJobs" element={<ManageJobs />} />
             {/* This is for test purpose added by Mostakim */}
-            <Route path="/chattest" element={<ChatComponent/>} />
+            <Route path="/chattest" element={<ChatComponent />} />
+            <Route path="/test" element={<Test />} />
           </Routes>
 
           {/* Place OTPModal outside the Routes to make it accessible from anywhere */}

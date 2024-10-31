@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { toast, Slide } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -25,6 +27,18 @@ function Header() {
     setUser(null);
     setIsDropdownOpen(false); // Close the dropdown on logout
     navigate("/home"); // Navigate to the home page after logout
+
+    toast.info("Logged out successfully.", {
+      position: "top-center",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      transition: Slide,
+    });
   };
 
   const toggleDropdown = () => {

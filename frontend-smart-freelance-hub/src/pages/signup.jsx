@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 import { ModalContext } from "../contexts/Modalcontext";
 import OTPModal from "../components/OTPmodal";
 import VerifyAccountPrompt from "../components/VerifyAccountPrompt";
+import { toast, Slide } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Signup() {
   const [countries, setCountries] = useState([]);
@@ -136,31 +138,39 @@ export default function Signup() {
 
     // If registration is successful
     if (response.status === 200) {
-
       //Added by Mostakim
+      console.log("Toast should trigger now");
+      toast.success("Account Created Successfully!", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Slide,
+      });
       const userresponse = await fetch("http://localhost:3000/user/getUser", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({email: formData.email}),
+        body: JSON.stringify({ email: formData.email }),
       });
       const userdata = await userresponse.json();
 
       sessionStorage.setItem("user", JSON.stringify(userdata));
-      //
-
       // Redirect based on account type
       <VerifyAccountPrompt />;
       console.log("Account Registered Successfully");
       <OTPModal email={formData.email} />;
-      // if (formData.accountType === "Client") {
-      //   navigate("/profileCl"); // Redirect to Client profile
-      // } else if (formData.accountType === "Freelancer") {
-      //   navigate("/profile"); // Redirect to Freelancer profile
-      // }
+      if (formData.accountType === "Client") {
+        navigate("/profileCl"); // Redirect to Client profile
+      } else if (formData.accountType === "Freelancer") {
+        navigate("/profile"); // Redirect to Freelancer profile
+      }
     } else {
-      setFormError("Registration failed. Please try again.");
       alert("Registration failed. Please try again.");
     }
   };
