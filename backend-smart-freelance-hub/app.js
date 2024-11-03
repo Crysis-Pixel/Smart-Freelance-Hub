@@ -7,9 +7,10 @@ const path = require('path');
 const initializeSocket = require('./utils/socket');
 
 const userRoutes = require('./routes/user');
+const jobsRoutes = require('./routes/jobs');
+const reviewsRoutes = require('./routes/reviews');
 
 //added by Mostakim
-const jobsRoutes = require('./routes/jobs');
 const proposalsRoutes = require('./routes/proposals');
 const messagesRoutes = require('./routes/messages');
 const portfoliosRoutes = require('./routes/portfolios');
@@ -29,8 +30,9 @@ app.use(express.json());
 const port = 3000
 
 app.use('/user', userRoutes);
-//Added by Mostakim
 app.use('/jobs', jobsRoutes);
+app.use('/reviews', reviewsRoutes);
+//Added by Mostakim
 app.use('/proposals', proposalsRoutes);
 app.use('/messages', messagesRoutes);
 app.use('/portfolios', portfoliosRoutes);

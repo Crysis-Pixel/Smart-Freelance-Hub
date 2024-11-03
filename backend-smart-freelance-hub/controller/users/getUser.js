@@ -7,7 +7,7 @@ const collection_users = process.env.COLLECTION_USERS;
 
 exports.getUser = async (req, res) => {
     const { email } = req.body; // Get the Email from the request body
-
+        
     // Check if the ID is valid
     if (await !emailExist(email)) {
         return res.status(400).json({ message: 'Invalid user' });

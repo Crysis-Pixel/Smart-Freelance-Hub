@@ -30,37 +30,37 @@ export default function ManageJobs() {
   // commented out cuz the page wont load without the backend part
 
   //   // Fetch jobs from the server
-  //   useEffect(() => {
-  //     const fetchJobs = async () => {
-  //       try {
-  //         const response = await fetch(
-  //           "http://localhost:3000/jobs/getClientJobs",
-  //           {
-  //             method: "POST",
-  //             headers: {
-  //               "Content-Type": "application/json",
-  //             },
-  //             body: JSON.stringify({
-  //               clientEmail: JSON.parse(sessionStorage.getItem("user")).email,
-  //             }),
-  //           }
-  //         );
+    useEffect(() => {
+      const fetchJobs = async () => {
+        try {
+          const response = await fetch(
+            "http://localhost:3000/jobs/getJobs",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                clientEmail: JSON.parse(sessionStorage.getItem("user")).email,
+              }),
+            }
+          );
 
-  //         if (!response.ok) {
-  //           throw new Error("Failed to fetch jobs");
-  //         }
+          if (!response.ok) {
+            throw new Error("Failed to fetch jobs");
+          }
 
-  //         const jobsData = await response.json();
-  //         setJobs(jobsData);
-  //       } catch (err) {
-  //         setError(err.message);
-  //       } finally {
-  //         setLoading(false);
-  //       }
-  //     };
+          const jobsData = await response.json();
+          setJobs(jobsData);
+        } catch (err) {
+          setError(err.message);
+        } finally {
+          setLoading(false);
+        }
+      };
 
-  //     fetchJobs();
-  //   }, []);
+      fetchJobs();
+    }, []);
 
   const handleModalToggle = () => {
     setIsModalOpen(!isModalOpen);
@@ -89,12 +89,12 @@ export default function ManageJobs() {
         },
         body: JSON.stringify({
           ...newJob,
-          requirements: selectedSkills,
+          requirements: selectedSkills.join(", "),
           clientEmail: JSON.parse(sessionStorage.getItem("user")).email,
         }),
       });
 
-      if (!response.ok) {
+      if (response.status != 200) {
         throw new Error("Failed to post job");
       }
 
