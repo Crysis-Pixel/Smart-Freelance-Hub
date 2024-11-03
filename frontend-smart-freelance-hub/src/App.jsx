@@ -9,6 +9,8 @@ import ManageJobs from "./pages/manageJobs";
 import Test from "./pages/test";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import TransactionPage from "./pages/TransactionPage";
+import PaymentPage from "./pages/PaymentPage";
 
 // Added by Mostakim
 import { GoogleOAuthProvider } from "@react-oauth/google";
@@ -42,9 +44,11 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/profileCl" element={<ClientProfile />} />
             <Route path="/manageJobs" element={<ManageJobs />} />
-            {/* This is for test purpose added by Mostakim */}
+            {/*added by Mostakim */}
             <Route path="/chattest" element={<ChatComponent />} />
             <Route path="/test" element={<Test />} />
+            <Route path="/PaymentPage" element={<PaymentPage/>} />
+            <Route path="/TransactionPage" element={<TransactionPage/>} />
           </Routes>
 
           {/* Place OTPModal outside the Routes to make it accessible from anywhere */}

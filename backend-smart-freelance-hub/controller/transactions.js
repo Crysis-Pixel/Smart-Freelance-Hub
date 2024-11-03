@@ -6,7 +6,7 @@ const db_name = process.env.DATABASE_NAME;
 const collection_transactions = process.env.COLLECTION_TRANSACTIONS;
 
 exports.createTransaction = async (req, res) => {
-    const { status, contractId, paymentId, date } = req.body;
+    const { contractId, paymentId, amount} = req.body;
 
     try {
         const client = getConnectedClient();
@@ -14,10 +14,11 @@ exports.createTransaction = async (req, res) => {
         const collection = db.collection(collection_transactions);
 
         const newTransaction = {
-            status,
-            contractId: contractId ? new ObjectId(contractId) : null, // contractId can be null
-            paymentId: new ObjectId(paymentId), // Convert paymentId to ObjectId
-            date: new Date(date),
+            status: "Incomplete",
+            contractId, // contractId can be null
+            paymentId, // Convert paymentId to ObjectId
+            amount,
+            date: new Date(),
         };
 
         const result = await collection.insertOne(newTransaction);

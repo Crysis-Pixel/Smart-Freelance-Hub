@@ -4,9 +4,48 @@ require('dotenv').config();
 const { ObjectId } = require('mongodb');
 const db_name = process.env.DATABASE_NAME;
 const collection_payments = process.env.COLLECTION_PAYMENTS;
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+// Process payment with OTP delay
+exports.processPayment = async (req, res) => {
+    const { paymentId, contractId, amount, freelancerEmail } = req.body;
+
+    // Simulate OTP verification delay
+    await sleep(10000); // 60 seconds
+
+    const transaction = { 
+        status: "Incomplete",
+        contractId,
+        paymentId, 
+        freelancerEmail, 
+        amount, 
+        date: new Date()
+    };
+    // Atomic transaction simulation
+    const client = getConnectedClient();
+    const db = client.db(db_name);
+
+    try {
+        // Insert transaction
+        const transactionResult = await db.collection(process.env.COLLECTION_TRANSACTIONS).insertOne(transaction);
+        console.log("Transaction inserted successfully.");
+
+        // Update freelancer’s total earnings
+        const updateResult = await db.collection(process.env.COLLECTION_USERS).updateOne(
+            { email: freelancerEmail },
+            { $inc: { totalEarnings: amount } }
+        );
+        console.log("Freelancer's total earnings updated.");
+
+        res.status(200).json({ message: "Payment successful" });
+    } catch (error) {
+        console.error("Error in payment operation: ", error);
+        res.status(500).json({ error: "Payment operation failed" });
+    }
+};
 
 exports.createPayment = async (req, res) => {
-    const { bankName, paymentMethod, userId } = req.body;
+    const { paymentMethod, cardDetails, phoneNumber, useremail } = req.body;
 
     try {
         const client = getConnectedClient();
@@ -14,9 +53,10 @@ exports.createPayment = async (req, res) => {
         const collection = db.collection(collection_payments);
 
         const newPayment = {
-            bankName,
             paymentMethod,
-            userId: (userId)  // Convert userId to ObjectId
+            cardDetails,
+            phoneNumber,
+            useremail: useremail // Convert userId to ObjectId
         };
 
         const result = await collection.insertOne(newPayment);
@@ -102,19 +142,15 @@ exports.getAllPayments = async (req, res) => {
     }
 };
 
-exports.getPaymentById = async (req, res) => {
-    const { id } = req.body;
-
-    if (!ObjectId.isValid(id)) {
-        return res.status(400).json({ message: 'Invalid payment ID' });
-    }
+exports.getPaymentByEmail = async (req, res) => {
+    const { useremail } = req.body;
 
     try {
         const client = getConnectedClient();
         const db = client.db(db_name);
         const collection = db.collection(collection_payments);
 
-        const payment = await collection.findOne({ _id: new ObjectId(id) });
+        const payment = await collection.findOne({ useremail: useremail });
 
         if (!payment) {
             return res.status(404).json({ message: 'Payment not found' });

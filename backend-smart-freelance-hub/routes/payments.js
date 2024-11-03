@@ -6,11 +6,15 @@ const {
     updatePayment,
     deletePayment,
     getAllPayments,
-    getPaymentById
+    processPayment,
+    getPaymentByEmail
 } = require('../controller/payments');
 
 // Create a new payment
 router.post('/create', createPayment);
+
+// Create a new payment process
+router.post('/processPayment', processPayment);
 
 // Update an existing payment
 router.put('/update', updatePayment);
@@ -22,6 +26,6 @@ router.delete('/delete', deletePayment);
 router.get('/all', getAllPayments);
 
 // Get a payment by ID
-router.get('/get', getPaymentById);
+router.post('/get', getPaymentByEmail);
 
 module.exports = router;
