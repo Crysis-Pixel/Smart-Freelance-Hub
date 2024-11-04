@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import io from 'socket.io-client';
+import { useNavigate } from 'react-router-dom';
 
 const socket = io('http://localhost:3000');
 
@@ -13,8 +14,10 @@ const ChatComponent = () => {
     const [selectedFile, setSelectedFile] = useState(null); //stores the file uploaded by user
     const loggedInUser = JSON.parse(sessionStorage.getItem("user")); //session value of current logged in user
     const senderId = loggedInUser?.email; //email of user from session value (email is also unique)
+    const sendertype = loggedInUser?.accountType;
     const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms)); //a sleep variable used for sleep functions
     const recipientIdRef = useRef('');
+    const navigate = useNavigate();
 
 
     useEffect(() => {
@@ -205,12 +208,28 @@ const ChatComponent = () => {
         recipientIdRef.current = recipientId;
     }, [recipientId]);
     
+    const gotoPayment = async () =>{
+        const checkifPaymentExists = async() =>{
+            const response = await fetch('http://localhost:3000/payments/get', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({useremail: senderId}),
+            });
+            const result = await response.json();
+            console.log(result);
+            if (!(result.message === "Payment not found")){
+                sessionStorage.setItem("paymentreciever", recipientId);
+                navigate('/TransactionPage');
+            }
+        }
+        checkifPaymentExists();
+    }
     
     return (
         <>
         <div>
             {/* This header makes it easier to identify which user is logged in */}
-            <h2>Chats of {senderId}</h2>
+            <h2>Chats of {senderId} ({sendertype})</h2>
             <div>
                 {/* This is a recipient selection dropdown system. Users list from database are taken into userList variable and then displayed here */}
                 <label htmlFor="recipient">Select Recipient: </label>
@@ -274,7 +293,8 @@ const ChatComponent = () => {
             <input type="file" onChange={(e) => setSelectedFile(e.target.files[0])} />
             
             {/* sendMessage function is triggered when button is pressed */}
-            <button onClick={sendMessage}>Send</button>
+            <button onClick={sendMessage}>Send</button><br></br>
+            <button onClick={gotoPayment}>Give Payment</button>
         </div>
     </>
     );

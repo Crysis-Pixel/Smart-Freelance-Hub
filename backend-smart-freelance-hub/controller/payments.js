@@ -6,12 +6,11 @@ const db_name = process.env.DATABASE_NAME;
 const collection_payments = process.env.COLLECTION_PAYMENTS;
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-// Process payment with OTP delay
-exports.processPayment = async (req, res) => {
-    const { paymentId, contractId, amount, freelancerEmail } = req.body;
 
-    // Simulate OTP verification delay
-    await sleep(10000); // 60 seconds
+exports.processTransaction = async (req, res) =>{
+    const { paymentId, contractId, amount, freelancerEmail } = req.body;
+    const client = getConnectedClient();
+    const db = client.db(db_name);
 
     const transaction = { 
         status: "Incomplete",
@@ -21,24 +20,66 @@ exports.processPayment = async (req, res) => {
         amount, 
         date: new Date()
     };
+
+    try {
+        // Insert transaction
+        const transactionResult = await db.collection(process.env.COLLECTION_TRANSACTIONS).insertOne(transaction);
+        res.status(200).json({ message: "Transaction inserted successfully.", transactionResult});
+        console.log(transactionResult);
+    } catch (error) {
+        console.error("Error in transaction operation: ", error);
+        res.status(500).json({ error: "transaction creation failed" });
+    }
+
+};
+
+// Process payment with OTP delay
+exports.processPayment = async (req, res) => {
+    const { transactionId, senderemail, amount, freelancerEmail } = req.body;
+
+    // Simulate OTP verification delay
+    await sleep(10000); // 60 seconds
+
     // Atomic transaction simulation
     const client = getConnectedClient();
     const db = client.db(db_name);
 
     try {
-        // Insert transaction
-        const transactionResult = await db.collection(process.env.COLLECTION_TRANSACTIONS).insertOne(transaction);
-        console.log("Transaction inserted successfully.");
-
         // Update freelancer’s total earnings
-        const updateResult = await db.collection(process.env.COLLECTION_USERS).updateOne(
+        const updateResultfreelancer = await db.collection(process.env.COLLECTION_USERS).updateOne(
             { email: freelancerEmail },
-            { $inc: { totalEarnings: amount } }
+            { $inc: { totalBalance: amount } }
         );
         console.log("Freelancer's total earnings updated.");
 
+        const updateResultclient = await db.collection(process.env.COLLECTION_USERS).updateOne(
+            { email: senderemail },
+            { $inc: { totalBalance: -amount } }
+        );
+        console.log("Client's total earnings updated.");
+
+        const updateTransaction = await db.collection(process.env.COLLECTION_TRANSACTIONS).updateOne(
+            { _id: new ObjectId(transactionId) },
+            { $set: { status: "Complete" } }
+        );
+        console.log("Transaction updated.");
+
         res.status(200).json({ message: "Payment successful" });
     } catch (error) {
+
+        const updateResultfreelancer = await db.collection(process.env.COLLECTION_USERS).updateOne(
+            { email: freelancerEmail },
+            { $inc: { totalBalance: -amount } }
+        );
+        const updateResultclient = await db.collection(process.env.COLLECTION_USERS).updateOne(
+            { email: senderemail },
+            { $inc: { totalBalance: amount } }
+        );
+        const updateTransaction = await db.collection(process.env.COLLECTION_TRANSACTIONS).updateOne(
+            { _id: new ObjectId(transactionId) },
+            { $set: { status: "Incomplete" } }
+        );
+
         console.error("Error in payment operation: ", error);
         res.status(500).json({ error: "Payment operation failed" });
     }
@@ -155,7 +196,6 @@ exports.getPaymentByEmail = async (req, res) => {
         if (!payment) {
             return res.status(404).json({ message: 'Payment not found' });
         }
-
         res.status(200).json(payment);
     } catch (err) {
         console.error(err);

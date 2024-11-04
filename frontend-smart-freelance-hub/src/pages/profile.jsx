@@ -1,6 +1,6 @@
 // File: pages/Profile.jsx
 
-import Header from "../components/Header.jsx";
+import Header from "../components/header.jsx";
 import Footer from "../components/footer.jsx";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -22,7 +22,7 @@ export default function Profile() {
     profilePicture: "",
     fRating: 0,
     skills: [],
-    totalEarnings: 0,
+    totalBalance: 0,
   });
 
   const [loading, setLoading] = useState(true);
@@ -218,9 +218,9 @@ export default function Profile() {
           <div id="stats-container" className="border-r-2">
             <div className="stats stats-vertical lg:stats-horizontal shadow">
               <div className="stat">
-                <div className="stat-title">Total Earnings</div>
+                <div className="stat-title">Total Balance</div>
                 <div className="stat-value">
-                  {user.totalEarnings ? `$${user.totalEarnings}K` : "$0"}
+                  {user.totalBalance ? `$${user.totalBalance}K` : "$0"}
                 </div>
               </div>
               <div className="stat">

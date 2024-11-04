@@ -5,7 +5,7 @@ const {register} = require('../controller/users/register');
 const {login} = require('../controller/users/login');
 const {verifyOTP} = require('../controller/users/otp/verifyOTP');
 const {resendOTP} = require('../controller/users/otp/resendOTP');
-const { updateUser } = require('../controller/users/updateUser');
+const { updateUser, updateUserBalance } = require('../controller/users/updateuser');
 const { updateUserAccountType } = require('../controller/users/updateUserAccountType');
 const { changeUserPassword } = require('../controller/users/changeUserPassword');
 const { deleteUser } = require('../controller/deleteuser');
@@ -23,6 +23,7 @@ router.post('/login', login);
 router.post('/getUser', getUser);
 
 router.post('/updateUser', updateUser);
+router.post('/updateUserBalance', updateUserBalance);
 router.post('/updateUserAccountType', updateUserAccountType);
 router.post('/changeUserPassword', changeUserPassword);
 

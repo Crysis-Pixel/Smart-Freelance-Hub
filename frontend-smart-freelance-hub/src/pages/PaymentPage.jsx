@@ -13,10 +13,6 @@ const PaymentPage = () => {
     useEffect(() => {
         // Check if user is client from session storage
         const user = JSON.parse(sessionStorage.getItem('user'));
-        if (user?.accountType !== 'Client') {
-            alert("You do not have access to this page.");
-            navigate('/');
-        }
         const checkifPaymentExists = async() =>{
             const response = await fetch('http://localhost:3000/payments/get', {
                 method: 'POST',
@@ -49,7 +45,7 @@ const PaymentPage = () => {
             console.log(result.message === 'Payment created successfully');
             if (result.message === 'Payment created successfully') {
                 alert(result.message);
-                navigate('/TransactionPage');
+                navigate(-1);
             } else {
                 alert(result.error || 'Failed to save payment details');
             }
@@ -63,7 +59,7 @@ const PaymentPage = () => {
 
     return (
         <div>
-            <h2>Enter Payment Details</h2>
+            <h2>Enter Payment Details for {JSON.parse(sessionStorage.getItem('user')).email}</h2>
             <form onSubmit={handlePaymentSubmit}>
                 <label>
                     Payment Method:

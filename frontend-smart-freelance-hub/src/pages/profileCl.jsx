@@ -16,7 +16,7 @@ export default function ClientProfile() {
     lastActive: "",
     lastName: "",
     projectsInProgress: 0,
-    totalSpending: 0,
+    totalBalance: 0,
     cRating: 0, // Use cRating for client rating
     preferredSkills: "",
     languagePreference: "",
@@ -203,9 +203,9 @@ export default function ClientProfile() {
           <div id="stats-container" className="border-r-2">
             <div className="stats stats-vertical lg:stats-horizontal shadow">
               <div className="stat">
-                <div className="stat-title">Total Spending</div>
+                <div className="stat-title">Total Balance</div>
                 <div className="stat-value">
-                  {user.totalSpending ? `$${user.totalSpending}` : "$0"}
+                  {user.totalBalance ? `$${user.totalBalance}` : "$0"}
                 </div>
               </div>
 

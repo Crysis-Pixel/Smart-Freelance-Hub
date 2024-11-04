@@ -9,11 +9,13 @@ import ManageJobs from "./pages/manageJobs";
 import Test from "./pages/test";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import TransactionPage from "./pages/TransactionPage";
-import PaymentPage from "./pages/PaymentPage";
 
 // Added by Mostakim
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import TransactionPage from "./pages/TransactionPage";
+import PaymentPage from "./pages/PaymentPage";
+import BalanceTopUp from "./pages/balancetopup";
+import BalanceWithdraw from "./pages/balancewithdraw";
 // Testing
 import ChatComponent from "./components/ChatComponent";
 
@@ -49,6 +51,8 @@ function App() {
             <Route path="/test" element={<Test />} />
             <Route path="/PaymentPage" element={<PaymentPage/>} />
             <Route path="/TransactionPage" element={<TransactionPage/>} />
+            <Route path="/BalanceTopUp" element={<BalanceTopUp/>} />
+            <Route path="/BalanceWithdraw" element={<BalanceWithdraw/>} />
           </Routes>
 
           {/* Place OTPModal outside the Routes to make it accessible from anywhere */}

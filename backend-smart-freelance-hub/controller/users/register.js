@@ -22,7 +22,7 @@ exports.register = async (req, res) => {
   const skills = "";
   const fRating = 0;
   const cRating = 0;
-  const totalEarnings = 0;
+  const totalBalance = 0;
   const lastActive = currentDate();
   const jobsCompleted = 0;
   const profilePicture = "";
@@ -60,7 +60,7 @@ exports.register = async (req, res) => {
       skills: skills,
       fRating: fRating,
       cRating: cRating,
-      totalEarnings: totalEarnings,
+      totalBalance: totalBalance,
       lastActive: lastActive,
       jobsCompleted: jobsCompleted,
       profilePicture: profilePicture,
