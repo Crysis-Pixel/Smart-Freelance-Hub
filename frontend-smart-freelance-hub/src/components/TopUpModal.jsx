@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
+import PaymentGateway from "../components/PaymentGateway.jsx";
 
 const TopUpModal = ({ onClose }) => {
   const [otp, setOtp] = useState("");
@@ -11,7 +11,10 @@ const TopUpModal = ({ onClose }) => {
   const email = JSON.parse(sessionStorage.getItem("user")).email;
   const [timeLeft, setTimeLeft] = useState(60);
   const [isTimerActive, setIsTimerActive] = useState(true);
-  const navigate = useNavigate();
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  const openModal = () => setModalOpen(true);
+  const closeModal = () => setModalOpen(false);
 
   useEffect(() => {
     if (otpSent && isTimerActive) {
@@ -39,12 +42,12 @@ const TopUpModal = ({ onClose }) => {
       });
       const result = await response.json();
       if (result.message === "Payment not found") {
-        alert("Please enter details from payment entry page.");
-        navigate("/PaymentPage");
+        toast.error("Add A Payment Method");
+        openModal();
       }
     };
     checkifPaymentExists();
-  }, [navigate, email]);
+  }, [email]);
 
   const handleTransaction = async () => {
     setLoading(true);
@@ -60,7 +63,7 @@ const TopUpModal = ({ onClose }) => {
         setOtpSent(true);
         toast.success("OTP sent successfully!");
       } else {
-        toast.error(result.error || "Failed to send OTP"); //
+        toast.error(result.error || "Failed to send OTP");
         onClose();
       }
     } catch (error) {
@@ -188,6 +191,7 @@ const TopUpModal = ({ onClose }) => {
           Cancel
         </button>
       </div>
+      <PaymentGateway isOpen={isModalOpen} onClose={closeModal} />
     </div>
   );
 };

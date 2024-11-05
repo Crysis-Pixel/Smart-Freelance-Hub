@@ -1,48 +1,22 @@
-import React, { useState } from "react";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import ChatBox from "../components/ChatBox"; // Assuming this is used elsewhere
-import TopUpModal from "../components/TopUpModal"; // Make sure to import the TopUpModal component
+import { useState } from "react";
+import PaymentGateway from "../components/PaymentGateway";
 
 function Test() {
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setModalOpen] = useState(false);
 
-  const notify = () => {
-    toast("Hello, World!");
-  };
-
-  const toggleChat = () => {
-    setIsChatOpen((prev) => !prev);
-  };
-
-  const toggleModal = () => {
-    setIsModalOpen((prev) => !prev);
-  };
+  const openModal = () => setModalOpen(true);
+  const closeModal = () => setModalOpen(false);
 
   return (
-    <div className="p-6">
+    <div className="p-6 flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <button
-        onClick={notify}
-        className="p-3 bg-blue-500 text-white rounded mb-4"
+        onClick={openModal}
+        className="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
       >
-        Show Toast
-      </button>
-      <button
-        onClick={toggleChat}
-        className="p-3 bg-green-500 text-white rounded mb-4"
-      >
-        {isChatOpen ? "Close Chat" : "Open Chat"}
-      </button>
-      <button
-        onClick={toggleModal}
-        className="p-3 bg-yellow-500 text-white rounded"
-      >
-        {isModalOpen ? "Close Top-Up Modal" : "Open Top-Up Modal"}
+        Open Payment Modal
       </button>
 
-      <ChatBox isOpen={isChatOpen} onClose={toggleChat} />
-      {isModalOpen && <TopUpModal onClose={toggleModal} />}
+      <PaymentGateway isOpen={isModalOpen} onClose={closeModal} />
     </div>
   );
 }

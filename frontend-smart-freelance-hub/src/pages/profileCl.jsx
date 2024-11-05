@@ -1,6 +1,7 @@
 import Header from "../components/header.jsx";
 import Footer from "../components/footer.jsx";
-import TopUpModal from "../components/TopUpModal"; // Import the TopUpModal component
+import TopUpModal from "../components/TopUpModal";
+import PaymentGateway from "../components/PaymentGateway.jsx";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -191,7 +192,6 @@ export default function ClientProfile() {
             )}
           </div>
 
-          {/* Manage Jobs and Top Up Buttons */}
           {!isEditing && (
             <>
               <button
@@ -202,7 +202,7 @@ export default function ClientProfile() {
               </button>
               <button
                 className="btn btn-secondary ml-4"
-                onClick={openTopUpModal} // Open Top Up modal on click
+                onClick={openTopUpModal}
               >
                 Top Up
               </button>
