@@ -49,10 +49,10 @@ function App() {
             {/*added by Mostakim */}
             <Route path="/chattest" element={<ChatComponent />} />
             <Route path="/test" element={<Test />} />
-            <Route path="/PaymentPage" element={<PaymentPage/>} />
-            <Route path="/TransactionPage" element={<TransactionPage/>} />
-            <Route path="/BalanceTopUp" element={<BalanceTopUp/>} />
-            <Route path="/BalanceWithdraw" element={<BalanceWithdraw/>} />
+            <Route path="/PaymentPage" element={<PaymentPage />} />
+            <Route path="/TransactionPage" element={<TransactionPage />} />
+            <Route path="/BalanceTopUp" element={<BalanceTopUp />} />
+            <Route path="/BalanceWithdraw" element={<BalanceWithdraw />} />
           </Routes>
 
           {/* Place OTPModal outside the Routes to make it accessible from anywhere */}

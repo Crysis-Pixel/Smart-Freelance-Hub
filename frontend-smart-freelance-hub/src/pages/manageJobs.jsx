@@ -2,12 +2,14 @@ import Header from "../components/header.jsx";
 import Footer from "../components/footer.jsx";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ChatBox from "../components/ChatBox";
 
 export default function ManageJobs() {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
   const [newJob, setNewJob] = useState({
     title: "",
     description: "",
@@ -30,37 +32,34 @@ export default function ManageJobs() {
   // commented out cuz the page wont load without the backend part
 
   //   // Fetch jobs from the server
-    useEffect(() => {
-      const fetchJobs = async () => {
-        try {
-          const response = await fetch(
-            "http://localhost:3000/jobs/getJobs",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                clientEmail: JSON.parse(sessionStorage.getItem("user")).email,
-              }),
-            }
-          );
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/jobs/getJobs", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            clientEmail: JSON.parse(sessionStorage.getItem("user")).email,
+          }),
+        });
 
-          if (!response.ok) {
-            throw new Error("Failed to fetch jobs");
-          }
-
-          const jobsData = await response.json();
-          setJobs(jobsData);
-        } catch (err) {
-          setError(err.message);
-        } finally {
-          setLoading(false);
+        if (!response.ok) {
+          throw new Error("Failed to fetch jobs");
         }
-      };
 
-      fetchJobs();
-    }, []);
+        const jobsData = await response.json();
+        setJobs(jobsData);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchJobs();
+  }, []);
 
   const handleModalToggle = () => {
     setIsModalOpen(!isModalOpen);
@@ -69,6 +68,9 @@ export default function ManageJobs() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewJob((prevJob) => ({ ...prevJob, [name]: value }));
+  };
+  const toggleChat = () => {
+    setIsChatOpen((prev) => !prev);
   };
 
   const handleSkillSelect = (e) => {
@@ -172,12 +174,10 @@ export default function ManageJobs() {
                     >
                       Delete
                     </button>
-                    <button
-                      className="btn btn-success"
-                      onClick={() => navigate(`/contact-freelancer/${job.id}`)}
-                    >
+                    <button className="btn btn-success" onClick={toggleChat}>
                       Contact Freelancer
                     </button>
+                    <ChatBox isOpen={isChatOpen} onClose={toggleChat} />
                   </div>
                 </div>
               ))
