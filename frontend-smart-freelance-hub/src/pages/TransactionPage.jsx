@@ -131,11 +131,11 @@ const TransactionPage = () => {
                     navigate('/ProfileCl');
                 } else {
                     alert(paymentResult.error || 'Payment failed');
-                    navigate('/chattest');
+                    navigate('/manageJobs');
                 }
             } else {
                 alert(result.error || 'OTP verification failed');
-                navigate('/chattest');
+                navigate('/manageJobs');
             }
         } catch (error) {
             console.error('Verification error:', error);
