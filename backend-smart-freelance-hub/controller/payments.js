@@ -6,14 +6,13 @@ const db_name = process.env.DATABASE_NAME;
 const collection_payments = process.env.COLLECTION_PAYMENTS;
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-
 exports.processTransaction = async (req, res) =>{
     const { paymentId, contractId, amount, freelancerEmail } = req.body;
     const client = getConnectedClient();
     const db = client.db(db_name);
 
     const transaction = { 
-        status: "Incomplete",
+        status: "Pending",
         contractId,
         paymentId, 
         freelancerEmail, 
@@ -37,6 +36,10 @@ exports.processTransaction = async (req, res) =>{
 exports.processPayment = async (req, res) => {
     const { transactionId, senderemail, amount, freelancerEmail } = req.body;
 
+    let transactionupdated = false;
+    let clientbalanceupdated = false;
+    let freelancerbalanceupdated = false;
+
     // Simulate OTP verification delay
     await sleep(10000); // 60 seconds
 
@@ -51,34 +54,40 @@ exports.processPayment = async (req, res) => {
             { $inc: { totalBalance: amount } }
         );
         console.log("Freelancer's total earnings updated.");
+        freelancerbalanceupdated = true;
 
         const updateResultclient = await db.collection(process.env.COLLECTION_USERS).updateOne(
             { email: senderemail },
             { $inc: { totalBalance: -amount } }
         );
         console.log("Client's total earnings updated.");
+        clientbalanceupdated = true;
 
         const updateTransaction = await db.collection(process.env.COLLECTION_TRANSACTIONS).updateOne(
             { _id: new ObjectId(transactionId) },
             { $set: { status: "Complete" } }
         );
         console.log("Transaction updated.");
+        transactionupdated = true;
 
         res.status(200).json({ message: "Payment successful" });
     } catch (error) {
 
-        const updateResultfreelancer = await db.collection(process.env.COLLECTION_USERS).updateOne(
+        if(freelancerbalanceupdated){
+            const updateResultfreelancer = await db.collection(process.env.COLLECTION_USERS).updateOne(
             { email: freelancerEmail },
             { $inc: { totalBalance: -amount } }
-        );
-        const updateResultclient = await db.collection(process.env.COLLECTION_USERS).updateOne(
+        );}
+        if(clientbalanceupdated){
+            const updateResultclient = await db.collection(process.env.COLLECTION_USERS).updateOne(
             { email: senderemail },
             { $inc: { totalBalance: amount } }
-        );
-        const updateTransaction = await db.collection(process.env.COLLECTION_TRANSACTIONS).updateOne(
+        );}
+        if(transactionupdated){
+            const updateTransaction = await db.collection(process.env.COLLECTION_TRANSACTIONS).updateOne(
             { _id: new ObjectId(transactionId) },
             { $set: { status: "Incomplete" } }
-        );
+        );}
 
         console.error("Error in payment operation: ", error);
         res.status(500).json({ error: "Payment operation failed" });

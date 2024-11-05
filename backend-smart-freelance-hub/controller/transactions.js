@@ -31,9 +31,9 @@ exports.createTransaction = async (req, res) => {
 };
 
 exports.updateTransaction = async (req, res) => {
-    const { id, status, contractId, paymentId, date } = req.body;
+    const { _id, status} = req.body;
 
-    if (!ObjectId.isValid(id)) {
+    if (!ObjectId.isValid(_id)) {
         return res.status(400).json({ message: 'Invalid transaction ID' });
     }
 
@@ -42,16 +42,9 @@ exports.updateTransaction = async (req, res) => {
         const db = client.db(db_name);
         const collection = db.collection(collection_transactions);
 
-        const updateData = {
-            status,
-            contractId,
-            paymentId,
-            date: new Date(date),
-        };
-
         const result = await collection.updateOne(
-            { _id: new ObjectId(id) },
-            { $set: updateData }
+            { _id: new ObjectId(_id) },
+            { $set: {status: status} }
         );
 
         if (result.matchedCount === 0) {

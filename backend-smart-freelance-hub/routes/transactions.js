@@ -13,7 +13,7 @@ const {
 router.post('/create', createTransaction);
 
 // Update an existing transaction
-router.put('/update', updateTransaction);
+router.post('/update', updateTransaction);
 
 // Delete a transaction by ID
 router.delete('/delete', deleteTransaction);

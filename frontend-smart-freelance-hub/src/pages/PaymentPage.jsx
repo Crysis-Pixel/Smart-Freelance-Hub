@@ -45,7 +45,8 @@ const PaymentPage = () => {
             console.log(result.message === 'Payment created successfully');
             if (result.message === 'Payment created successfully') {
                 alert(result.message);
-                navigate(-1);
+                if (user.accountType === 'Client') navigate("/ProfileCl");
+                else navigate("/Profile");
             } else {
                 alert(result.error || 'Failed to save payment details');
             }

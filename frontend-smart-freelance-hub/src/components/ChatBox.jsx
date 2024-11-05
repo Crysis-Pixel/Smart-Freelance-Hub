@@ -306,12 +306,15 @@ const ChatBox = ({ isOpen, onClose }) => {
               >
                 Upload File
               </button>
-              <button
-                onClick={handleGivePayment}
-                className="block px-4 py-2 text-white hover:bg-greenPrimary w-full text-left"
-              >
-                Give Payment
-              </button>
+              {loggedInUser.accountType === 'Client' ? (
+                <button
+                    onClick={handleGivePayment}
+                    className="block px-4 py-2 text-white hover:bg-greenPrimary w-full text-left"
+                  >
+                    Give Payment
+                  </button>
+              ) : null}
+              
             </div>
           )}
 

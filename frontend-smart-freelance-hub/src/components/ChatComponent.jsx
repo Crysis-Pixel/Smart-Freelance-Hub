@@ -337,7 +337,9 @@ const ChatComponent = () => {
         {/* sendMessage function is triggered when button is pressed */}
         <button onClick={sendMessage}>Send</button>
         <br></br>
-        <button onClick={gotoPayment}>Give Payment</button>
+        {loggedInUser.accountType === 'Client' ? (
+            <button onClick={gotoPayment}>Give Payment</button>
+        ) : null}
       </div>
     </>
   );

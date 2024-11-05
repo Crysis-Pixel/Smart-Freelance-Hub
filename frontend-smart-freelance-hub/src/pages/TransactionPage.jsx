@@ -21,8 +21,8 @@ const TransactionPage = () => {
                 setTimeLeft((prevTime) => {
                     if (prevTime <= 1) {
                         clearInterval(timer);
-                        alert("OTP timed out!");
-                        navigate('/chattest'); // Navigate to another page after time is up
+                        handleTimeout();
+                        navigate('/manageJobs'); // Navigate to another page after time is up
                     }
                     return prevTime - 1;
                 });
@@ -31,7 +31,23 @@ const TransactionPage = () => {
             // Cleanup timer on component unmount
             return () => clearInterval(timer);
         }
-    }, [otpSent, isTimerActive, navigate]);
+    }, [otpSent, isTimerActive, navigate, transactionId]);
+
+    const handleTimeout = async () => {
+        try {
+            const response = await fetch('http://localhost:3000/transactions/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ _id: transactionId, status: "Declined" }),
+            });
+            const result = await response.json();
+            console.log(result);
+        } catch (error) {
+            console.error("Error updating transaction:", error);
+        }
+        alert("OTP timed out!");
+        navigate('/manageJobs'); // Navigate after transaction update
+    };
 
     useEffect(() => {
         // Check if user is payment reciever is available in session storage
@@ -114,7 +130,13 @@ const TransactionPage = () => {
                 const userinfo = await userresponse.json();
                 if ((Number(userinfo.totalBalance) - amount)<0){
                     alert("You do not have enough balance!");
+                    const transactiondecline = await fetch('http://localhost:3000/transactions/update', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ _id: transactionId, status: "Declined" }), // example data
+                    });
                     navigate('/balancetopup');
+                    return;
                 }
 
                 // Proceed with the payment after successful OTP verification
@@ -135,12 +157,23 @@ const TransactionPage = () => {
                 }
             } else {
                 alert(result.error || 'OTP verification failed');
+                const transactiondecline = await fetch('http://localhost:3000/transactions/update', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ _id: transactionId, status: "Declined" }), // example data
+                });
                 navigate('/manageJobs');
             }
         } catch (error) {
             console.error('Verification error:', error);
+            const transactiondecline = await fetch('http://localhost:3000/transactions/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ _id: transactionId, status: "Declined" }), // example data
+            });
             alert('Verification failed');
-            navigate('/chattest');
+            navigate('/manageJobs');
+            return;
         } finally {
             setLoading(false);
         }

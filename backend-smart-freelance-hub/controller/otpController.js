@@ -33,7 +33,64 @@ exports.sendOTP = async (req, res) => {
         to: email,
         from: 'smartfreelancehub@gmail.com', // Your verified SendGrid sender
         subject: 'Your OTP Code',
-        text: `Your OTP code is ${otp}. It is valid for 60 seconds.`,
+        html: `
+        <html>
+        <head>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    background-color: #f7f7f7;
+                    margin: 0;
+                    padding: 20px;
+                }
+                .container {
+                    max-width: 600px;
+                    margin: 0 auto;
+                    background-color: #ffffff;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                    padding: 20px;
+                }
+                h1 {
+                    color: #333;
+                    text-align: center;
+                }
+                p {
+                    font-size: 16px;
+                    color: #555;
+                    line-height: 1.5;
+                }
+                .otp-code {
+                    display: inline-block;
+                    background-color: #e7f4ff;
+                    color: #007bff;
+                    font-weight: bold;
+                    padding: 10px 15px;
+                    border-radius: 4px;
+                    font-size: 24px;
+                }
+                .footer {
+                    text-align: center;
+                    margin-top: 20px;
+                    font-size: 12px;
+                    color: #aaa;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h1>Your OTP Code</h1>
+                <p>Dear User,</p>
+                <p>Your OTP code is <span class="otp-code">${otp}</span>. It is valid for 60 seconds.</p>
+                <p>Please enter this code to complete your transaction.</p>
+                <p>Thank you for using Smart Freelance Hub!</p>
+                <div class="footer">
+                    <p>If you did not request this code, please ignore this email.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+    `,
     };
 
     try {

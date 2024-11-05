@@ -10,7 +10,6 @@ const BalanceWithdraw = () => {
     const email = JSON.parse(sessionStorage.getItem("user")).email;
     const [timeLeft, setTimeLeft] = useState(60); // 60-second countdown
     const [isTimerActive, setIsTimerActive] = useState(true);
-    const [currentBalance, setCurrentBalance] = useState(0);
 
     useEffect(() => {
         if (otpSent && isTimerActive) {
@@ -46,16 +45,16 @@ const BalanceWithdraw = () => {
         };
 
         const user = JSON.parse(sessionStorage.getItem('user'));
-        setCurrentBalance(user.totalBalance);
         if (user?.accountType !== 'Freelancer') {
             alert("You do not have access to this page.");
             navigate('/ProfileCl');
         } else {
             checkifPaymentExists();
         }
-    }, [navigate, currentBalance, email]);
+    }, [navigate, email]);
 
     const handleTransaction = async () => {
+
         setLoading(true);
         try {
             const response = await fetch('http://localhost:3000/otp/send-otp', {
@@ -91,6 +90,17 @@ const BalanceWithdraw = () => {
             const result = await response.json();
             console.log(result.message);
             if (result.message === 'OTP verified successfully') {
+
+                const currentuser = await fetch("http://localhost:3000/user/getUser", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ email }),
+                    });
+                const userinfo = await currentuser.json();
+                const currentBalance = userinfo.totalBalance;
+
                 if ((currentBalance - amount) > 0){
                     setIsTimerActive(false);
                     const userinfo = await fetch("http://localhost:3000/user/updateUserBalance", {
