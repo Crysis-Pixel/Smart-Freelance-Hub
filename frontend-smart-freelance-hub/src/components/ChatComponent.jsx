@@ -240,6 +240,9 @@ const ChatComponent = () => {
       if (!(result.message === "Payment not found")) {
         sessionStorage.setItem("paymentreciever", recipientId);
         navigate("/TransactionPage");
+      } else {
+        alert("You do not have payment set up. Please set payment details.");
+        navigate("/PaymentPage");
       }
     };
     checkifPaymentExists();
