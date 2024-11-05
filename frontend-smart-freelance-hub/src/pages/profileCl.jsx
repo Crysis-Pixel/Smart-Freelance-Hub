@@ -1,13 +1,14 @@
 import Header from "../components/header.jsx";
 import Footer from "../components/footer.jsx";
+import TopUpModal from "../components/TopUpModal"; // Import the TopUpModal component
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function ClientProfile() {
   const [user, setUser] = useState({
     accountCreated: "",
-    accountType: "Client", // Default as Client based on the data
-    cbio: "", // Use cbio for client bio
+    accountType: "Client",
+    cbio: "",
     country: "",
     email: "",
     firstName: "",
@@ -17,7 +18,7 @@ export default function ClientProfile() {
     lastName: "",
     projectsInProgress: 0,
     totalBalance: 0,
-    cRating: 0, // Use cRating for client rating
+    cRating: 0,
     preferredSkills: "",
     languagePreference: "",
   });
@@ -26,19 +27,18 @@ export default function ClientProfile() {
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({});
-  const [countries, setCountries] = useState([]); // State for storing country list
+  const [countries, setCountries] = useState([]);
+  const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
   const navigate = useNavigate();
 
-  // Redirect user if no user info is in sessionStorage
   useEffect(() => {
     const userData = sessionStorage.getItem("user");
     if (!userData) {
-      navigate("/login"); // Redirect to login if user data is not present
+      navigate("/login");
       return;
     }
   }, [navigate]);
 
-  // Fetch user data from the API on component mount
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -68,7 +68,6 @@ export default function ClientProfile() {
     fetchUserData();
   }, []);
 
-  // Fetch countries from REST Countries API
   useEffect(() => {
     const fetchCountries = async () => {
       try {
@@ -99,7 +98,7 @@ export default function ClientProfile() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const updatedData = { ...user, ...formData }; // Merge original and form data
+      const updatedData = { ...user, ...formData };
       const response = await fetch("http://localhost:3000/user/updateUser", {
         method: "POST",
         headers: {
@@ -112,8 +111,6 @@ export default function ClientProfile() {
       let updatedUser;
       try {
         updatedUser = JSON.parse(text);
-
-        // eslint-disable-next-line no-unused-vars
       } catch (error) {
         throw new Error("Invalid JSON response");
       }
@@ -123,11 +120,19 @@ export default function ClientProfile() {
         throw new Error(updatedUser.message || "Failed to update user data");
       }
 
-      setUser(updatedUser); // Update user state with the new data
-      setIsEditing(false); // Exit edit mode
+      setUser(updatedUser);
+      setIsEditing(false);
     } catch (err) {
       setError(err.message);
     }
+  };
+
+  const openTopUpModal = () => {
+    setIsTopUpModalOpen(true);
+  };
+
+  const closeTopUpModal = () => {
+    setIsTopUpModalOpen(false);
   };
 
   if (loading) {
@@ -185,13 +190,25 @@ export default function ClientProfile() {
               <p>{user.country || "Country not provided"}</p>
             )}
           </div>
-          {/* MANAGE JOBS */}
-          <button
-            className="btn btn-primary"
-            onClick={() => navigate("/manageJobs")}
-          >
-            Manage Jobs
-          </button>
+
+          {/* Manage Jobs and Top Up Buttons */}
+          {!isEditing && (
+            <>
+              <button
+                className="btn btn-primary"
+                onClick={() => navigate("/manageJobs")}
+              >
+                Manage Jobs
+              </button>
+              <button
+                className="btn btn-secondary ml-4"
+                onClick={openTopUpModal} // Open Top Up modal on click
+              >
+                Top Up
+              </button>
+            </>
+          )}
+
           <button className="btn ml-auto" onClick={handleEditToggle}>
             {isEditing ? "CANCEL" : "EDIT"}
           </button>
@@ -310,6 +327,8 @@ export default function ClientProfile() {
         </div>
       </div>
       <Footer />
+
+      {isTopUpModalOpen && <TopUpModal onClose={closeTopUpModal} />}
     </>
   );
 }
