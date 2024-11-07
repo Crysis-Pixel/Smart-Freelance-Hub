@@ -24,6 +24,7 @@ exports.postJob = async (req, res) => {
         
         // Insert the job data into the collection
     const newJob = {
+        status: 'unassigned',
         title,
         description,
         requirements,
