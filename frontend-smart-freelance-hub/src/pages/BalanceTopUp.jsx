@@ -10,7 +10,7 @@ const BalanceTopUp = () => {
   const email = JSON.parse(sessionStorage.getItem("user")).email;
   const [timeLeft, setTimeLeft] = useState(60); // 60-second countdown
   const [isTimerActive, setIsTimerActive] = useState(true);
-
+  
   useEffect(() => {
     if (otpSent && isTimerActive) {
       const timer = setInterval(() => {

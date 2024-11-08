@@ -1,9 +1,8 @@
-// File: pages/Profile.jsx
-
 import Header from "../components/header.jsx";
 import Footer from "../components/footer.jsx";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import WithdrawModal from "../components/WithdrawModal";
 
 export default function Profile() {
   const [user, setUser] = useState({
@@ -31,6 +30,7 @@ export default function Profile() {
   const [formData, setFormData] = useState({});
   const [countries, setCountries] = useState([]); // State for storing country list
   const [selectedSkills, setSelectedSkills] = useState([]);
+  const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
   const navigate = useNavigate();
 
   const availableSkills = [
@@ -152,6 +152,14 @@ export default function Profile() {
     }
   };
 
+  const openWithdrawModal = () => {
+    setIsWithdrawModalOpen(true);
+  };
+
+  const closeWithdrawModal = () => {
+    setIsWithdrawModalOpen(false);
+  };
+
   if (loading) {
     return <p>Loading...</p>;
   }
@@ -207,6 +215,12 @@ export default function Profile() {
               <p>{user.country || "Country not provided"}</p>
             )}
           </div>
+          <button
+                className="btn btn-secondary ml-4"
+                onClick={openWithdrawModal}
+              >
+                Withdraw
+              </button>
           <button className="btn ml-auto" onClick={handleEditToggle}>
             {isEditing ? "CANCEL" : "EDIT"}
           </button>
@@ -357,6 +371,7 @@ export default function Profile() {
         </div>
       </div>
       <Footer />
+      {isWithdrawModalOpen && <WithdrawModal onClose={closeWithdrawModal} />}
     </>
   );
 }

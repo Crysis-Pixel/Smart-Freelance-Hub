@@ -20,6 +20,7 @@ const paymentsRoutes = require('./routes/payments');
 const contractsRoutes = require('./routes/contracts');
 const uploadRoutes = require('./routes/uploads');
 const otpRoutes = require('./routes/otpRoutes');
+const mailRoutes = require('./routes/mailMessage');
 //
 
 const app = express()
@@ -43,6 +44,7 @@ app.use('/payments', paymentsRoutes);
 app.use('/contracts', contractsRoutes);
 app.use('/uploads', uploadRoutes);
 app.use('/otp', otpRoutes);
+app.use('/sendMail', mailRoutes);
 //
 
 var connectionString = 'mongodb://localhost:27017';

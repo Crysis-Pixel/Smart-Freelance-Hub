@@ -3,19 +3,25 @@ import React from "react";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+import { toast, Slide } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const GoogleLoginButton = ({ onSuccess, onError }) => {
+const GoogleLoginButton = () => {
   const navigate = useNavigate();
+
   return (
     <GoogleLogin
       onSuccess={(credentialResponse) => {
-        var credentialResponseDecoded = jwtDecode(
+        const credentialResponseDecoded = jwtDecode(
           credentialResponse.credential
         );
         console.log(credentialResponseDecoded.given_name);
-        var email = credentialResponseDecoded.email;
-        var password = "";
-        const response = fetch("http://localhost:3000/user/login", {
+
+        const email = credentialResponseDecoded.email;
+        const password = "";
+
+        // Login request
+        fetch("http://localhost:3000/user/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -26,41 +32,100 @@ const GoogleLoginButton = ({ onSuccess, onError }) => {
           .then((data) => console.log(data))
           .catch((error) => {
             console.error("Error:", error);
-            alert("Error has occured.");
-            return;
+            toast.error("Error occurred while logging in.", {
+              position: "top-center",
+              autoClose: 2000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              transition: Slide,
+            });
           });
 
-        const userresponse = fetch("http://localhost:3000/user/getUser", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ email }),
+        // Fetch user data
+        fetch("http://localhost:3000/user/getUser", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email }),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            return response.json();
+          })
+          .then((userdata) => {
+            if (userdata) {
+              sessionStorage.setItem("user", JSON.stringify(userdata));
+              console.log(userdata);
+
+              // Navigate based on accountType if userdata is valid
+              if (userdata.accountType === "Client") {
+                navigate("/profileCl");
+              } else if (userdata.accountType === "Freelancer") {
+                navigate("/profile");
+              } else if (userdata.accountType === "Both") {
+                navigate("/home");
+              } else {
+                toast.error("Invalid account type.", {
+                  position: "top-center",
+                  autoClose: 2000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  transition: Slide,
+                });
+              }
+
+              // Display welcome toast
+              toast.success(
+                `Logged in successfully! Welcome, ${userdata.firstName} ${userdata.lastName}`,
+                {
+                  position: "top-center",
+                  autoClose: 2000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  theme: "light",
+                  transition: Slide,
+                }
+              );
+            } else {
+              throw new Error("User data is null");
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            toast.error("Error occurred while fetching user data.", {
+              position: "top-center",
+              autoClose: 2000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              transition: Slide,
+            });
           });
-        
-        userresponse
-        .then((response) => {
-          if (!response.ok) {
-            alert("Network response was not ok");
-          }
-          return response.json(); // Convert response to JSON
-        })
-        .then((userdata) => {
-          sessionStorage.setItem("user", JSON.stringify(userdata)); // Store in sessionStorage
-          console.log(userdata); // Optional: log the userdata
-        })
-        .catch((error) => {
-          console.error("Error:", error); // Handle errors
-          alert("Error has occured.");
-          return;
-        });
-        
-        navigate("/profile");
       }}
       onError={() => {
-        console.log("Login Failed");
-        setError("An error occurred. Please try again.");
-        console.error(error);
+        console.error("An error occurred during Google login.");
+        toast.error("Login failed. Please try again.", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Slide,
+        });
       }}
     />
   );
