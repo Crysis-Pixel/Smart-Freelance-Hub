@@ -7,7 +7,7 @@ import WithdrawModal from "../components/WithdrawModal";
 export default function Profile() {
   const [user, setUser] = useState({
     accountCreated: "",
-    accountType: "", // Default as Freelancer based on the data
+    accountType: "",
     fBio: "",
     country: "",
     email: "",
@@ -28,7 +28,7 @@ export default function Profile() {
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({});
-  const [countries, setCountries] = useState([]); // State for storing country list
+  const [countries, setCountries] = useState([]);
   const [selectedSkills, setSelectedSkills] = useState([]);
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
   const navigate = useNavigate();
@@ -216,11 +216,11 @@ export default function Profile() {
             )}
           </div>
           <button
-                className="btn btn-secondary ml-4"
-                onClick={openWithdrawModal}
-              >
-                Withdraw
-              </button>
+            className="btn btn-secondary ml-4"
+            onClick={openWithdrawModal}
+          >
+            Withdraw
+          </button>
           <button className="btn ml-auto" onClick={handleEditToggle}>
             {isEditing ? "CANCEL" : "EDIT"}
           </button>
@@ -344,7 +344,7 @@ export default function Profile() {
                   <div className="flex flex-col gap-4">
                     <textarea
                       name="fBio"
-                      value={formData.fBio || ""} // Use fBio here
+                      value={formData.fBio || ""}
                       onChange={handleInputChange}
                       className="textarea textarea-bordered w-full"
                       placeholder="Update your bio"
@@ -363,7 +363,7 @@ export default function Profile() {
                 </form>
               ) : (
                 <div>
-                  <p>{user.fBio || "Bio not available"}</p> {/* Use fBio */}
+                  <p>{user.fBio || "Bio not available"}</p>
                 </div>
               )}
             </div>

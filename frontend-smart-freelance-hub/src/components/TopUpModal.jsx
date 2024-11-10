@@ -175,7 +175,7 @@ const TopUpModal = ({ onClose }) => {
               className="mt-2 block w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-green-500"
             />
             <button
-              className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition duration-200 mt-2"
+              className="w-full bg-greenPrimary text-white py-2 rounded-md hover:bg-green-500 transition duration-200 mt-2"
               onClick={handleVerifyOTP}
               disabled={loading}
             >

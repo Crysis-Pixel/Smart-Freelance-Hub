@@ -9,7 +9,7 @@ export default function ClientProfile() {
   const [user, setUser] = useState({
     accountCreated: "",
     accountType: "Client",
-    cbio: "",
+    cBio: "",
     country: "",
     email: "",
     firstName: "",
@@ -20,8 +20,6 @@ export default function ClientProfile() {
     projectsInProgress: 0,
     totalBalance: 0,
     cRating: 0,
-    preferredSkills: "",
-    languagePreference: "",
   });
 
   const [loading, setLoading] = useState(true);
@@ -99,7 +97,10 @@ export default function ClientProfile() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const updatedData = { ...user, ...formData };
+      const updatedData = {
+        ...user,
+        ...formData,
+      };
       const response = await fetch("http://localhost:3000/user/updateUser", {
         method: "POST",
         headers: {
@@ -108,20 +109,12 @@ export default function ClientProfile() {
         body: JSON.stringify(updatedData),
       });
 
-      const text = await response.text();
-      let updatedUser;
-      try {
-        updatedUser = JSON.parse(text);
-      } catch (error) {
-        throw new Error("Invalid JSON response");
-      }
-
       if (!response.ok) {
-        console.error("Server Error Message:", updatedUser);
-        throw new Error(updatedUser.message || "Failed to update user data");
+        const errorText = await response.text();
+        throw new Error(errorText);
       }
 
-      setUser(updatedUser);
+      setUser(updatedData);
       setIsEditing(false);
     } catch (err) {
       setError(err.message);
@@ -267,19 +260,8 @@ export default function ClientProfile() {
               </div>
 
               <div>
-                <h1 className="font-bold">Language Preference</h1>
-                {isEditing ? (
-                  <input
-                    type="text"
-                    name="languagePreference"
-                    value={formData.languagePreference || ""}
-                    onChange={handleInputChange}
-                    className="input input-bordered w-full"
-                    placeholder="Language Preference"
-                  />
-                ) : (
-                  <p>{user.languagePreference || "Not specified"}</p>
-                )}
+                <h1 className="font-bold">Account Created</h1>
+                <p>{user.accountCreated || "New"}</p>
               </div>
             </div>
           </div>
@@ -290,17 +272,14 @@ export default function ClientProfile() {
                 <div>
                   <h1 className="text-2xl font-bold">Client Bio</h1>
                 </div>
-                <div>
-                  <h2 className="text-xl font-bold">Budget: $$ - $$$</h2>
-                </div>
               </div>
 
               {isEditing ? (
                 <form onSubmit={handleSubmit}>
                   <div className="flex flex-col gap-4">
                     <textarea
-                      name="cbio"
-                      value={formData.cbio || ""}
+                      name="cBio"
+                      value={formData.cBio || ""}
                       onChange={handleInputChange}
                       className="textarea textarea-bordered w-full"
                       placeholder="Update your bio"
@@ -319,7 +298,7 @@ export default function ClientProfile() {
                 </form>
               ) : (
                 <div>
-                  <p>{user.cbio || "Bio not available"}</p>
+                  <p>{user.cBio || "Bio not available"}</p>
                 </div>
               )}
             </div>
