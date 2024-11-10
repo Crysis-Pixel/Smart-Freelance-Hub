@@ -31,7 +31,6 @@ exports.getUser = async (req, res) => {
         if (profilePicture) {
             userInfo.profilePicture = `http://localhost:3000${profilePicture}`;
         }
-        console.log(userInfo.profilePicture);
         res.status(200).json(userInfo); // Return the user details with accessible profile picture URL
     } catch (err) {
         console.error("Failed to retrieve user:", err); // Log the error for debugging

@@ -1,6 +1,7 @@
 // File: routes/userRoutes.js
 const multer = require("multer");
 const { getConnectedClient } = require("../../database/db");
+const { deleteFile } = require("../../utils/fileUtils");
 const { ObjectId } = require("mongodb");
 const path = require("path"); // Import path module
 require("dotenv").config();
@@ -30,16 +31,24 @@ exports.uploadProfilePicture = async (req, res) => {
             return res.status(500).json({ message: "Image upload failed." });
         }
 
-        const { email } = req.body; // Identify the user by email
-        const profilePicturePath = `/uploads/profile-pictures/${req.file.filename}`; // Relative path for storage
-
-        // Build a URL to send back to the frontend
-        const profilePictureUrl = `http://localhost:3000${profilePicturePath}`;
-
+        
         try {
+            const { email } = req.body; // Identify the user by email
+            const profilePicturePath = `/uploads/profile-pictures/${req.file.filename}`; // Relative path for storage
+    
+            // Build a URL to send back to the frontend
+            const profilePictureUrl = `http://localhost:3000${profilePicturePath}`;
+            
             const client = await getConnectedClient();
             const db = client.db(db_name);
             const users = db.collection(collection_users);
+
+            // Get the current user's profile picture path
+            const user = await users.findOne({ email });
+            if (user?.profilePicture) {
+                // Delete the old profile picture if it exists
+                deleteFile(user.profilePicture);
+            }
 
             // Update the user's profile picture path in the database
             await users.updateOne(

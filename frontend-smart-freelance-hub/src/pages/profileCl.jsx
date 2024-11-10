@@ -28,6 +28,7 @@ export default function ClientProfile() {
   const [formData, setFormData] = useState({});
   const [countries, setCountries] = useState([]);
   const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
+  const [profilePictureFile, setProfilePictureFile] = useState(null); // Add this line for the profile picture file state
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -81,7 +82,10 @@ export default function ClientProfile() {
 
     fetchCountries();
   }, []);
-
+  
+  const handleFileChange = (e) => {
+    setProfilePictureFile(e.target.files[0]); // Capture the selected file
+  };
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
   };
@@ -101,6 +105,30 @@ export default function ClientProfile() {
         ...user,
         ...formData,
       };
+
+      // Prepare form data with the profile picture and other data
+      const formDataObj = new FormData();
+      formDataObj.append("email", user.email); // Send email to identify user
+      formDataObj.append("profilePicture", profilePictureFile);
+
+      const profRes = await fetch(
+        "http://localhost:3000/user/uploadProfilePicture",
+        {
+          method: "POST",
+          body: formDataObj,
+        }
+      );
+      if (profRes.status === 200) {
+        const data = await profRes.json();
+        console.log("Profile picture uploaded successfully:", data);
+        user.profilePicture = data.path; // Use this URL directly in the frontend
+        updatedData.profilePicture = data.path; // Use this URL directly in the frontend
+        sessionStorage.setItem("user", JSON.stringify(updatedData)); // Update session storage
+
+      } else {
+        console.error("Failed to upload profile picture.");
+      }
+
       const response = await fetch("http://localhost:3000/user/updateUser", {
         method: "POST",
         headers: {
@@ -115,7 +143,9 @@ export default function ClientProfile() {
       }
 
       setUser(updatedData);
+      sessionStorage.setItem("user", JSON.stringify(updatedData)); // Update session storage
       setIsEditing(false);
+      window.location.reload()
     } catch (err) {
       setError(err.message);
     }
@@ -147,15 +177,26 @@ export default function ClientProfile() {
         >
           <div className="avatar">
             <div className="w-24 rounded-full">
-              <img
+            <img
                 src={
-                  user.profilePicture ||
-                  "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                  user.profilePicture
+                    ? `${user.profilePicture}`
+                    : "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
                 }
                 alt="Profile"
+                onError={(e) => {
+                  e.target.src =
+                    "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp";
+                }}
               />
             </div>
           </div>
+          {/* Edit mode file input */}
+          {isEditing && (
+            <div>
+              <input type="file" onChange={handleFileChange} />
+            </div>
+          )}
           <div className="flex-grow">
             {isEditing ? (
               <input
