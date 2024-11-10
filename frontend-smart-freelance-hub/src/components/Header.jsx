@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import logo from "../assets/SmartFreelanceHubLOGO.png";
 
 function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -96,7 +97,13 @@ function Header() {
       <div className="bg-grey">
         <div className="navbar container mx-auto">
           <div className="navbar-start">
-            <Link to="/home">LOGO</Link>
+            <Link to="/home">
+            <img 
+              src={logo} 
+              alt="Logo" 
+              className="h-20 w-25" // Adjust size as needed
+            />
+            </Link>
             <ul className="menu menu-horizontal px-1 hidden lg:flex">
               <li>
                 <a>Find Talent</a>
