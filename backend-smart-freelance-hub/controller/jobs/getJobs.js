@@ -14,6 +14,7 @@ exports.getJobs = async (req, res) => {
         // Return the jobs to the frontend
         const allJobs = jobs.map((job) => ({
             ...job,
+            _id: job._id.toString(), // Convert _id to string
             requirements: typeof job.requirements === "string" 
                 ? job.requirements.split(", ").map((req) => req.trim()) 
                 : [], // default to an empty array if requirements is undefined
