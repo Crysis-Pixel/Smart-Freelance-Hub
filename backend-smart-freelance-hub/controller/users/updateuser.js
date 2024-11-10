@@ -30,6 +30,7 @@ exports.updateUserBalance = async (req, res) => {
 };
 
 exports.updateUser = async (req, res) => {
+    console.log("updating User")
     const {firstName, lastName, email, country, phoneNumber, lookingForJob, accountType, fBio, cBio, skills, fRating, cRating, profilePicture, totalBalance, lastActive, 
         jobsCompleted
     } = req.body;
@@ -44,10 +45,10 @@ exports.updateUser = async (req, res) => {
         // Update the user in the database
         const result = await collection.updateOne(
             { email: email }, // Use the email from the request body
-            { $set: { firstName, lastName, email, country, phoneNumber, lookingForJob, accountType, fBio, cBio, skills, fRating, cRating, profilePicture, totalBalance, lastActive, 
+            { $set: { firstName, lastName, email, country, phoneNumber, lookingForJob, accountType, fBio, cBio, skills, fRating, cRating, totalBalance, lastActive, 
                 jobsCompleted } }
         );
-        console.log(result);
+        //console.log(result);
 
         res.status(200).json(`User with ${email} has been updated successfully`);
     } catch (err) {

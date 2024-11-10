@@ -12,6 +12,7 @@ const { deleteUser } = require('../controller/deleteuser');
 const { getUsers } = require('../controller/getusers');
 const { getUser } = require('../controller/users/getUser');
 const { getUserById } = require('../controller/getuserbyid');
+const { uploadProfilePicture } = require('../controller/users/uploadProfilePicture');
 
 //Added by Mostakim
 const { checkUserEmail } = require('../controller/users/checkUserEmail')
@@ -30,6 +31,7 @@ router.post('/changeUserPassword', changeUserPassword);
 router.delete('/delete', deleteUser);
 router.get('/getUsers', getUsers);
 router.get('/getUserById', getUserById);
+router.post('/uploadProfilePicture', uploadProfilePicture);
 
 //OTP routes
 router.post('/resendOTP', resendOTP);

@@ -5,6 +5,7 @@ const client = require('./database/db').getConnectedClient;
 const fs = require('fs');
 const path = require('path');
 const initializeSocket = require('./utils/socket');
+const multer = require("multer");
 
 const userRoutes = require('./routes/user');
 const jobsRoutes = require('./routes/jobs');
@@ -34,6 +35,9 @@ const port = 3000
 app.use('/user', userRoutes);
 app.use('/jobs', jobsRoutes);
 app.use('/reviews', reviewsRoutes);
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+
 //Added by Mostakim
 app.use('/proposals', proposalsRoutes);
 app.use('/messages', messagesRoutes);
