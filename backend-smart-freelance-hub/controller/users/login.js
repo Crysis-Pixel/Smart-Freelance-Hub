@@ -30,7 +30,7 @@ exports.login = async (req, res) => {
         }
         
         // If user not found or password incorrect
-        res.status(500).json({ message: 'Wrong Password' });
+        res.status(500).json({ message: 'Invalid Credentials or user does not exist' });
         
     } catch (err) {
         console.error('Error during login:', err);

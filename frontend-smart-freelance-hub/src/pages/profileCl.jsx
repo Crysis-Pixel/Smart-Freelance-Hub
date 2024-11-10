@@ -263,7 +263,7 @@ export default function ClientProfile() {
               <div className="stat">
                 <div className="stat-title">Total Projects Posted</div>
                 <div className="stat-value">
-                  {user.totalProjectsPosted || 0}
+                  {user.jobsCompleted || 0}
                 </div>
               </div>
 

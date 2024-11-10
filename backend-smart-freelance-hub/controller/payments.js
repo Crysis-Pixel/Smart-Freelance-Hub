@@ -51,14 +51,14 @@ exports.processPayment = async (req, res) => {
         // Update freelancer’s total earnings
         const updateResultfreelancer = await db.collection(process.env.COLLECTION_USERS).updateOne(
             { email: freelancerEmail },
-            { $inc: { totalBalance: amount } }
+            { $inc: { totalBalance: amount, jobsCompleted: 1 } }
         );
         console.log("Freelancer's total earnings updated.");
         freelancerbalanceupdated = true;
 
         const updateResultclient = await db.collection(process.env.COLLECTION_USERS).updateOne(
             { email: senderemail },
-            { $inc: { totalBalance: -amount } }
+            { $inc: { totalBalance: -amount, jobsCompleted: 1 } }
         );
         console.log("Client's total earnings updated.");
         clientbalanceupdated = true;
@@ -76,12 +76,12 @@ exports.processPayment = async (req, res) => {
         if(freelancerbalanceupdated){
             const updateResultfreelancer = await db.collection(process.env.COLLECTION_USERS).updateOne(
             { email: freelancerEmail },
-            { $inc: { totalBalance: -amount } }
+            { $inc: { totalBalance: -amount, jobsCompleted: -1 } }
         );}
         if(clientbalanceupdated){
             const updateResultclient = await db.collection(process.env.COLLECTION_USERS).updateOne(
             { email: senderemail },
-            { $inc: { totalBalance: amount } }
+            { $inc: { totalBalance: amount, jobsCompleted: -1 } }
         );}
         if(transactionupdated){
             const updateTransaction = await db.collection(process.env.COLLECTION_TRANSACTIONS).updateOne(

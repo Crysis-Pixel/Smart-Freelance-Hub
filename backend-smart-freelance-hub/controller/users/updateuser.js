@@ -30,28 +30,44 @@ exports.updateUserBalance = async (req, res) => {
 };
 
 exports.updateUser = async (req, res) => {
-    console.log("updating User")
-    const {firstName, lastName, email, country, phoneNumber, lookingForJob, accountType, fBio, cBio, skills, fRating, cRating, profilePicture, totalBalance, lastActive, 
-        jobsCompleted
-    } = req.body;
+    console.log("Updating User");
+    const { email } = req.body; // Extract email to identify the user
     if (!emailExist(email)) {
         return res.status(400).json({ message: 'Invalid user' });
     }
+
     try {
         const client = getConnectedClient();
         const db = client.db(db_name);
         const collection = db.collection(collection_users);
 
-        // Update the user in the database
-        const result = await collection.updateOne(
-            { email: email }, // Use the email from the request body
-            { $set: { firstName, lastName, email, country, phoneNumber, lookingForJob, accountType, fBio, cBio, skills, fRating, cRating, totalBalance, lastActive, 
-                jobsCompleted } }
-        );
-        //console.log(result);
+        // Initialize an empty update object
+        const updateFields = {};
 
-        res.status(200).json(`User with ${email} has been updated successfully`);
+        // Dynamically add fields to the update object if they are present in req.body
+        for (const [key, value] of Object.entries(req.body)) {
+            if (value !== undefined && key !== 'email') { // Exclude undefined values and email from updates
+                updateFields[key] = value;
+            }
+        }
+
+        if (Object.keys(updateFields).length === 0) {
+            return res.status(400).json({ message: 'No fields to update' });
+        }
+
+        // Perform the update operation
+        const result = await collection.updateOne(
+            { email: email }, // Find the user by email
+            { $set: updateFields } // Only update the specified fields
+        );
+
+        if (result.modifiedCount === 0) {
+            return res.status(404).json({ message: `User with email ${email} not found or no fields were updated.` });
+        }
+
+        res.status(200).json({ message: `User with email ${email} has been updated successfully.` });
     } catch (err) {
         res.status(500).send(`Failed to update user: ${err.message}`);
     }
 };
+

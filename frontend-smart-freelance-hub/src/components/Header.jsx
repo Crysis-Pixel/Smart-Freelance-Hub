@@ -45,12 +45,32 @@ function Header() {
     setIsDropdownOpen(!isDropdownOpen); // Toggle dropdown visibility
   };
 
+  const updateusertype = async(accountType) => {
+    const userData = JSON.parse(sessionStorage.getItem("user"));
+    const updateuser = await fetch("http://localhost:3000/user/updateUser", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email: userData.email, accountType: accountType }),
+    });
+
+    const result = await updateuser.json();
+
+    if (result.message){
+      userData.accountType = accountType;
+      sessionStorage.setItem("user", JSON.stringify(userData));
+      toast.success("You have successfully changed account type.");
+    }
+  }
+
   // Determine the dropdown option based on the current route
   const getDropdownOption = () => {
     if (location.pathname === "/profile") {
       return "Change to Client";
     } else if (location.pathname === "/profileCl") {
       return "Change to Freelancer";
+
     } else {
       return "Go to Profile";
     }
@@ -58,9 +78,12 @@ function Header() {
 
   // Handle navigation when the dropdown option is clicked
   const handleDropdownNavigation = () => {
+
     if (location.pathname === "/profile") {
+      updateusertype("Client");
       navigate("/profileCl"); // Navigate to client profile if on freelancer profile
     } else if (location.pathname === "/profileCl") {
+      updateusertype("Freelancer");
       navigate("/profile"); // Navigate to freelancer profile if on client profile
     } else {
       navigate("/profile"); // Default navigation to freelancer profile
