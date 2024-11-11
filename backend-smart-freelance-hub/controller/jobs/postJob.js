@@ -8,7 +8,7 @@ const collection_users = process.env.COLLECTION_USERS;
 
 exports.postJob = async (req, res) => {
     // Extract data from request body
-    const { title, description, requirements, clientEmail } = req.body;
+    const { title, description, requirements, clientEmail, maxBudget } = req.body;
     
     console.log("Attempting to Post Job")
     try {
@@ -30,6 +30,7 @@ exports.postJob = async (req, res) => {
         requirements,
         clientEmail,
         createdAt: currentDate(),
+        maxBudget,
       };
         const result = await collection.insertOne(newJob);
 

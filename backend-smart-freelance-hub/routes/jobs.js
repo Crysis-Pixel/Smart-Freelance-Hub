@@ -6,11 +6,17 @@ const {postJob} = require('../controller/jobs/postJob');
 const {getJobs} = require('../controller/jobs/getJobs');
 const {assignJob} = require('../controller/jobs/assignJob');
 const {cancelJob} = require('../controller/jobs/cancelJob');
+const {editJob} = require('../controller/jobs/editJob');
+const {jobPending} = require('../controller/jobs/jobPending');
+const {declineJob} = require('../controller/jobs/declineJob');
 
 router.post('/postJob', postJob);
 router.post('/getJobs', getJobs);
 router.post('/assignJob', assignJob);
 router.post('/cancelJob', cancelJob);
+router.post('/editJob', editJob);
+router.post('/jobPending', jobPending);
+router.post('/declineJob', declineJob);
 
 
 

@@ -4,16 +4,17 @@ const { findUserByEmail } = require("../../utils/findUserByEmail");
 const { currentDate } = require("../../utils/date");
 const { ObjectId } = require("mongodb"); // Import ObjectId
 
-exports.assignJob = async (req, res) => {
+exports.jobPending = async (req, res) => {
   // Extract jobId and clientEmail from the request body
-  const { jobId, clientEmail } = req.body;
+  const { jobId, clientEmail, freelancerEmail, offeredPrice } = req.body;
 
   try {
     // Find user by email
     const user = await findUserByEmail(clientEmail);
+    const user2 = await findUserByEmail(freelancerEmail);
 
     // Check if user was found
-    if (user) {
+    if (user && user2) {
       // Connect to the database
       const client = await getConnectedClient();
       const db = client.db(process.env.DATABASE_NAME);
@@ -24,8 +25,10 @@ exports.assignJob = async (req, res) => {
 
       // Update the job status to "completed"
       const updateResult = await collection.updateOne(
-        { _id: jobObjectId }, // Match job by ObjectId
-        { $set: { status: "pending" } } // Set status to assigned and update timestamp
+        { _id: jobObjectId }, // Match job by jobId
+        { $set: { status: "pending", freelancerEmail: freelancerEmail, 
+          "offeredPrice" : offeredPrice
+        } } // Set status to pending
       );
 
       // Check if the update was successful
