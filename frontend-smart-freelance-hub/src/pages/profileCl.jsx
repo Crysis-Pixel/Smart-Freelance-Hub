@@ -125,6 +125,8 @@ export default function ClientProfile() {
         user.profilePicture = data.path;
         updatedData.profilePicture = data.path;
         sessionStorage.setItem("user", JSON.stringify(updatedData));
+
+        delete updatedData.profilePicture;
       } else {
         console.error("Failed to upload profile picture.");
       }

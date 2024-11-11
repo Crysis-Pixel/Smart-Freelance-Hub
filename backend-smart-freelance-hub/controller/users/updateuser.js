@@ -61,9 +61,9 @@ exports.updateUser = async (req, res) => {
             { $set: updateFields } // Only update the specified fields
         );
 
-        if (result.modifiedCount === 0) {
-            return res.status(404).json({ message: `User with email ${email} not found or no fields were updated.` });
-        }
+        // if (result.modifiedCount === 0) {
+        //     return res.status(404).json({ message: `User with email ${email} not found or no fields were updated.` });
+        // }
 
         res.status(200).json({ message: `User with email ${email} has been updated successfully.` });
     } catch (err) {
