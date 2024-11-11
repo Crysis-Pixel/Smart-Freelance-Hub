@@ -162,7 +162,7 @@ export default function ManageJobs() {
 
   return (
     <>
-      <Header />
+      <Header profilePicture={JSON.parse(sessionStorage.getItem("user")).profilePicture}/>
       <div className="min-h-screen flex flex-col">
         <div className="container mx-auto my-10 p-5 flex-grow">
           <div className="flex justify-between items-center mb-5">

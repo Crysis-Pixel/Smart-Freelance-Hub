@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import WithdrawModal from "../components/WithdrawModal";
 import { toast, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ChatBox from "../components/ChatBox";
 
 export default function Profile() {
   const [user, setUser] = useState({
@@ -35,6 +36,7 @@ export default function Profile() {
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
   const [profilePictureFile, setProfilePictureFile] = useState(null); // Add this line for the profile picture file state
   const navigate = useNavigate();
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   const availableSkills = [
     "Web-Development",
@@ -185,6 +187,10 @@ export default function Profile() {
     }
   };
 
+  const toggleChat = () => {
+    setIsChatOpen((prev) => !prev);
+  };
+
   const openWithdrawModal = () => {
     setIsWithdrawModalOpen(true);
   };
@@ -284,6 +290,9 @@ export default function Profile() {
               <p>{user.country || "Country not provided"}</p>
             )}
           </div>
+          <button className="btn btn-success" onClick={toggleChat}>
+            Chat
+          </button>
           <button
             className="btn btn-secondary ml-4"
             onClick={openWithdrawModal}
@@ -293,6 +302,7 @@ export default function Profile() {
           <button className="btn ml-auto" onClick={handleEditToggle}>
             {isEditing ? "CANCEL" : "EDIT"}
           </button>
+          <ChatBox isOpen={isChatOpen} onClose={toggleChat} />
         </div>
 
         <hr />
