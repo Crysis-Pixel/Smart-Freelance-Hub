@@ -33,7 +33,8 @@ def recommendation():
         if value > 0:
             user_info = {
                 'user': user,
-                'similarity_value': float(value) + float(user['fRating']/30)
+                'similarity_value': float(value) + float(user['fRating']/30),
+                'match_value': float(value)
             }
 
             # Check the number of jobs completed and classify accordingly
