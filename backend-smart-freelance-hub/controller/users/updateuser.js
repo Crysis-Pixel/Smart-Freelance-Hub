@@ -46,7 +46,7 @@ exports.updateUser = async (req, res) => {
 
         // Dynamically add fields to the update object if they are present in req.body
         for (const [key, value] of Object.entries(req.body)) {
-            if (value !== undefined && key !== 'email') { // Exclude undefined values and email from updates
+            if (value !== undefined && key !== 'email' && key!= 'profilePicture') { // Exclude undefined values and email from updates
                 updateFields[key] = value;
             }
         }

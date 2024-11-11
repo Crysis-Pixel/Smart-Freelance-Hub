@@ -4,7 +4,7 @@ import { toast, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import logo from "../assets/SmartFreelanceHubLOGO.png";
 
-function Header() {
+function Header({profilePicture}) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -194,8 +194,8 @@ function Header() {
                     <div className="ring-primary ring-offset-base-100 w-12 rounded-full">
                       <img
                         src={
-                          user.profilePicture
-                            ? user.profilePicture
+                          profilePicture
+                            ? profilePicture
                             : "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
                         }
                         alt="User Avatar"

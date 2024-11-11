@@ -126,7 +126,7 @@ export default function ClientProfile() {
         updatedData.profilePicture = data.path;
         sessionStorage.setItem("user", JSON.stringify(updatedData));
 
-        delete updatedData.profilePicture;
+        //delete updatedData.profilePicture;
       } else {
         console.error("Failed to upload profile picture.");
       }
@@ -195,7 +195,7 @@ export default function ClientProfile() {
 
   return (
     <>
-      <Header />
+      <Header profilePicture={user.profilePicture} />
       <div id="dashboard" className="container mx-auto border my-32">
         <div
           id="profile-container"
