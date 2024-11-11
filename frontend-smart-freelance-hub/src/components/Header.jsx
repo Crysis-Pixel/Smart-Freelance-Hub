@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -159,7 +159,7 @@ function Header({profilePicture}) {
               <img
                 src={logo}
                 alt="Logo"
-                className="h-20 w-25" // Adjust size as needed
+                className="h-16 w-25" // Adjust size as needed
               />
             </Link>
             <ul className="menu menu-horizontal px-1 hidden lg:flex">

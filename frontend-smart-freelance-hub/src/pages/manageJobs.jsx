@@ -50,7 +50,11 @@ export default function ManageJobs() {
         }
 
         const jobsData = await response.json();
-        setJobs(jobsData);
+        console.log(jobsData);
+        const sortedJobs = jobsData.sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
+        setJobs(sortedJobs);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -101,7 +105,7 @@ export default function ManageJobs() {
       }
 
       const postedJob = await response.json();
-      setJobs([...jobs, postedJob]);
+      setJobs((prevJobs) => [postedJob, ...prevJobs]); // Add the new job to the top of the list
       setIsModalOpen(false);
       setNewJob({ title: "", description: "", requirements: [] });
       setSelectedSkills([]);
@@ -132,7 +136,6 @@ export default function ManageJobs() {
   };
 
   const handleFindFreelancers = async (job) => {
-    
     try {
       console.log(JSON.stringify(job.requirements));
       const response = await fetch("http://127.0.0.1:8000", {
@@ -148,7 +151,8 @@ export default function ManageJobs() {
       }
 
       const freelancersData = await response.json();
-      console.log(freelancersData);
+      console.log(freelancersData.newUsers);
+      console.log(freelancersData.oldUsers);
       setFreelancers(freelancersData);
       setIsGigModalOpen(true);
     } catch (err) {

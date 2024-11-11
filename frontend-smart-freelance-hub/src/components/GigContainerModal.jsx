@@ -1,7 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
 
-const GigContainerModal = ({ isOpen, onClose }) => {
+const GigContainerModal = ({ isOpen, onClose, freelancers }) => {
   if (!isOpen) return null;
+
+  // Sort and filter users based on similarity value
+  const newUsersSorted = [...freelancers.newUsers]
+    .filter((user) => user.similarity_value >= 0.5)
+    .sort((a, b) => b.similarity_value - a.similarity_value);
+  const oldUsersSorted = [...freelancers.oldUsers]
+    .filter((user) => user.similarity_value >= 0.5)
+    .sort((a, b) => b.similarity_value - a.similarity_value);
+
+  // Combine users and set pagination
+  const combinedUsers = [...newUsersSorted, ...oldUsersSorted];
+  const usersPerPage = 3;
+  const [page, setPage] = useState(0);
+
+  const startIndex = page * usersPerPage;
+  const paginatedUsers = combinedUsers.slice(
+    startIndex,
+    startIndex + usersPerPage
+  );
+
+  const hasMore = startIndex + usersPerPage < combinedUsers.length;
+  const hasPrevious = page > 0;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
@@ -10,58 +32,88 @@ const GigContainerModal = ({ isOpen, onClose }) => {
           Freelancer Matches
         </h2>
 
-        {/* Dummy Freelancer Data */}
         <div className="flex justify-center gap-10 flex-wrap">
-          {/* Freelancer Card 1 */}
-          <div className="flex-shrink-0 w-full sm:w-80 md:w-60 border p-5 rounded-md shadow-sm flex flex-col items-center">
-            <img
-              src="https://via.placeholder.com/100"
-              alt="Profile"
-              className="w-24 h-24 rounded-full mb-4"
-            />
-            <div className="text-center">
-              <p className="text-gray-600 font-semibold">Jane Doe</p>
-              <p className="text-gray-600">Rating: 4.7</p>
-              <p className="text-gray-600">Last Active: 2 hours ago</p>
-              <p className="text-gray-600">Skills: Web Development, React</p>
-            </div>
-          </div>
+          {paginatedUsers.length > 0 ? (
+            paginatedUsers.map((item, index) => {
+              const freelancer = item.user;
+              const isNewUser = freelancers.newUsers.includes(item);
+              const matchScore = (item.similarity_value * 100).toFixed(0);
 
-          {/* Freelancer Card 2 */}
-          <div className="flex-shrink-0 w-full sm:w-80 md:w-60 border p-5 rounded-md shadow-sm flex flex-col items-center">
-            <img
-              src="https://via.placeholder.com/100"
-              alt="Profile"
-              className="w-24 h-24 rounded-full mb-4"
-            />
-            <div className="text-center">
-              <p className="text-gray-600 font-semibold">John Smith</p>
-              <p className="text-gray-600">Rating: 4.9</p>
-              <p className="text-gray-600">Last Active: 5 hours ago</p>
-              <p className="text-gray-600">Skills: UI/UX Design, Figma</p>
-            </div>
-          </div>
-
-          {/* Freelancer Card 3 */}
-          <div className="flex-shrink-0 w-full sm:w-80 md:w-60 border p-5 rounded-md shadow-sm flex flex-col items-center">
-            <img
-              src="https://via.placeholder.com/100"
-              alt="Profile"
-              className="w-24 h-24 rounded-full mb-4"
-            />
-            <div className="text-center">
-              <p className="text-gray-600 font-semibold">Alice Jones</p>
-              <p className="text-gray-600">Rating: 4.8</p>
-              <p className="text-gray-600">Last Active: 10 minutes ago</p>
-              <p className="text-gray-600">Skills: Graphic Design, Photoshop</p>
-            </div>
-          </div>
+              return (
+                <div
+                  key={index}
+                  className="relative flex-shrink-0 w-full sm:w-80 md:w-60 border p-5 rounded-md shadow-sm flex flex-col items-center"
+                >
+                  {isNewUser && (
+                    <span className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded-md text-xs font-bold">
+                      New
+                    </span>
+                  )}
+                  <img
+                    src={
+                      freelancer.profilePic || "https://via.placeholder.com/100"
+                    }
+                    alt="Profile"
+                    className="w-24 h-24 rounded-full mb-4"
+                  />
+                  <p className="text-gray-600 text-xl text-center">
+                    {`${freelancer.firstName} ${freelancer.lastName}`}
+                  </p>
+                  <div className="">
+                    <p className="text-gray-600">
+                      <b>Match Score:</b> {matchScore}%
+                    </p>
+                    <p className="text-gray-600">
+                      <b>Rating:</b> {freelancer.fRating}
+                    </p>
+                    <p className="text-gray-600">
+                      <b>Last Active:</b> {freelancer.lastActive}
+                    </p>
+                    <p className="text-gray-600">
+                      <b>Skills:</b> {freelancer.skills}
+                    </p>
+                  </div>
+                </div>
+              );
+            })
+          ) : (
+            <p className="text-gray-600 text-center">
+              No freelancers found matching the requirements.
+            </p>
+          )}
         </div>
 
-        {/* Close Button */}
-        <div className="flex justify-end mt-5">
+        {/* Page Counter */}
+        <p className="text-center mt-4 text-gray-600">
+          Page {page + 1} of {Math.ceil(combinedUsers.length / usersPerPage)}
+        </p>
+
+        {/* Button containers */}
+        <div className="flex justify-between mt-5">
+          {/* Left button group */}
+          <div className="flex gap-3">
+            {hasPrevious && (
+              <button
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                onClick={() => setPage((prev) => prev - 1)}
+              >
+                Go back
+              </button>
+            )}
+            {hasMore && (
+              <button
+                className="px-4 py-2 bg-greenPrimary text-white rounded-md hover:bg-green-600"
+                onClick={() => setPage((prev) => prev + 1)}
+              >
+                Show more ({combinedUsers.length - (startIndex + usersPerPage)}{" "}
+                more)
+              </button>
+            )}
+          </div>
+
+          {/* Right button group */}
           <button
-            className="px-4 py-2 bg-greenPrimary text-white rounded-md hover:bg-green-500"
+            className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
             onClick={onClose}
           >
             Close
