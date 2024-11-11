@@ -4,6 +4,8 @@ import TopUpModal from "../components/TopUpModal";
 import PaymentGateway from "../components/PaymentGateway.jsx";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast, Slide } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function ClientProfile() {
   const [user, setUser] = useState({
@@ -82,7 +84,7 @@ export default function ClientProfile() {
 
     fetchCountries();
   }, []);
-  
+
   const handleFileChange = (e) => {
     setProfilePictureFile(e.target.files[0]); // Capture the selected file
   };
@@ -106,9 +108,8 @@ export default function ClientProfile() {
         ...formData,
       };
 
-      // Prepare form data with the profile picture and other data
       const formDataObj = new FormData();
-      formDataObj.append("email", user.email); // Send email to identify user
+      formDataObj.append("email", user.email);
       formDataObj.append("profilePicture", profilePictureFile);
 
       const profRes = await fetch(
@@ -118,13 +119,12 @@ export default function ClientProfile() {
           body: formDataObj,
         }
       );
+
       if (profRes.status === 200) {
         const data = await profRes.json();
-        console.log("Profile picture uploaded successfully:", data);
-        user.profilePicture = data.path; // Use this URL directly in the frontend
-        updatedData.profilePicture = data.path; // Use this URL directly in the frontend
-        sessionStorage.setItem("user", JSON.stringify(updatedData)); // Update session storage
-
+        user.profilePicture = data.path;
+        updatedData.profilePicture = data.path;
+        sessionStorage.setItem("user", JSON.stringify(updatedData));
       } else {
         console.error("Failed to upload profile picture.");
       }
@@ -143,9 +143,9 @@ export default function ClientProfile() {
       }
 
       setUser(updatedData);
-      sessionStorage.setItem("user", JSON.stringify(updatedData)); // Update session storage
+      sessionStorage.setItem("user", JSON.stringify(updatedData));
       setIsEditing(false);
-      window.location.reload()
+      showToast();
     } catch (err) {
       setError(err.message);
     }
@@ -166,6 +166,30 @@ export default function ClientProfile() {
   if (error) {
     return <p>Error: {error}</p>;
   }
+  const showToast = () => {
+    toast.success("Changes save successfully", {
+      position: "top-center",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      transition: Slide,
+    });
+  };
+
+  function formatBalance(value) {
+    if (value >= 1_000_000_000) {
+      return `$${value / 1_000_000_000}B`;
+    } else if (value >= 1_000_000) {
+      return `$${value / 1_000_000}M`;
+    } else if (value >= 1_000) {
+      return `$${value / 1_000}K`;
+    }
+    return `$${value}`;
+  }
 
   return (
     <>
@@ -177,7 +201,7 @@ export default function ClientProfile() {
         >
           <div className="avatar">
             <div className="w-24 rounded-full">
-            <img
+              <img
                 src={
                   user.profilePicture
                     ? `${user.profilePicture}`
@@ -256,15 +280,13 @@ export default function ClientProfile() {
               <div className="stat">
                 <div className="stat-title">Total Balance</div>
                 <div className="stat-value">
-                  {user.totalBalance ? `$${user.totalBalance}` : "$0"}
+                  {user.totalBalance ? formatBalance(user.totalBalance) : "$0"}
                 </div>
               </div>
 
               <div className="stat">
                 <div className="stat-title">Total Projects Posted</div>
-                <div className="stat-value">
-                  {user.jobsCompleted || 0}
-                </div>
+                <div className="stat-value">{user.jobsCompleted || 0}</div>
               </div>
 
               <div className="stat">
@@ -312,6 +334,11 @@ export default function ClientProfile() {
               <div id="bio-title" className="flex justify-between">
                 <div>
                   <h1 className="text-2xl font-bold">Client Bio</h1>
+                  <h2 className="text-s font-light">
+                    {user.accountType === "Client" && "Client"}
+                    {user.accountType === "Freelance" && "Freelancer"}
+                    {user.accountType === "Both" && "Client and Freelancer"}
+                  </h2>
                 </div>
               </div>
 

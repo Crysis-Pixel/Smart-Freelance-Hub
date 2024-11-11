@@ -3,6 +3,7 @@ import Footer from "../components/footer.jsx";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ChatBox from "../components/ChatBox";
+import GigContainerModal from "../components/GigContainerModal";
 
 export default function ManageJobs() {
   const [jobs, setJobs] = useState([]);
@@ -16,6 +17,8 @@ export default function ManageJobs() {
     requirements: [],
   });
   const [selectedSkills, setSelectedSkills] = useState([]);
+  const [freelancers, setFreelancers] = useState([]);
+  const [isGigModalOpen, setIsGigModalOpen] = useState(false);
   const navigate = useNavigate();
 
   const availableSkills = [
@@ -29,9 +32,6 @@ export default function ManageJobs() {
     "SEO analyst",
   ];
 
-  // commented out cuz the page wont load without the backend part
-
-  //   // Fetch jobs from the server
   useEffect(() => {
     const fetchJobs = async () => {
       try {
@@ -96,13 +96,13 @@ export default function ManageJobs() {
         }),
       });
 
-      if (response.status != 200) {
+      if (response.status !== 200) {
         throw new Error("Failed to post job");
       }
 
       const postedJob = await response.json();
-      setJobs([...jobs, postedJob]); // Add the newly posted job to the jobs list
-      setIsModalOpen(false); // Close the modal
+      setJobs([...jobs, postedJob]);
+      setIsModalOpen(false);
       setNewJob({ title: "", description: "", requirements: [] });
       setSelectedSkills([]);
     } catch (err) {
@@ -112,7 +112,7 @@ export default function ManageJobs() {
 
   const handleDelete = async (jobId) => {
     try {
-      const response = await fetch("http://localhost:3000/jobs/deleteJob", {
+      const response = await fetch("http://localhost:3000/jobs/cancelJob", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -121,19 +121,37 @@ export default function ManageJobs() {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to delete job");
+        throw new Error(`Failed to delete job: ${response.statusText}`);
       }
 
-      setJobs(jobs.filter((job) => job.id !== jobId));
+      setJobs(jobs.filter((job) => job._id !== jobId));
     } catch (err) {
+      console.error("Error deleting job:", err);
       setError(err.message);
     }
   };
 
-  //remvoe comment after adding backend functionality
+  const handleFindFreelancers = async (job) => {
+    try {
+      const response = await fetch("http://127.0.0.1:8000", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ requirements: job.requirements }),
+      });
 
-  //   if (loading) return <p>Loading...</p>;
-  //   if (error) return <p>Error: {error}</p>;
+      if (!response.ok) {
+        throw new Error("Failed to fetch freelancers");
+      }
+
+      const freelancersData = await response.json();
+      setFreelancers(freelancersData);
+      setIsGigModalOpen(true);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
   return (
     <>
@@ -170,12 +188,18 @@ export default function ManageJobs() {
                     </button>
                     <button
                       className="btn btn-error"
-                      onClick={() => handleDelete(job.id)}
+                      onClick={() => handleDelete(job._id)}
                     >
                       Delete
                     </button>
                     <button className="btn btn-success" onClick={toggleChat}>
                       Contact Freelancer
+                    </button>
+                    <button
+                      className="btn btn-secondary"
+                      onClick={() => handleFindFreelancers(job)}
+                    >
+                      Find Freelancer
                     </button>
                     <ChatBox isOpen={isChatOpen} onClose={toggleChat} />
                   </div>
@@ -186,7 +210,6 @@ export default function ManageJobs() {
         </div>
         <Footer />
 
-        {/* Post New Job Modal */}
         {isModalOpen && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
             <div className="bg-white rounded-lg p-8 w-1/2">
@@ -254,6 +277,12 @@ export default function ManageJobs() {
             </div>
           </div>
         )}
+
+        <GigContainerModal
+          isOpen={isGigModalOpen}
+          onClose={() => setIsGigModalOpen(false)}
+          freelancers={freelancers}
+        />
       </div>
     </>
   );

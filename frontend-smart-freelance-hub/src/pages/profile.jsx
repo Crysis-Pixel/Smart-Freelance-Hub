@@ -3,6 +3,8 @@ import Footer from "../components/footer.jsx";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import WithdrawModal from "../components/WithdrawModal";
+import { toast, Slide } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Profile() {
   const [user, setUser] = useState({
@@ -45,16 +47,14 @@ export default function Profile() {
     "SEO Analyst",
   ];
 
-  // Redirect user if no user info is in sessionStorage
   useEffect(() => {
     const userData = sessionStorage.getItem("user");
     if (!userData) {
-      navigate("/login"); // Redirect to login if user data is not present
+      navigate("/login");
       return;
     }
   }, [navigate]);
 
-  // Fetch user data from the API on component mount
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -72,7 +72,6 @@ export default function Profile() {
         }
 
         const userData = await response.json();
-        // Ensure profile picture URL is properly set with backend path
         userData.profilePicture = userData.profilePicture
           ? `${userData.profilePicture}`
           : "";
@@ -140,11 +139,11 @@ export default function Profile() {
         ...user,
         ...formData,
         skills: selectedSkills.join(", "),
-      }; // Update skills in user data
+      };
 
       // Prepare form data with the profile picture and other data
       const formDataObj = new FormData();
-      formDataObj.append("email", user.email); // Send email to identify user
+      formDataObj.append("email", user.email);
       formDataObj.append("profilePicture", profilePictureFile);
 
       const profRes = await fetch(
@@ -154,13 +153,12 @@ export default function Profile() {
           body: formDataObj,
         }
       );
+
       if (profRes.status === 200) {
         const data = await profRes.json();
-        console.log("Profile picture uploaded successfully:", data);
-        user.profilePicture = data.path; // Use this URL directly in the frontend
-        updatedData.profilePicture = data.path; // Use this URL directly in the frontend
-        sessionStorage.setItem("user", JSON.stringify(updatedData)); // Update session storage
-
+        user.profilePicture = data.path;
+        updatedData.profilePicture = data.path;
+        sessionStorage.setItem("user", JSON.stringify(updatedData));
       } else {
         console.error("Failed to upload profile picture.");
       }
@@ -178,10 +176,10 @@ export default function Profile() {
         throw new Error(errorText);
       }
 
-      setUser(updatedData); // Update user state with the new data
-      sessionStorage.setItem("user", JSON.stringify(updatedData)); // Update session storage
-      setIsEditing(false); // Exit edit mode
-      window.location.reload()
+      setUser(updatedData);
+      sessionStorage.setItem("user", JSON.stringify(updatedData));
+      setIsEditing(false);
+      showToast();
     } catch (err) {
       setError(err.message);
     }
@@ -201,6 +199,30 @@ export default function Profile() {
 
   if (error) {
     return <p>Error: {error}</p>;
+  }
+  const showToast = () => {
+    toast.success("Changes save successfully", {
+      position: "top-center",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      transition: Slide,
+    });
+  };
+
+  function formatBalance(value) {
+    if (value >= 1_000_000_000) {
+      return `$${value / 1_000_000_000}B`;
+    } else if (value >= 1_000_000) {
+      return `$${value / 1_000_000}M`;
+    } else if (value >= 1_000) {
+      return `$${value / 1_000}K`;
+    }
+    return `$${value}`;
   }
 
   return (
@@ -281,7 +303,7 @@ export default function Profile() {
               <div className="stat">
                 <div className="stat-title">Total Balance</div>
                 <div className="stat-value">
-                  {user.totalBalance ? `$${user.totalBalance}K` : "$0"}
+                  {user.totalBalance ? formatBalance(user.totalBalance) : "$0"}
                 </div>
               </div>
               <div className="stat">
@@ -383,7 +405,9 @@ export default function Profile() {
               <div id="bio-title">
                 <h1 className="text-2xl font-bold">Profile Bio</h1>
                 <h2 className="text-s font-light">
-                  {user.accountType || "Account Type"}
+                  {user.accountType === "Client" && "Client"}
+                  {user.accountType === "Freelance" && "Freelancer"}
+                  {user.accountType === "Both" && "Client and Freelancer"}
                 </h2>
               </div>
               {isEditing ? (

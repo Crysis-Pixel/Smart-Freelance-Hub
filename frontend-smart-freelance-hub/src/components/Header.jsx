@@ -6,28 +6,54 @@ import logo from "../assets/SmartFreelanceHubLOGO.png";
 
 function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState(null); // To store user data
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State for dropdown visibility
-  const location = useLocation(); // Get the current route
-  const navigate = useNavigate(); // For programmatic navigation
+  const [user, setUser] = useState(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [viewMessage, setViewMessage] = useState("");
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if user data exists in sessionStorage
-    const userData = sessionStorage.getItem("user"); // Retrieve user data from sessionStorage
+    const userData = sessionStorage.getItem("user");
     if (userData) {
       setIsLoggedIn(true);
-      setUser(JSON.parse(userData)); // Parse and store user data if logged in
+      setUser(JSON.parse(userData));
     } else {
-      setIsLoggedIn(false); // User is not logged in
+      setIsLoggedIn(false);
     }
+  }, []);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const email = JSON.parse(sessionStorage.getItem("user")).email;
+        const response = await fetch("http://localhost:3000/user/getUser", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch user data");
+        }
+
+        const userData = await response.json();
+        setUser(userData);
+      } catch (err) {
+        console.log(err.message);
+      }
+    };
+
+    fetchUserData();
   }, []);
 
   const handleLogout = () => {
     sessionStorage.removeItem("user");
     setIsLoggedIn(false);
     setUser(null);
-    setIsDropdownOpen(false); // Close the dropdown on logout
-    navigate("/home"); // Navigate to the home page after logout
+    setIsDropdownOpen(false);
+    navigate("/home");
 
     toast.info("Logged out successfully.", {
       position: "top-center",
@@ -43,53 +69,85 @@ function Header() {
   };
 
   const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen); // Toggle dropdown visibility
+    setIsDropdownOpen(!isDropdownOpen);
   };
 
-  const updateusertype = async(accountType) => {
-    const userData = JSON.parse(sessionStorage.getItem("user"));
-    const updateuser = await fetch("http://localhost:3000/user/updateUser", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email: userData.email, accountType: accountType }),
-    });
-
-    const result = await updateuser.json();
-
-    if (result.message){
-      userData.accountType = accountType;
-      sessionStorage.setItem("user", JSON.stringify(userData));
-      toast.success("You have successfully changed account type.");
-    }
-  }
-
-  // Determine the dropdown option based on the current route
   const getDropdownOption = () => {
     if (location.pathname === "/profile") {
       return "Change to Client";
     } else if (location.pathname === "/profileCl") {
       return "Change to Freelancer";
-
     } else {
       return "Go to Profile";
     }
   };
 
-  // Handle navigation when the dropdown option is clicked
-  const handleDropdownNavigation = () => {
+  const updateAccountType = async () => {
+    try {
+      const email = JSON.parse(sessionStorage.getItem("user")).email;
+      const response = await fetch(
+        "http://localhost:3000/user/updateUserAccountType",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, accountType: "Both" }),
+        }
+      );
 
-    if (location.pathname === "/profile") {
-      updateusertype("Client");
-      navigate("/profileCl"); // Navigate to client profile if on freelancer profile
-    } else if (location.pathname === "/profileCl") {
-      updateusertype("Freelancer");
-      navigate("/profile"); // Navigate to freelancer profile if on client profile
-    } else {
-      navigate("/profile"); // Default navigation to freelancer profile
+      if (!response.ok) {
+        throw new Error("Failed to update account type");
+      }
+
+      if (location.pathname === "/profile") {
+        navigate("/profileCl");
+        setViewMessage("Changed to Client view");
+        toast.info("Switched to Client view.", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Slide,
+        });
+      } else if (location.pathname === "/profileCl") {
+        navigate("/profile");
+        setViewMessage("Changed to Freelancer view");
+        toast.info("Switched to Freelancer view.", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Slide,
+        });
+      } else {
+        navigate("/profile");
+        setViewMessage("Navigated to Profile");
+      }
+
+      setIsDropdownOpen(false);
+    } catch (err) {
+      console.log(err.message);
+      toast.error("Failed to update account type.", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Slide,
+      });
     }
-    setIsDropdownOpen(false); // Close the dropdown after navigation
   };
 
   return (
@@ -98,11 +156,11 @@ function Header() {
         <div className="navbar container mx-auto">
           <div className="navbar-start">
             <Link to="/home">
-            <img 
-              src={logo} 
-              alt="Logo" 
-              className="h-20 w-25" // Adjust size as needed
-            />
+              <img
+                src={logo}
+                alt="Logo"
+                className="h-20 w-25" // Adjust size as needed
+              />
             </Link>
             <ul className="menu menu-horizontal px-1 hidden lg:flex">
               <li>
@@ -119,7 +177,6 @@ function Header() {
           <div className="navbar-end gap-5">
             {!isLoggedIn ? (
               <>
-                {/* Show Login and Sign-Up buttons if the user is a guest */}
                 <Link to="/signup" className="btn bg-greenPrimary border-none">
                   Sign-Up
                 </Link>
@@ -129,7 +186,6 @@ function Header() {
               </>
             ) : (
               <>
-                {/* Show Avatar if the user is logged in */}
                 <div className="relative">
                   <div
                     onClick={toggleDropdown}
@@ -146,14 +202,12 @@ function Header() {
                       />
                     </div>
                   </div>
-                  {/* Dropdown Menu */}
                   {isDropdownOpen && (
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
                       <ul className="py-1">
                         <li>
-                          {/* Clicking this option will navigate accordingly */}
                           <button
-                            onClick={handleDropdownNavigation}
+                            onClick={updateAccountType}
                             className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-200"
                           >
                             {getDropdownOption()}
@@ -171,6 +225,9 @@ function Header() {
                     </div>
                   )}
                 </div>
+                {viewMessage && (
+                  <div className="text-green-500 mt-2">{viewMessage}</div>
+                )}
               </>
             )}
           </div>
