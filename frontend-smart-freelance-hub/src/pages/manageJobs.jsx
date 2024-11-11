@@ -132,13 +132,15 @@ export default function ManageJobs() {
   };
 
   const handleFindFreelancers = async (job) => {
+    
     try {
+      console.log(JSON.stringify(job.requirements));
       const response = await fetch("http://127.0.0.1:8000", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ requirements: job.requirements }),
+        body: JSON.stringify({ requirements: job.requirements.join(", ") }),
       });
 
       if (!response.ok) {

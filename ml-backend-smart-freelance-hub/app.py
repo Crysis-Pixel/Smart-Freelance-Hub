@@ -7,8 +7,8 @@ from flask_cors import CORS, cross_origin
 from datetime import datetime, timedelta
 
 app = Flask(__name__)
-cors = CORS(app)
-app.config['CORS_HEADERS'] = 'Content-Type'
+# Enable CORS for all routes and allow all origins (can be restricted to specific origins)
+CORS(app, resources={r"/*": {"origins": "*"}}, allow_headers=["Content-Type", "Authorization"], methods=["GET", "POST", "OPTIONS"])
 nlp = spacy.load('en_core_web_lg')
 
 # Database
