@@ -227,7 +227,7 @@ export default function Profile() {
 
   return (
     <>
-      <Header />
+      <Header profilePicture={user.profilePicture}/>
       <div id="dashboard" className="container mx-auto border my-32">
         <div
           id="profile-container"
