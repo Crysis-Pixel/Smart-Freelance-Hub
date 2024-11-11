@@ -148,6 +148,7 @@ export default function ManageJobs() {
       }
 
       const freelancersData = await response.json();
+      console.log(freelancersData);
       setFreelancers(freelancersData);
       setIsGigModalOpen(true);
     } catch (err) {
