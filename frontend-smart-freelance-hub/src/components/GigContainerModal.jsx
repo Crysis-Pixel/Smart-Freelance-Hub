@@ -1,6 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import FreelancerProfileModal from "./FreelancerProfileModal"; // Import the modal component
 
 const GigContainerModal = ({ isOpen, onClose, freelancers }) => {
+  const [page, setPage] = useState(0);
+  const [selectedFreelancer, setSelectedFreelancer] = useState(null);
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
   if (!isOpen) return null;
 
   // Sort and filter users based on similarity value
@@ -11,10 +18,8 @@ const GigContainerModal = ({ isOpen, onClose, freelancers }) => {
     .filter((user) => user.similarity_value >= 0.5)
     .sort((a, b) => b.similarity_value - a.similarity_value);
 
-  // Combine users and set pagination
   const combinedUsers = [...newUsersSorted, ...oldUsersSorted];
   const usersPerPage = 3;
-  const [page, setPage] = useState(0);
 
   const startIndex = page * usersPerPage;
   const paginatedUsers = combinedUsers.slice(
@@ -24,6 +29,35 @@ const GigContainerModal = ({ isOpen, onClose, freelancers }) => {
 
   const hasMore = startIndex + usersPerPage < combinedUsers.length;
   const hasPrevious = page > 0;
+
+  const handleCardClick = (freelancer) => {
+    setSelectedFreelancer(freelancer);
+    fetchUserData(freelancer.user.email);
+  };
+
+  const fetchUserData = async (email) => {
+    setLoading(true);
+    try {
+      const response = await fetch("http://localhost:3000/user/getUser", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch user data");
+      }
+
+      const data = await response.json();
+      setUserData(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
@@ -42,7 +76,8 @@ const GigContainerModal = ({ isOpen, onClose, freelancers }) => {
               return (
                 <div
                   key={index}
-                  className="relative flex-shrink-0 w-full sm:w-80 md:w-60 border p-5 rounded-md shadow-sm flex flex-col items-center"
+                  onClick={() => handleCardClick(item)}
+                  className="relative flex-shrink-0 w-full sm:w-80 md:w-60 border p-5 rounded-md shadow-sm flex flex-col items-center cursor-pointer transform transition-transform duration-200 hover:scale-105"
                 >
                   {isNewUser && (
                     <span className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded-md text-xs font-bold">
@@ -90,7 +125,6 @@ const GigContainerModal = ({ isOpen, onClose, freelancers }) => {
 
         {/* Button containers */}
         <div className="flex justify-between mt-5">
-          {/* Left button group */}
           <div className="flex gap-3">
             {hasPrevious && (
               <button
@@ -102,7 +136,7 @@ const GigContainerModal = ({ isOpen, onClose, freelancers }) => {
             )}
             {hasMore && (
               <button
-                className="px-4 py-2 bg-greenPrimary text-white rounded-md hover:bg-green-600"
+                className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
                 onClick={() => setPage((prev) => prev + 1)}
               >
                 Show more ({combinedUsers.length - (startIndex + usersPerPage)}{" "}
@@ -111,7 +145,6 @@ const GigContainerModal = ({ isOpen, onClose, freelancers }) => {
             )}
           </div>
 
-          {/* Right button group */}
           <button
             className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
             onClick={onClose}
@@ -119,6 +152,13 @@ const GigContainerModal = ({ isOpen, onClose, freelancers }) => {
             Close
           </button>
         </div>
+
+        {/* Freelancer Profile Modal */}
+        <FreelancerProfileModal
+          isOpen={Boolean(selectedFreelancer && userData)}
+          freelancer={userData}
+          onClose={() => setSelectedFreelancer(null)}
+        />
       </div>
     </div>
   );
