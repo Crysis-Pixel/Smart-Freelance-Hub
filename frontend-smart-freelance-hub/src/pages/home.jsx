@@ -5,7 +5,9 @@ import Footer from '../components/footer.jsx'
 export default function Home(){
     return (
         <>
-          <Header/>
+          <Header profilePicture={
+          JSON.parse(sessionStorage.getItem("user")).profilePicture
+        }/>
           <Hero/>
           <Footer/>
         </>
