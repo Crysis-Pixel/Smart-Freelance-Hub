@@ -3,6 +3,7 @@ import Footer from "../components/footer.jsx";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import WithdrawModal from "../components/WithdrawModal";
+import AddOtherSkill from "../components/AddOtherSkill";
 import { toast, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ChatBox from "../components/ChatBox";
@@ -35,6 +36,9 @@ export default function Profile() {
   const [selectedSkills, setSelectedSkills] = useState([]);
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
   const [profilePictureFile, setProfilePictureFile] = useState(null); // Add this line for the profile picture file state
+  const [isOtherModalOpen, setIsOtherModalOpen] = useState(false);
+  const [otherSkill, setOtherSkill] = useState("");
+
   const navigate = useNavigate();
   const [isChatOpen, setIsChatOpen] = useState(false);
 
@@ -47,6 +51,7 @@ export default function Profile() {
     "Data Analyst",
     "Application Developer",
     "SEO Analyst",
+    "Other",
   ];
 
   useEffect(() => {
@@ -123,9 +128,21 @@ export default function Profile() {
   };
 
   const handleSkillSelect = (skill) => {
-    if (selectedSkills.length < 3 && !selectedSkills.includes(skill)) {
-      setSelectedSkills((prevSkills) => [...prevSkills, skill]);
+    if (selectedSkills.length < 5 && !selectedSkills.includes(skill)) {
+      if (skill === "Other") {
+        setIsOtherModalOpen(true);
+      } else {
+        setSelectedSkills((prevSkills) => [...prevSkills, skill]);
+      }
     }
+  };
+
+  const handleOtherSkillSubmit = () => {
+    if (otherSkill && selectedSkills.length < 5) {
+      setSelectedSkills((prevSkills) => [...prevSkills, otherSkill]);
+      setOtherSkill("");
+    }
+    setIsOtherModalOpen(false);
   };
 
   const handleSkillRemove = (skill) => {
@@ -233,7 +250,7 @@ export default function Profile() {
 
   return (
     <>
-      <Header profilePicture={user.profilePicture}/>
+      <Header profilePicture={user.profilePicture} />
       <div id="dashboard" className="container mx-auto border my-32">
         <div
           id="profile-container"
@@ -367,7 +384,10 @@ export default function Profile() {
                 {isEditing ? (
                   <div className="flex flex-col gap-2">
                     <div className="dropdown">
-                      <button className="btn btn-secondary">
+                      <button
+                        className="btn btn-secondary"
+                        disabled={selectedSkills.length >= 5}
+                      >
                         Select Skill
                       </button>
                       <ul className="dropdown-content menu p-2 shadow bg-white rounded-box w-52">
@@ -386,15 +406,15 @@ export default function Profile() {
                       </ul>
                     </div>
 
-                    <div className="flex flex-wrap gap-2 mt-2">
+                    <div className="flex flex-wrap gap-2 mt-2 w-96">
                       {selectedSkills.map((skill) => (
                         <div
                           key={skill}
-                          className="badge badge-primary cursor-pointer"
+                          className="badge badge-primary cursor-pointer px-4 py-1 rounded-full bg-blue-100 border-none"
                         >
                           {skill}
                           <span
-                            className="ml-1 text-xs"
+                            className="ml-2 text-xs cursor-pointer text-red-600"
                             onClick={() => handleSkillRemove(skill)}
                           >
                             ✕
@@ -402,9 +422,24 @@ export default function Profile() {
                         </div>
                       ))}
                     </div>
+                    {selectedSkills.length >= 5 && (
+                      <p className="text-red-500 mt-2">Maximum skills added.</p>
+                    )}
+                    <p className="text-sm text-gray-500 mt-2">
+                      {selectedSkills.length}/5 skills selected
+                    </p>
                   </div>
                 ) : (
-                  <p>{selectedSkills.join(", ") || "Skills not specified"}</p>
+                  <div className="flex flex-wrap gap-2 mt-2 w-96">
+                    {selectedSkills.map((skill) => (
+                      <div
+                        key={skill}
+                        className="badge badge-primary px-4 py-1 rounded-full bg-blue-100 border-none"
+                      >
+                        {skill}
+                      </div>
+                    ))}
+                  </div>
                 )}
               </div>
             </div>
@@ -453,6 +488,14 @@ export default function Profile() {
       </div>
       <Footer />
       {isWithdrawModalOpen && <WithdrawModal onClose={closeWithdrawModal} />}
+
+      <AddOtherSkill
+        isOpen={isOtherModalOpen}
+        onClose={() => setIsOtherModalOpen(false)}
+        onSubmit={handleOtherSkillSubmit}
+        skill={otherSkill}
+        setSkill={setOtherSkill}
+      />
     </>
   );
 }

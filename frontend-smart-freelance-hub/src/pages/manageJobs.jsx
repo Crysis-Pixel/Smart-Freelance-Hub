@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ChatBox from "../components/ChatBox";
 import GigContainerModal from "../components/GigContainerModal";
+import AddOtherSkill from "../components/AddOtherSkill";
 
 export default function ManageJobs() {
   const [jobs, setJobs] = useState([]);
@@ -19,6 +20,8 @@ export default function ManageJobs() {
   const [selectedSkills, setSelectedSkills] = useState([]);
   const [freelancers, setFreelancers] = useState([]);
   const [isGigModalOpen, setIsGigModalOpen] = useState(false);
+  const [isOtherSkillModalOpen, setIsOtherSkillModalOpen] = useState(false);
+  const [customSkill, setCustomSkill] = useState("");
   const navigate = useNavigate();
 
   const availableSkills = [
@@ -30,6 +33,7 @@ export default function ManageJobs() {
     "Data Analyst",
     "Application Developer",
     "SEO analyst",
+    "Other",
   ];
 
   useEffect(() => {
@@ -50,7 +54,6 @@ export default function ManageJobs() {
         }
 
         const jobsData = await response.json();
-        console.log(jobsData);
         const sortedJobs = jobsData.sort(
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
         );
@@ -73,17 +76,21 @@ export default function ManageJobs() {
     const { name, value } = e.target;
     setNewJob((prevJob) => ({ ...prevJob, [name]: value }));
   };
+
   const toggleChat = () => {
     setIsChatOpen((prev) => !prev);
   };
 
   const handleSkillSelect = (e) => {
     const selectedSkill = e.target.value;
-    setSelectedSkills((prevSkills) =>
-      prevSkills.includes(selectedSkill)
-        ? prevSkills
-        : [...prevSkills, selectedSkill]
-    );
+
+    if (selectedSkill === "Other") {
+      setIsOtherSkillModalOpen(true); // Open the modal when "Other" is selected
+    } else {
+      if (!selectedSkills.includes(selectedSkill)) {
+        setSelectedSkills((prevSkills) => [...prevSkills, selectedSkill]);
+      }
+    }
   };
 
   const handlePostJob = async () => {
@@ -105,7 +112,7 @@ export default function ManageJobs() {
       }
 
       const postedJob = await response.json();
-      setJobs((prevJobs) => [postedJob, ...prevJobs]); // Add the new job to the top of the list
+      setJobs((prevJobs) => [postedJob, ...prevJobs]);
       setIsModalOpen(false);
       setNewJob({ title: "", description: "", requirements: [] });
       setSelectedSkills([]);
@@ -137,7 +144,6 @@ export default function ManageJobs() {
 
   const handleFindFreelancers = async (job) => {
     try {
-      console.log(JSON.stringify(job.requirements));
       const response = await fetch("http://127.0.0.1:8000", {
         method: "POST",
         headers: {
@@ -151,8 +157,6 @@ export default function ManageJobs() {
       }
 
       const freelancersData = await response.json();
-      console.log(freelancersData.newUsers);
-      console.log(freelancersData.oldUsers);
       setFreelancers(freelancersData);
       setIsGigModalOpen(true);
     } catch (err) {
@@ -160,9 +164,29 @@ export default function ManageJobs() {
     }
   };
 
+  const handleRemoveSkill = (skillToRemove) => {
+    setSelectedSkills((prevSkills) =>
+      prevSkills.filter((skill) => skill !== skillToRemove)
+    );
+  };
+
+  const handleAddCustomSkill = () => {
+    if (customSkill.trim()) {
+      setSelectedSkills((prevSkills) => [...prevSkills, customSkill.trim()]);
+      setCustomSkill("");
+      setIsOtherSkillModalOpen(false);
+    } else {
+      alert("Please enter a valid custom skill.");
+    }
+  };
+
   return (
     <>
-      <Header profilePicture={JSON.parse(sessionStorage.getItem("user")).profilePicture}/>
+      <Header
+        profilePicture={
+          JSON.parse(sessionStorage.getItem("user")).profilePicture
+        }
+      />
       <div className="min-h-screen flex flex-col">
         <div className="container mx-auto my-10 p-5 flex-grow">
           <div className="flex justify-between items-center mb-5">
@@ -183,9 +207,18 @@ export default function ManageJobs() {
                 <div key={index} className="border p-5 rounded-md shadow-sm">
                   <h2 className="text-lg font-semibold">{job.title}</h2>
                   <p className="text-gray-600">{job.description}</p>
-                  <p className="text-gray-500">
-                    Requirements: {job.requirements.join(", ")}
-                  </p>
+                  <p>Skill Requirements:</p>
+                  <div className="flex flex-wrap gap-2 w-96">
+                    {job.requirements.map((requirement, index) => (
+                      <span
+                        key={index}
+                        className="badge badge-primary bg-blue-100 border-none"
+                      >
+                        {requirement}
+                      </span>
+                    ))}
+                  </div>
+
                   <div className="flex gap-2 mt-3">
                     <button
                       className="btn btn-outline"
@@ -255,16 +288,28 @@ export default function ManageJobs() {
                   <option value="" disabled>
                     Select a skill
                   </option>
-                  {availableSkills.map((skill, index) => (
-                    <option key={index} value={skill}>
-                      {skill}
-                    </option>
-                  ))}
+                  {availableSkills
+                    .filter((skill) => !selectedSkills.includes(skill))
+                    .map((skill, index) => (
+                      <option key={index} value={skill}>
+                        {skill}
+                      </option>
+                    ))}
                 </select>
                 <div className="flex flex-wrap mt-2">
                   {selectedSkills.map((skill, index) => (
-                    <span key={index} className="badge badge-primary m-1">
+                    <span
+                      key={index}
+                      className="badge badge-primary m-1 bg-blue-100 border-none"
+                    >
                       {skill}
+                      <button
+                        type="button"
+                        className="ml-2 text-red-500"
+                        onClick={() => handleRemoveSkill(skill)}
+                      >
+                        &#x2715;
+                      </button>
                     </span>
                   ))}
                 </div>
@@ -284,6 +329,14 @@ export default function ManageJobs() {
             </div>
           </div>
         )}
+
+        <AddOtherSkill
+          isOpen={isOtherSkillModalOpen}
+          onClose={() => setIsOtherSkillModalOpen(false)}
+          onSubmit={handleAddCustomSkill}
+          skill={customSkill}
+          setSkill={setCustomSkill}
+        />
 
         <GigContainerModal
           isOpen={isGigModalOpen}

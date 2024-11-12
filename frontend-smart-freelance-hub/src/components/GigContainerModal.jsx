@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import FreelancerProfileModal from "./FreelancerProfileModal"; // Import the modal component
+import FreelancerProfileModal from "./FreelancerProfileModal";
 
 const GigContainerModal = ({ isOpen, onClose, freelancers }) => {
   const [page, setPage] = useState(0);
@@ -8,21 +8,43 @@ const GigContainerModal = ({ isOpen, onClose, freelancers }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const clientAccount = sessionStorage.getItem("user");
+  const clientMail = JSON.parse(clientAccount);
+  const closeModal = () => {
+    setPage(0);
+    onClose();
+  };
+
   if (!isOpen) return null;
 
-  // Sort and filter users based on similarity value
   const newUsersSorted = [...freelancers.newUsers]
-    .filter((user) => user.similarity_value >= 0.5)
+    .filter(
+      (user) =>
+        user.similarity_value >= 0.5 && user.user.email !== clientMail.email
+    )
     .sort((a, b) => b.similarity_value - a.similarity_value);
+
   const oldUsersSorted = [...freelancers.oldUsers]
-    .filter((user) => user.similarity_value >= 0.5)
+    .filter(
+      (user) =>
+        user.similarity_value >= 0.5 && user.user.email !== clientMail.email
+    )
     .sort((a, b) => b.similarity_value - a.similarity_value);
 
   const combinedUsers = [...newUsersSorted, ...oldUsersSorted];
   const usersPerPage = 3;
 
+  // Determine the freelancers to display on the first page
+  const firstPageUsers =
+    page === 0
+      ? [
+          ...newUsersSorted.slice(0, 2), // Top 2 new freelancers for the first page
+          ...oldUsersSorted.slice(0, usersPerPage - 2), // Fill the rest with top old users
+        ]
+      : combinedUsers;
+
   const startIndex = page * usersPerPage;
-  const paginatedUsers = combinedUsers.slice(
+  const paginatedUsers = firstPageUsers.slice(
     startIndex,
     startIndex + usersPerPage
   );
@@ -105,7 +127,17 @@ const GigContainerModal = ({ isOpen, onClose, freelancers }) => {
                       <b>Last Active:</b> {freelancer.lastActive}
                     </p>
                     <p className="text-gray-600">
-                      <b>Skills:</b> {freelancer.skills}
+                      <b>Skills:</b>{" "}
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {freelancer.skills.split(",").map((skill, index) => (
+                          <span
+                            key={index}
+                            className="bg-blue-100 text-black text-xs py-1 px-3 rounded-full"
+                          >
+                            {skill.trim()}
+                          </span>
+                        ))}
+                      </div>
                     </p>
                   </div>
                 </div>
@@ -147,7 +179,7 @@ const GigContainerModal = ({ isOpen, onClose, freelancers }) => {
 
           <button
             className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
-            onClick={onClose}
+            onClick={closeModal}
           >
             Close
           </button>
