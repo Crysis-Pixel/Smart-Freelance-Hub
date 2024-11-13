@@ -2,6 +2,7 @@ import React from "react";
 
 const FreelancerProfileModal = ({ isOpen, freelancer, onClose }) => {
   if (!isOpen || !freelancer) return null;
+  console.log(freelancer.profilePicture);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">

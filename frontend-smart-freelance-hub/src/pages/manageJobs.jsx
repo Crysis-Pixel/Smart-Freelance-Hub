@@ -16,7 +16,9 @@ export default function ManageJobs() {
     title: "",
     description: "",
     requirements: [],
+    maxBudget: "",
   });
+
   const [selectedSkills, setSelectedSkills] = useState([]);
   const [freelancers, setFreelancers] = useState([]);
   const [isGigModalOpen, setIsGigModalOpen] = useState(false);
@@ -94,6 +96,23 @@ export default function ManageJobs() {
   };
 
   const handlePostJob = async () => {
+    if (!newJob.title.trim()) {
+      alert("Please enter a job title.");
+      return;
+    }
+    if (!newJob.description.trim()) {
+      alert("Please enter a job description.");
+      return;
+    }
+    if (selectedSkills.length === 0) {
+      alert("Please select at least one skill.");
+      return;
+    }
+    if (!newJob.maxBudget || newJob.maxBudget <= 0) {
+      alert("Please enter a valid maximum budget greater than 0.");
+      return;
+    }
+
     try {
       const response = await fetch("http://localhost:3000/jobs/postJob", {
         method: "POST",
@@ -114,7 +133,12 @@ export default function ManageJobs() {
       const postedJob = await response.json();
       setJobs((prevJobs) => [postedJob, ...prevJobs]);
       setIsModalOpen(false);
-      setNewJob({ title: "", description: "", requirements: [] });
+      setNewJob({
+        title: "",
+        description: "",
+        requirements: [],
+        maxBudget: "",
+      });
       setSelectedSkills([]);
     } catch (err) {
       setError(err.message);
@@ -208,6 +232,10 @@ export default function ManageJobs() {
                   <h2 className="text-lg font-semibold">{job.title}</h2>
                   <p className="text-gray-600">{job.description}</p>
                   <p>Skill Requirements:</p>
+                  <p className="text-gray-600">
+                    <b>Max budget: $</b>
+                    {job.maxBudget}
+                  </p>
                   <div className="flex flex-wrap gap-2 w-96">
                     {job.requirements.map((requirement, index) => (
                       <span
@@ -266,7 +294,6 @@ export default function ManageJobs() {
                   placeholder="Enter job title"
                 />
               </label>
-
               <label className="block mb-3">
                 <span className="text-gray-700">Description</span>
                 <textarea
@@ -313,6 +340,24 @@ export default function ManageJobs() {
                     </span>
                   ))}
                 </div>
+              </label>
+
+              <label className="block mb-3">
+                <span className="text-gray-700">Max Budget</span>
+                <input
+                  type="number"
+                  name="maxBudget"
+                  value={newJob.maxBudget}
+                  onChange={handleInputChange}
+                  min="0"
+                  inputMode="numeric"
+                  className="input input-bordered w-full mt-2"
+                  placeholder="Enter maximum budget"
+                  style={{
+                    "-moz-appearance": "textfield",
+                    "-webkit-appearance": "none",
+                  }}
+                />
               </label>
 
               <div className="flex justify-end mt-5">

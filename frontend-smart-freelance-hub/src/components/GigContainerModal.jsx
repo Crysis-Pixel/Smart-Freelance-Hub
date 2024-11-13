@@ -108,7 +108,8 @@ const GigContainerModal = ({ isOpen, onClose, freelancers }) => {
                   )}
                   <img
                     src={
-                      freelancer.profilePic || "https://via.placeholder.com/100"
+                      freelancer.profilePicture ||
+                      "https://via.placeholder.com/100"
                     }
                     alt="Profile"
                     className="w-24 h-24 rounded-full mb-4"
