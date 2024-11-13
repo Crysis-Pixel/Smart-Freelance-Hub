@@ -18,6 +18,7 @@ function Header({profilePicture}) {
   const [newPassword, setNewPassword] = useState("");
   const [verifyPassword, setVerifyPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     const userData = sessionStorage.getItem("user");
@@ -157,7 +158,12 @@ function Header({profilePicture}) {
     }
   };
   const handlePasswordChange = async () => {
-    if (newPassword !== verifyPassword) {
+    const passwordPattern = /^(?=.*[a-z])(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordPattern.test(newPassword)) {
+      setPasswordError("Password must be at least 8 characters, with one lowercase letter and one symbol.");
+      return;
+    }
+    else if (newPassword !== verifyPassword) {
       setPasswordError("Passwords do not match.");
       return;
     }
@@ -175,6 +181,7 @@ function Header({profilePicture}) {
       setNewPassword("");
       setVerifyPassword("");
       setPasswordError("");
+      setShowPassword(false);
     } catch (err) {
       toast.error("Password change failed. Please try again.", { autoClose: 2000, theme: "light" });
     }
@@ -244,14 +251,6 @@ function Header({profilePicture}) {
                         </li>
                         <li>
                           <button
-                            onClick={handleLogout}
-                            className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-200"
-                          >
-                            Logout
-                          </button>
-                        </li>
-                        <li>
-                          <button
                             onClick={() => {
                               setIsChangePasswordModalOpen(true);
                               setIsDropdownOpen(false); 
@@ -261,6 +260,15 @@ function Header({profilePicture}) {
                             Change Password
                           </button>
                         </li>
+                        <li>
+                          <button
+                            onClick={handleLogout}
+                            className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-200"
+                          >
+                            Logout
+                          </button>
+                        </li>
+                        
                       </ul>
                     </div>
                   )}
@@ -280,7 +288,7 @@ function Header({profilePicture}) {
             <div className="mb-4">
               <label className="block text-sm font-medium mb-2">Old Password</label>
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 className="w-full border px-3 py-2 rounded-md"
                 value={oldPassword}
                 onChange={(e) => setOldPassword(e.target.value)}
@@ -289,7 +297,7 @@ function Header({profilePicture}) {
             <div className="mb-4">
               <label className="block text-sm font-medium mb-2">New Password</label>
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 className="w-full border px-3 py-2 rounded-md"
                 value={newPassword}
                 onChange={(e) => {
@@ -301,7 +309,7 @@ function Header({profilePicture}) {
             <div className="mb-4">
               <label className="block text-sm font-medium mb-2">Verify New Password</label>
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 className="w-full border px-3 py-2 rounded-md"
                 value={verifyPassword}
                 onChange={(e) => {
@@ -309,17 +317,33 @@ function Header({profilePicture}) {
                   if (passwordError) setPasswordError("");
                 }}
               />
+              
               {passwordError && <p className="text-red-500 text-sm mt-1">{passwordError}</p>}
             </div>
+            <div className="mb-4">
+        <input
+          type="checkbox"
+          checked={showPassword}
+          onChange={() => setShowPassword(!showPassword)}
+          className="mr-2"
+        />
+        <label className="text-sm">Show Password</label>
+      </div>
             <div className="flex justify-end gap-3">
               <button
-                className="btn border-none bg-gray-200 text-gray-700"
-                onClick={() => setIsChangePasswordModalOpen(false)}
+                className="btn border-100 bg-gray-200 text-gray-700"
+                onClick={() => {setIsChangePasswordModalOpen(false);
+                  setPasswordError("");
+                  setOldPassword("");
+                  setNewPassword("");
+                  setVerifyPassword("");
+                  setIsDropdownOpen(false);
+                }}
               >
                 Cancel
               </button>
               <button
-                className="btn bg-greenPrimary text-white"
+                className="btn bg-green-600 text-white hover:bg-green-700 border-none"
                 onClick={handlePasswordChange}
               >
                 Change Password
