@@ -12,6 +12,13 @@ function Header({profilePicture}) {
   const location = useLocation();
   const navigate = useNavigate();
 
+  //Password
+  const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [verifyPassword, setVerifyPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
   useEffect(() => {
     const userData = sessionStorage.getItem("user");
     if (userData) {
@@ -149,7 +156,29 @@ function Header({profilePicture}) {
       });
     }
   };
-
+  const handlePasswordChange = async () => {
+    if (newPassword !== verifyPassword) {
+      setPasswordError("Passwords do not match.");
+      return;
+    }
+    try {
+      const email = user.email;
+      const response = await fetch("http://localhost:3000/user/changeUserPassword", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password: oldPassword, newPassword }),
+      });
+      if (!response.ok) throw new Error("Password change failed");
+      toast.success("Password changed successfully.", { autoClose: 2000, theme: "light" });
+      setIsChangePasswordModalOpen(false);
+      setOldPassword("");
+      setNewPassword("");
+      setVerifyPassword("");
+      setPasswordError("");
+    } catch (err) {
+      toast.error("Password change failed. Please try again.", { autoClose: 2000, theme: "light" });
+    }
+  };
   return (
     <>
       <div className="bg-grey">
@@ -221,6 +250,17 @@ function Header({profilePicture}) {
                             Logout
                           </button>
                         </li>
+                        <li>
+                          <button
+                            onClick={() => {
+                              setIsChangePasswordModalOpen(true);
+                              setIsDropdownOpen(false); 
+                            }}
+                            className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-200"
+                          >
+                            Change Password
+                          </button>
+                        </li>
                       </ul>
                     </div>
                   )}
@@ -233,8 +273,64 @@ function Header({profilePicture}) {
           </div>
         </div>
       </div>
+      {isChangePasswordModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-6 rounded-md shadow-lg w-80">
+            <h2 className="text-xl font-bold mb-4">Change Password</h2>
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-2">Old Password</label>
+              <input
+                type="password"
+                className="w-full border px-3 py-2 rounded-md"
+                value={oldPassword}
+                onChange={(e) => setOldPassword(e.target.value)}
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-2">New Password</label>
+              <input
+                type="password"
+                className="w-full border px-3 py-2 rounded-md"
+                value={newPassword}
+                onChange={(e) => {
+                  setNewPassword(e.target.value);
+                  if (passwordError) setPasswordError("");
+                }}
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-2">Verify New Password</label>
+              <input
+                type="password"
+                className="w-full border px-3 py-2 rounded-md"
+                value={verifyPassword}
+                onChange={(e) => {
+                  setVerifyPassword(e.target.value);
+                  if (passwordError) setPasswordError("");
+                }}
+              />
+              {passwordError && <p className="text-red-500 text-sm mt-1">{passwordError}</p>}
+            </div>
+            <div className="flex justify-end gap-3">
+              <button
+                className="btn border-none bg-gray-200 text-gray-700"
+                onClick={() => setIsChangePasswordModalOpen(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn bg-greenPrimary text-white"
+                onClick={handlePasswordChange}
+              >
+                Change Password
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
+  
 }
 
 export default Header;
