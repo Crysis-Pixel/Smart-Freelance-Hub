@@ -26,6 +26,7 @@ export default function Profile() {
     fRating: 0,
     skills: [],
     totalBalance: 0,
+    minWage: 0,
   });
 
   const [loading, setLoading] = useState(true);
@@ -248,6 +249,28 @@ export default function Profile() {
     return `$${value}`;
   }
 
+  function StarRating({ rating }) {
+    const filledStars = Math.floor(rating);
+    const hasHalfStar = rating - filledStars >= 0.5;
+    const emptyStars = 5 - filledStars - (hasHalfStar ? 1 : 0);
+
+    return (
+      <div className="flex items-center">
+        {[...Array(filledStars)].map((_, i) => (
+          <span key={`filled-${i}`} className="text-yellow-400">
+            ★
+          </span>
+        ))}
+        {hasHalfStar && <span className="text-yellow-400">☆</span>}
+        {[...Array(emptyStars)].map((_, i) => (
+          <span key={`empty-${i}`} className="text-gray-300">
+            ★
+          </span>
+        ))}
+      </div>
+    );
+  }
+
   return (
     <>
       <Header profilePicture={user.profilePicture} />
@@ -325,7 +348,7 @@ export default function Profile() {
         <hr />
 
         <div id="body-container" className="flex">
-          <div id="stats-container" className="border-r-2">
+          <div id="stats-container" className="border-r-2 grid">
             <div className="stats stats-vertical lg:stats-horizontal shadow">
               <div className="stat">
                 <div className="stat-title">Total Balance</div>
@@ -339,23 +362,48 @@ export default function Profile() {
               </div>
               <div className="stat">
                 <div className="stat-title">Rating</div>
-                <div className="stat-value">{user.fRating || "Not Rated"}</div>
+                <div className="stat-value flex items-center">
+                  {user.fRating ? (
+                    <StarRating rating={user.fRating} />
+                  ) : (
+                    "Not Rated"
+                  )}
+                </div>
               </div>
             </div>
             <div className="flex flex-col gap-10 p-10">
-              <div>
-                <h1 className="font-bold">Looking For Job</h1>
-                {isEditing ? (
-                  <input
-                    type="checkbox"
-                    name="lookingForJob"
-                    checked={formData.lookingForJob}
-                    onChange={handleInputChange}
-                    className="mr-2 "
-                  />
-                ) : (
-                  <p>{user.lookingForJob ? "Yes" : "No"}</p>
-                )}
+              <div className="flex justify-between">
+                <div>
+                  <h1 className="font-bold">Looking For Job</h1>
+                  {isEditing ? (
+                    <input
+                      type="checkbox"
+                      name="lookingForJob"
+                      checked={formData.lookingForJob}
+                      onChange={handleInputChange}
+                      className="mr-2 "
+                    />
+                  ) : (
+                    <p>{user.lookingForJob ? "Yes" : "No"}</p>
+                  )}
+                </div>
+                <div>
+                  <h1 className="font-bold">Expected Minimum Wage</h1>
+                  {isEditing ? (
+                    <input
+                      type="number"
+                      name="minWage"
+                      value={formData.minWage || ""}
+                      onChange={handleInputChange}
+                      className="input input-bordered w-full"
+                      placeholder="Enter minimum wage"
+                      min="0" // Ensures no negative numbers are allowed
+                      required // Makes the field required during editing
+                    />
+                  ) : (
+                    <p>{user.minWage ? `$${user.minWage}` : "Not specified"}</p>
+                  )}
+                </div>
               </div>
 
               <div>
@@ -381,6 +429,7 @@ export default function Profile() {
 
               <div>
                 <h1 className="font-bold">Skills</h1>
+
                 {isEditing ? (
                   <div className="flex flex-col gap-2">
                     <div className="dropdown">

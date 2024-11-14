@@ -4,7 +4,7 @@ import { toast, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import logo from "../assets/SmartFreelanceHubLOGO.png";
 
-function Header({profilePicture}) {
+function Header({ profilePicture }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -13,13 +13,15 @@ function Header({profilePicture}) {
   const navigate = useNavigate();
 
   //Password
-  const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
+  const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] =
+    useState(false);
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [verifyPassword, setVerifyPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-
+  const [jobs, setJobs] = useState([]);
+  const [error, setError] = useState(null);
   useEffect(() => {
     const userData = sessionStorage.getItem("user");
     if (userData) {
@@ -55,6 +57,34 @@ function Header({profilePicture}) {
 
     fetchUserData();
   }, []);
+
+  // useEffect(() => {
+  //   const fetchJobs = async () => {
+  //     try {
+  //       const response = await fetch("http://localhost:3000/jobs/getJobs", {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify({
+  //           clientEmail: JSON.parse(sessionStorage.getItem("user")).email,
+  //         }),
+  //       });
+
+  //       if (!response.ok) {
+  //         throw new Error("Failed to fetch jobs");
+  //       }
+
+  //       const jobsData = await response.json();
+
+  //       setJobs(jobsData);
+  //     } catch (err) {
+  //       setError(err.message);
+  //     }
+  //   };
+
+  //   fetchJobs();
+  // }, []);
 
   const handleLogout = () => {
     sessionStorage.removeItem("user");
@@ -160,22 +190,29 @@ function Header({profilePicture}) {
   const handlePasswordChange = async () => {
     const passwordPattern = /^(?=.*[a-z])(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordPattern.test(newPassword)) {
-      setPasswordError("Password must be at least 8 characters, with one lowercase letter and one symbol.");
+      setPasswordError(
+        "Password must be at least 8 characters, with one lowercase letter and one symbol."
+      );
       return;
-    }
-    else if (newPassword !== verifyPassword) {
+    } else if (newPassword !== verifyPassword) {
       setPasswordError("Passwords do not match.");
       return;
     }
     try {
       const email = user.email;
-      const response = await fetch("http://localhost:3000/user/changeUserPassword", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password: oldPassword, newPassword }),
-      });
+      const response = await fetch(
+        "http://localhost:3000/user/changeUserPassword",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password: oldPassword, newPassword }),
+        }
+      );
       if (!response.ok) throw new Error("Password change failed");
-      toast.success("Password changed successfully.", { autoClose: 2000, theme: "light" });
+      toast.success("Password changed successfully.", {
+        autoClose: 2000,
+        theme: "light",
+      });
       setIsChangePasswordModalOpen(false);
       setOldPassword("");
       setNewPassword("");
@@ -183,7 +220,10 @@ function Header({profilePicture}) {
       setPasswordError("");
       setShowPassword(false);
     } catch (err) {
-      toast.error("Password change failed. Please try again.", { autoClose: 2000, theme: "light" });
+      toast.error("Password change failed. Please try again.", {
+        autoClose: 2000,
+        theme: "light",
+      });
     }
   };
   return (
@@ -253,7 +293,7 @@ function Header({profilePicture}) {
                           <button
                             onClick={() => {
                               setIsChangePasswordModalOpen(true);
-                              setIsDropdownOpen(false); 
+                              setIsDropdownOpen(false);
                             }}
                             className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-200"
                           >
@@ -268,7 +308,6 @@ function Header({profilePicture}) {
                             Logout
                           </button>
                         </li>
-                        
                       </ul>
                     </div>
                   )}
@@ -286,7 +325,9 @@ function Header({profilePicture}) {
           <div className="bg-white p-6 rounded-md shadow-lg w-80">
             <h2 className="text-xl font-bold mb-4">Change Password</h2>
             <div className="mb-4">
-              <label className="block text-sm font-medium mb-2">Old Password</label>
+              <label className="block text-sm font-medium mb-2">
+                Old Password
+              </label>
               <input
                 type={showPassword ? "text" : "password"}
                 className="w-full border px-3 py-2 rounded-md"
@@ -295,7 +336,9 @@ function Header({profilePicture}) {
               />
             </div>
             <div className="mb-4">
-              <label className="block text-sm font-medium mb-2">New Password</label>
+              <label className="block text-sm font-medium mb-2">
+                New Password
+              </label>
               <input
                 type={showPassword ? "text" : "password"}
                 className="w-full border px-3 py-2 rounded-md"
@@ -307,7 +350,9 @@ function Header({profilePicture}) {
               />
             </div>
             <div className="mb-4">
-              <label className="block text-sm font-medium mb-2">Verify New Password</label>
+              <label className="block text-sm font-medium mb-2">
+                Verify New Password
+              </label>
               <input
                 type={showPassword ? "text" : "password"}
                 className="w-full border px-3 py-2 rounded-md"
@@ -317,22 +362,25 @@ function Header({profilePicture}) {
                   if (passwordError) setPasswordError("");
                 }}
               />
-              
-              {passwordError && <p className="text-red-500 text-sm mt-1">{passwordError}</p>}
+
+              {passwordError && (
+                <p className="text-red-500 text-sm mt-1">{passwordError}</p>
+              )}
             </div>
             <div className="mb-4">
-        <input
-          type="checkbox"
-          checked={showPassword}
-          onChange={() => setShowPassword(!showPassword)}
-          className="mr-2"
-        />
-        <label className="text-sm">Show Password</label>
-      </div>
+              <input
+                type="checkbox"
+                checked={showPassword}
+                onChange={() => setShowPassword(!showPassword)}
+                className="mr-2"
+              />
+              <label className="text-sm">Show Password</label>
+            </div>
             <div className="flex justify-end gap-3">
               <button
                 className="btn border-100 bg-gray-200 text-gray-700"
-                onClick={() => {setIsChangePasswordModalOpen(false);
+                onClick={() => {
+                  setIsChangePasswordModalOpen(false);
                   setPasswordError("");
                   setOldPassword("");
                   setNewPassword("");
@@ -354,7 +402,6 @@ function Header({profilePicture}) {
       )}
     </>
   );
-  
 }
 
 export default Header;

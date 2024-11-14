@@ -87,7 +87,7 @@ export default function ManageJobs() {
     const selectedSkill = e.target.value;
 
     if (selectedSkill === "Other") {
-      setIsOtherSkillModalOpen(true); // Open the modal when "Other" is selected
+      setIsOtherSkillModalOpen(true);
     } else {
       if (!selectedSkills.includes(selectedSkill)) {
         setSelectedSkills((prevSkills) => [...prevSkills, selectedSkill]);
@@ -182,7 +182,7 @@ export default function ManageJobs() {
 
       const freelancersData = await response.json();
       setFreelancers(freelancersData);
-      setIsGigModalOpen(true);
+      setIsGigModalOpen(job._id);
     } catch (err) {
       setError(err.message);
     }
@@ -384,9 +384,10 @@ export default function ManageJobs() {
         />
 
         <GigContainerModal
-          isOpen={isGigModalOpen}
+          isOpen={Boolean(isGigModalOpen)}
           onClose={() => setIsGigModalOpen(false)}
           freelancers={freelancers}
+          jobId={isGigModalOpen}
         />
       </div>
     </>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import FreelancerProfileModal from "./FreelancerProfileModal";
 
-const GigContainerModal = ({ isOpen, onClose, freelancers }) => {
+const GigContainerModal = ({ isOpen, onClose, freelancers, jobId }) => {
   const [page, setPage] = useState(0);
   const [selectedFreelancer, setSelectedFreelancer] = useState(null);
   const [userData, setUserData] = useState(null);
@@ -186,10 +186,11 @@ const GigContainerModal = ({ isOpen, onClose, freelancers }) => {
           </button>
         </div>
 
-        {/* Freelancer Profile Modal */}
         <FreelancerProfileModal
           isOpen={Boolean(selectedFreelancer && userData)}
           freelancer={userData}
+          jobId={jobId}
+          clientMail={clientMail.email}
           onClose={() => setSelectedFreelancer(null)}
         />
       </div>

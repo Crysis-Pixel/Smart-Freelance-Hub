@@ -153,6 +153,28 @@ export default function ClientProfile() {
     }
   };
 
+  function StarRating({ rating }) {
+    const filledStars = Math.floor(rating);
+    const hasHalfStar = rating - filledStars >= 0.5;
+    const emptyStars = 5 - filledStars - (hasHalfStar ? 1 : 0);
+
+    return (
+      <div className="flex items-center">
+        {[...Array(filledStars)].map((_, i) => (
+          <span key={`filled-${i}`} className="text-yellow-400">
+            ★
+          </span>
+        ))}
+        {hasHalfStar && <span className="text-yellow-400">☆</span>}
+        {[...Array(emptyStars)].map((_, i) => (
+          <span key={`empty-${i}`} className="text-gray-300">
+            ★
+          </span>
+        ))}
+      </div>
+    );
+  }
+
   const openTopUpModal = () => {
     setIsTopUpModalOpen(true);
   };
@@ -293,8 +315,13 @@ export default function ClientProfile() {
 
               <div className="stat">
                 <div className="stat-title">Client Rating</div>
-                <div className="stat-value">{user.cRating || "Not Rated"}</div>
-                <div className="stat-desc">★★★★★</div>
+                <div className="stat-value flex items-center">
+                  {user.fRating ? (
+                    <StarRating rating={user.cRating} />
+                  ) : (
+                    "Not Rated"
+                  )}
+                </div>
               </div>
             </div>
             <div className="flex flex-col gap-10 p-10">
