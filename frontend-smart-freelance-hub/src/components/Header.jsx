@@ -20,7 +20,7 @@ function Header({ profilePicture }) {
   const [verifyPassword, setVerifyPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [jobs, setJobs] = useState([]);
+  const [availableJob, setAvailableJobs] = useState([]);
   const [error, setError] = useState(null);
   useEffect(() => {
     const userData = sessionStorage.getItem("user");
@@ -61,15 +61,18 @@ function Header({ profilePicture }) {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await fetch("http://localhost:3000/jobs/getJobs", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            clientEmail: JSON.parse(sessionStorage.getItem("user")).email,
-          }),
-        });
+        const response = await fetch(
+          "http://localhost:3000/jobs/getFreelancerJob",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              freelancerEmail: JSON.parse(sessionStorage.getItem("user")).email,
+            }),
+          }
+        );
 
         if (!response.ok) {
           throw new Error("Failed to fetch jobs");
@@ -77,15 +80,16 @@ function Header({ profilePicture }) {
 
         const jobsData = await response.json();
 
-        setJobs(jobsData);
+        setAvailableJobs(jobsData);
       } catch (err) {
         setError(err.message);
       }
     };
-
     fetchJobs();
   }, []);
-  console.log(jobs);
+
+  console.log(availableJob);
+
   const handleLogout = () => {
     sessionStorage.removeItem("user");
     setIsLoggedIn(false);
@@ -250,6 +254,14 @@ function Header({ profilePicture }) {
               </li>
             </ul>
           </div>
+          <div className="border">
+            {availableJob.length === 1 &&
+              availableJob[0].status === "pending" && (
+                <div>
+                  You have a gig offer, visit freelancer profile to check
+                </div>
+              )}
+          </div>
           <div className="navbar-end gap-5">
             {!isLoggedIn ? (
               <>
@@ -267,7 +279,7 @@ function Header({ profilePicture }) {
                     onClick={toggleDropdown}
                     className="avatar cursor-pointer"
                   >
-                    <div className="ring-primary ring-offset-red-200 w-12 rounded-full ring ring-offset-2">
+                    <div className="ring-primary ring-offset-red-200 w-12 rounded-full ring ring-offset-2 relative">
                       <img
                         src={
                           profilePicture
@@ -277,6 +289,10 @@ function Header({ profilePicture }) {
                         alt="User Avatar"
                       />
                     </div>
+                    {availableJob.length === 1 &&
+                      availableJob[0].status === "pending" && (
+                        <div className="bg-red-700 rounded-full absolute w-6 -right-3 -top-2"></div>
+                      )}
                   </div>
                   {isDropdownOpen && (
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">

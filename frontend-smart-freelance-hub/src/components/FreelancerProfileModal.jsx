@@ -150,7 +150,7 @@ const FreelancerProfileModal = ({
               className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-            <div className="flex justify-center">
+            <div className="flex justify-end">
               {" "}
               <button
                 onClick={handleSendOffer}

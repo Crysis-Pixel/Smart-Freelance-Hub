@@ -7,6 +7,7 @@ import AddOtherSkill from "../components/AddOtherSkill";
 import { toast, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ChatBox from "../components/ChatBox";
+import JobOfferModal from "../components/jobOfferModal.jsx";
 
 export default function Profile() {
   const [user, setUser] = useState({
@@ -39,9 +40,11 @@ export default function Profile() {
   const [profilePictureFile, setProfilePictureFile] = useState(null); // Add this line for the profile picture file state
   const [isOtherModalOpen, setIsOtherModalOpen] = useState(false);
   const [otherSkill, setOtherSkill] = useState("");
-
+  const [availableJob, setAvailableJobs] = useState([]);
   const navigate = useNavigate();
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isJobOfferModal, setIsJobOfferModal] = useState(false);
+  const [jobOffer, setJobOffer] = useState(null);
 
   const availableSkills = [
     "Web-Development",
@@ -61,7 +64,7 @@ export default function Profile() {
       navigate("/login");
       return;
     }
-  }, [navigate]);
+  }, []);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -95,6 +98,36 @@ export default function Profile() {
     };
 
     fetchUserData();
+  }, []);
+
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:3000/jobs/getFreelancerJob",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              freelancerEmail: JSON.parse(sessionStorage.getItem("user")).email,
+            }),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch jobs");
+        }
+
+        const jobsData = await response.json();
+
+        setAvailableJobs(jobsData);
+      } catch (err) {
+        setError(err.message);
+      }
+    };
+    fetchJobs();
   }, []);
 
   // Fetch countries from REST Countries API
@@ -270,7 +303,14 @@ export default function Profile() {
       </div>
     );
   }
+  const openJobOfferModal = (job) => {
+    setJobOffer(job);
+    setIsJobOfferModal(true);
+  };
 
+  const closeJobOfferModal = () => {
+    setIsJobOfferModal(false);
+  };
   return (
     <>
       <Header profilePicture={user.profilePicture} />
@@ -330,9 +370,22 @@ export default function Profile() {
               <p>{user.country || "Country not provided"}</p>
             )}
           </div>
-          <button className="btn btn-success" onClick={toggleChat}>
+          {/* <button className="btn btn-success" onClick={toggleChat}>
             Chat
-          </button>
+          </button> */}
+          {availableJob.length === 1 &&
+            availableJob[0].status === "pending" && (
+              <button
+                className="btn"
+                onClick={() => openJobOfferModal(availableJob[0])}
+              >
+                View Gig Offer
+              </button>
+            )}
+          {availableJob.length === 1 &&
+            availableJob[0].status === "assigned" && (
+              <button className="btn">Contact Freelancer</button>
+            )}
           <button
             className="btn btn-secondary ml-4"
             onClick={openWithdrawModal}
@@ -342,7 +395,6 @@ export default function Profile() {
           <button className="btn ml-auto" onClick={handleEditToggle}>
             {isEditing ? "CANCEL" : "EDIT"}
           </button>
-          <ChatBox isOpen={isChatOpen} onClose={toggleChat} />
         </div>
 
         <hr />
@@ -397,8 +449,8 @@ export default function Profile() {
                       onChange={handleInputChange}
                       className="input input-bordered w-full"
                       placeholder="Enter minimum wage"
-                      min="0" // Ensures no negative numbers are allowed
-                      required // Makes the field required during editing
+                      min="0"
+                      required
                     />
                   ) : (
                     <p>{user.minWage ? `$${user.minWage}` : "Not specified"}</p>
@@ -545,6 +597,12 @@ export default function Profile() {
         skill={otherSkill}
         setSkill={setOtherSkill}
       />
+      <JobOfferModal
+        isOpen={isJobOfferModal}
+        onClose={closeJobOfferModal}
+        jobOffer={jobOffer}
+      />
+      <ChatBox isOpen={isChatOpen} onClose={toggleChat} />
     </>
   );
 }
