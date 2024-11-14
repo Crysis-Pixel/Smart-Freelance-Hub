@@ -88,8 +88,6 @@ function Header({ profilePicture }) {
     fetchJobs();
   }, []);
 
-  console.log(availableJob);
-
   const handleLogout = () => {
     sessionStorage.removeItem("user");
     setIsLoggedIn(false);

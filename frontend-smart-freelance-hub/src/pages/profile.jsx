@@ -45,6 +45,7 @@ export default function Profile() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isJobOfferModal, setIsJobOfferModal] = useState(false);
   const [jobOffer, setJobOffer] = useState(null);
+  const [clientEmail, setClientEmail] = useState(null);
 
   const availableSkills = [
     "Web-Development",
@@ -187,6 +188,29 @@ export default function Profile() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (
+      !formData.firstName ||
+      !formData.lastName ||
+      !formData.fBio ||
+      !formData.country ||
+      selectedSkills.length === 0 ||
+      !formData.minWage
+    ) {
+      toast.error("Please fill out all fields before submitting!", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Slide,
+      });
+      return;
+    }
+
     try {
       const updatedData = {
         ...user,
@@ -194,7 +218,6 @@ export default function Profile() {
         skills: selectedSkills.join(", "),
       };
 
-      // Prepare form data with the profile picture and other data
       const formDataObj = new FormData();
       formDataObj.append("email", user.email);
       formDataObj.append("profilePicture", profilePictureFile);
@@ -238,7 +261,9 @@ export default function Profile() {
     }
   };
 
-  const toggleChat = () => {
+  const toggleChat = (email) => {
+    setClientEmail(email);
+    console.log(clientEmail);
     setIsChatOpen((prev) => !prev);
   };
 
@@ -384,7 +409,12 @@ export default function Profile() {
             )}
           {availableJob.length === 1 &&
             availableJob[0].status === "assigned" && (
-              <button className="btn">Contact Freelancer</button>
+              <button
+                className="btn"
+                onClick={() => toggleChat(availableJob[0].clientEmail)}
+              >
+                Contact Freelancer
+              </button>
             )}
           <button
             className="btn btn-secondary ml-4"
@@ -523,6 +553,11 @@ export default function Profile() {
                         </div>
                       ))}
                     </div>
+                    {selectedSkills.length === 0 && (
+                      <p className="text-red-500 mt-2">
+                        At least one skill must be selected.
+                      </p>
+                    )}
                     {selectedSkills.length >= 5 && (
                       <p className="text-red-500 mt-2">Maximum skills added.</p>
                     )}
@@ -602,7 +637,7 @@ export default function Profile() {
         onClose={closeJobOfferModal}
         jobOffer={jobOffer}
       />
-      <ChatBox isOpen={isChatOpen} onClose={toggleChat} />
+      <ChatBox isOpen={isChatOpen} onClose={toggleChat} email={clientEmail} />
     </>
   );
 }

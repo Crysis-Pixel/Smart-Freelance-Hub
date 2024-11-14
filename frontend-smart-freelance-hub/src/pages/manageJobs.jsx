@@ -18,9 +18,9 @@ export default function ManageJobs() {
     requirements: [],
     maxBudget: "",
   });
-
+  const [freelancerEmail, setFreelancerEmail] = useState("");
   const [selectedSkills, setSelectedSkills] = useState([]);
-  const [freelancers, setFreelancers] = useState([]);
+  const [freelancers, setFreelancers] = useState(null);
   const [isGigModalOpen, setIsGigModalOpen] = useState(false);
   const [isOtherSkillModalOpen, setIsOtherSkillModalOpen] = useState(false);
   const [customSkill, setCustomSkill] = useState("");
@@ -79,7 +79,9 @@ export default function ManageJobs() {
     setNewJob((prevJob) => ({ ...prevJob, [name]: value }));
   };
 
-  const toggleChat = () => {
+  const toggleChat = (email) => {
+    setFreelancerEmail(email);
+
     setIsChatOpen((prev) => !prev);
   };
 
@@ -280,9 +282,15 @@ export default function ManageJobs() {
                     >
                       Delete
                     </button>
-                    <button className="btn btn-success" onClick={toggleChat}>
-                      Contact Freelancer
-                    </button>
+                    {job.status === "assigned" && (
+                      <button
+                        className="btn btn-success"
+                        onClick={() => toggleChat(job.freelancerEmail)}
+                      >
+                        Contact Freelancer
+                      </button>
+                    )}
+
                     {(job.status === "unassigned" ||
                       job.status === "declined") && (
                       <button
@@ -292,7 +300,6 @@ export default function ManageJobs() {
                         Find Freelancer
                       </button>
                     )}
-                    <ChatBox isOpen={isChatOpen} onClose={toggleChat} />
                   </div>
                 </div>
               ))
@@ -411,6 +418,11 @@ export default function ManageJobs() {
           onClose={() => setIsGigModalOpen(false)}
           freelancers={freelancers}
           jobId={isGigModalOpen}
+        />
+        <ChatBox
+          isOpen={isChatOpen}
+          onClose={toggleChat}
+          email={freelancerEmail}
         />
       </div>
     </>

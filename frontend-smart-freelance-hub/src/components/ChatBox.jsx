@@ -4,11 +4,10 @@ import { useNavigate } from "react-router-dom";
 
 const socket = io("http://localhost:3000");
 
-const ChatBox = ({ isOpen, onClose }) => {
+const ChatBox = ({ isOpen, onClose, email }) => {
   const [message, setMessage] = useState("");
   const [chatMessages, setChatMessages] = useState([]);
-  const [recipientId, setRecipientId] = useState("");
-  const [userList, setUserList] = useState([]);
+  const [user, setUser] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
   const [typingUser, setTypingUser] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -17,20 +16,21 @@ const ChatBox = ({ isOpen, onClose }) => {
   const recipientIdRef = useRef("");
   const messagesEndRef = useRef(null);
   const navigate = useNavigate();
+  const recipientId = email;
 
   useEffect(() => {
     socket.emit("join", senderId);
 
-    const fetchUserList = async () => {
+    const fetchUser = async () => {
       try {
         const response = await fetch("http://localhost:3000/user/getUsers");
         const data = await response.json();
-        setUserList(data.filter((user) => user.email !== senderId));
+        setUser(data.filter((user) => user.email === recipientId));
       } catch (error) {
         console.error("Failed to fetch user list:", error);
       }
     };
-    fetchUserList();
+    fetchUser();
   }, [senderId]);
 
   useEffect(() => {
@@ -168,8 +168,7 @@ const ChatBox = ({ isOpen, onClose }) => {
       if (!(result.message === "Payment not found")) {
         sessionStorage.setItem("paymentreciever", recipientId);
         navigate("/TransactionPage");
-      }
-      else{
+      } else {
         alert("You do not have payment set up. Please set payment details.");
         navigate("/PaymentPage");
       }
@@ -230,30 +229,20 @@ const ChatBox = ({ isOpen, onClose }) => {
         style={{ marginRight: "100px" }}
       >
         <header className="flex justify-between items-center p-3 bg-greenPrimary rounded-t-lg">
-          <h2 className="text-white text-lg">{recipientId}</h2>
+          <h2 className="text-white text-lg">
+            {user[0]?.firstName || "first name"}{" "}
+            {user[0]?.lastName || "last name"}
+          </h2>
           <button onClick={onClose} className="text-white">
             X
           </button>
         </header>
         <div className="flex flex-col p-2">
           <label htmlFor="recipient" className="text-white">
-            Select Recipient:
+            Recipient: {recipientId}
           </label>
-          <select
-            id="recipient"
-            value={recipientId}
-            onChange={(e) => setRecipientId(e.target.value)}
-            className="bg-gray-900 text-white border border-gray-600 rounded-md p-1 mb-2"
-          >
-            <option value="">Select a user</option>
-            {userList.map((user) => (
-              <option key={user.email} value={user.email}>
-                {user.firstName} {user.lastName} ({user.email})
-              </option>
-            ))}
-          </select>
         </div>
-        <div className="flex flex-col p-4 h-64 overflow-y-auto bg-gray-900 rounded-b-lg">
+        <div className="flex flex-col p-4 h-80 overflow-y-auto bg-gray-900 rounded-b-lg">
           {chatMessages.map((msg, index) => (
             <div
               key={index}
@@ -306,15 +295,14 @@ const ChatBox = ({ isOpen, onClose }) => {
               >
                 Upload File
               </button>
-              {loggedInUser.accountType !== 'Freelancer' ? (
+              {loggedInUser.accountType !== "Freelancer" ? (
                 <button
-                    onClick={handleGivePayment}
-                    className="block px-4 py-2 text-white hover:bg-greenPrimary w-full text-left"
-                  >
-                    Give Payment
-                  </button>
+                  onClick={handleGivePayment}
+                  className="block px-4 py-2 text-white hover:bg-greenPrimary w-full text-left"
+                >
+                  Give Payment
+                </button>
               ) : null}
-              
             </div>
           )}
 

@@ -34,7 +34,6 @@ const GigContainerModal = ({ isOpen, onClose, freelancers, jobId }) => {
   const combinedUsers = [...newUsersSorted, ...oldUsersSorted];
   const usersPerPage = 3;
 
-  // Determine the freelancers to display on the first page
   const firstPageUsers =
     page === 0
       ? [
@@ -126,6 +125,9 @@ const GigContainerModal = ({ isOpen, onClose, freelancers, jobId }) => {
                     </p>
                     <p className="text-gray-600">
                       <b>Last Active:</b> {freelancer.lastActive}
+                    </p>
+                    <p className="text-gray-600">
+                      <b>Rate:</b> ${freelancer.minWage}/hr
                     </p>
                     <p className="text-gray-600">
                       <b>Skills:</b>{" "}
