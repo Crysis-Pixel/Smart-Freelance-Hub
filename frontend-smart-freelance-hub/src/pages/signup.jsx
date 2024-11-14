@@ -23,6 +23,8 @@ export default function Signup() {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [formError, setFormError] = useState("");
   const [isChecked, setIsChecked] = useState(false);
+  const [closeVerifyModal, setCloseVerifyModal] = useState(false);
+  const [openVerifyModal, setOpenVerifyModal] = useState(false);
   const navigate = useNavigate();
 
   // needed for modal
@@ -139,7 +141,6 @@ export default function Signup() {
     // If registration is successful
     if (response.status === 200) {
       //Added by Mostakim
-      console.log("Toast should trigger now");
       toast.success("Account Created Successfully!", {
         position: "top-center",
         autoClose: 2000,
@@ -162,13 +163,12 @@ export default function Signup() {
 
       sessionStorage.setItem("user", JSON.stringify(userdata));
       // Redirect based on account type
-      <VerifyAccountPrompt />;
-      console.log("Account Registered Successfully");
-      <OTPModal email={formData.email} />;
       if (formData.accountType === "Client") {
         navigate("/profileCl"); // Redirect to Client profile
+        setOpenVerifyModal(true);
       } else if (formData.accountType === "Freelancer") {
         navigate("/profile"); // Redirect to Freelancer profile
+        setOpenVerifyModal(true);
       }
     } else {
       alert("Registration failed. Please try again.");
@@ -247,7 +247,7 @@ export default function Signup() {
                 value={formData.email}
                 onChange={handleInputChange}
                 required
-                pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$" // Regex pattern for email validation
+                pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
                 title="Please enter a valid email address (e.g., example@example.com)."
               />
             </label>
@@ -275,7 +275,7 @@ export default function Signup() {
                 onChange={handleInputChange}
                 required
                 minLength="6"
-                // pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$" // Regex pattern for password complexity
+                // pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$" // Remove later
                 title="Password must be at least 8 characters long, contain at least one lowercase letter, one uppercase letter, one number, and one special character (!@#$%^&*)."
               />
 
@@ -394,7 +394,6 @@ export default function Signup() {
               }`}
               disabled={!validateForm()}
               // onClick={openModal}
-              // onClick={console.log("sign-up button clicked- data:", formData)}
             >
               Sign Up
             </button>
@@ -406,6 +405,10 @@ export default function Signup() {
           </form>
         </div>
       </div>
+      <VerifyAccountPrompt
+        isOpen={openVerifyModal}
+        onClose={closeVerifyModal}
+      />
     </>
   );
 }

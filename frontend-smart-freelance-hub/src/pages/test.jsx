@@ -1,27 +1,34 @@
 import { useState } from "react";
-import GigContainerModal from "../components/GigContainerModal"; // Path to your GigContainerModal
+import OTPModal from "../components/OTPmodal";
+import VerifyAccountPrompt from "../components/VerifyAccountPrompt";
 
 function Test() {
-  const [isModalOpen, setModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Open the modal
-  const openModal = () => setModalOpen(true);
-
-  // Close the modal
-  const closeModal = () => setModalOpen(false);
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
 
   return (
     <div className="p-6 flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      {/* Button to open the Gig Container modal */}
+      <button className="btn btn-primary" onClick={openModal}>
+        Open OTP Modal
+      </button>
       <button
         onClick={openModal}
-        className="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
+        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
       >
-        Open Gig Container Modal
+        Open Verify Account Modal
       </button>
 
-      {/* Gig Container Modal */}
-      <GigContainerModal isOpen={isModalOpen} onClose={closeModal} />
+      {isModalOpen && (
+        <OTPModal
+          email="abdullahalraiyan4@gmail.com"
+          isModalOpen={isModalOpen}
+          closeModal={closeModal}
+        />
+      )}
+
+      <VerifyAccountPrompt isOpen={isModalOpen} onClose={closeModal} />
     </div>
   );
 }

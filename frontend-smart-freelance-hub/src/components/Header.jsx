@@ -58,34 +58,34 @@ function Header({ profilePicture }) {
     fetchUserData();
   }, []);
 
-  // useEffect(() => {
-  //   const fetchJobs = async () => {
-  //     try {
-  //       const response = await fetch("http://localhost:3000/jobs/getJobs", {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify({
-  //           clientEmail: JSON.parse(sessionStorage.getItem("user")).email,
-  //         }),
-  //       });
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/jobs/getJobs", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            clientEmail: JSON.parse(sessionStorage.getItem("user")).email,
+          }),
+        });
 
-  //       if (!response.ok) {
-  //         throw new Error("Failed to fetch jobs");
-  //       }
+        if (!response.ok) {
+          throw new Error("Failed to fetch jobs");
+        }
 
-  //       const jobsData = await response.json();
+        const jobsData = await response.json();
 
-  //       setJobs(jobsData);
-  //     } catch (err) {
-  //       setError(err.message);
-  //     }
-  //   };
+        setJobs(jobsData);
+      } catch (err) {
+        setError(err.message);
+      }
+    };
 
-  //   fetchJobs();
-  // }, []);
-
+    fetchJobs();
+  }, []);
+  console.log(jobs);
   const handleLogout = () => {
     sessionStorage.removeItem("user");
     setIsLoggedIn(false);
@@ -267,7 +267,7 @@ function Header({ profilePicture }) {
                     onClick={toggleDropdown}
                     className="avatar cursor-pointer"
                   >
-                    <div className="ring-primary ring-offset-base-100 w-12 rounded-full">
+                    <div className="ring-primary ring-offset-red-200 w-12 rounded-full ring ring-offset-2">
                       <img
                         src={
                           profilePicture
