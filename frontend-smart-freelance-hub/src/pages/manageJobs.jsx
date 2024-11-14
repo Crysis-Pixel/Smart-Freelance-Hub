@@ -146,9 +146,10 @@ export default function ManageJobs() {
   };
 
   const handleDelete = async (jobId) => {
+    console.log(jobId);
     try {
       const response = await fetch("http://localhost:3000/jobs/cancelJob", {
-        method: "DELETE",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
@@ -159,7 +160,7 @@ export default function ManageJobs() {
         throw new Error(`Failed to delete job: ${response.statusText}`);
       }
 
-      setJobs(jobs.filter((job) => job._id !== jobId));
+      setJobs((prevJobs) => prevJobs.filter((job) => job._id !== jobId));
     } catch (err) {
       console.error("Error deleting job:", err);
       setError(err.message);
@@ -228,14 +229,33 @@ export default function ManageJobs() {
               </p>
             ) : (
               jobs.map((job, index) => (
-                <div key={index} className="border p-5 rounded-md shadow-sm">
+                <div
+                  key={index}
+                  className="border p-5 rounded-md shadow-sm relative"
+                >
+                  <div
+                    className={`absolute right-10 badge border-none ${
+                      job.status === "unassigned"
+                        ? "bg-orange-400"
+                        : job.status === "pending"
+                        ? "bg-yellow-400"
+                        : job.status === "assigned"
+                        ? "bg-green-200"
+                        : job.status === "declined"
+                        ? "bg-red-400"
+                        : ""
+                    }`}
+                  >
+                    {job.status}
+                  </div>
                   <h2 className="text-lg font-semibold">{job.title}</h2>
                   <p className="text-gray-600">{job.description}</p>
-                  <p>Skill Requirements:</p>
                   <p className="text-gray-600">
                     <b>Max budget: $</b>
                     {job.maxBudget}
                   </p>
+                  <p>Skill Requirements:</p>
+
                   <div className="flex flex-wrap gap-2 w-96">
                     {job.requirements.map((requirement, index) => (
                       <span
@@ -263,12 +283,15 @@ export default function ManageJobs() {
                     <button className="btn btn-success" onClick={toggleChat}>
                       Contact Freelancer
                     </button>
-                    <button
-                      className="btn btn-secondary"
-                      onClick={() => handleFindFreelancers(job)}
-                    >
-                      Find Freelancer
-                    </button>
+                    {(job.status === "unassigned" ||
+                      job.status === "declined") && (
+                      <button
+                        className="btn btn-secondary"
+                        onClick={() => handleFindFreelancers(job)}
+                      >
+                        Find Freelancer
+                      </button>
+                    )}
                     <ChatBox isOpen={isChatOpen} onClose={toggleChat} />
                   </div>
                 </div>

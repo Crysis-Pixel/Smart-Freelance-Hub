@@ -1,23 +1,19 @@
-import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const VerifyAccountPrompt = () => {
-  const [isOpen, setIsOpen] = useState(true); // State to control modal visibility
+const VerifyAccountPrompt = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
 
   const handleVerifyNow = () => {
-    // Navigate to the verification page
     navigate("/verify-account");
-    setIsOpen(false); // Close the modal
+    onClose();
   };
 
   const handleSkipForLater = () => {
-    // Navigate to a different page
     navigate("/home");
-    setIsOpen(false); // Close the modal
+    onClose();
   };
 
-  if (!isOpen) return null; // Don't render the modal if it's closed
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -28,16 +24,16 @@ const VerifyAccountPrompt = () => {
         </p>
         <div className="flex justify-center gap-4">
           <button
-            onClick={handleVerifyNow}
-            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"
-          >
-            Verify Now
-          </button>
-          <button
             onClick={handleSkipForLater}
             className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
           >
             Skip for Later
+          </button>
+          <button
+            onClick={handleVerifyNow}
+            className="bg-greenPrimary text-white px-4 py-2 rounded hover:bg-green-600 transition"
+          >
+            Verify Now
           </button>
         </div>
       </div>

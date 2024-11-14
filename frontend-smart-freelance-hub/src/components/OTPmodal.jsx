@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useContext } from "react";
-import { ModalContext } from "../contexts/Modalcontext";
+// OTPModal.js
+import React, { useState, useEffect } from "react";
 
-const OTPModal = ({ email }) => {
-  const { isModalOpen, closeModal } = useContext(ModalContext);
+const OTPModal = ({ email, isModalOpen, closeModal }) => {
   const [otp, setOtp] = useState(new Array(6).fill(""));
   const [isOtpValid, setIsOtpValid] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -14,7 +13,6 @@ const OTPModal = ({ email }) => {
     newOtp[index] = element.value;
     setOtp(newOtp);
 
-    // Move to next input if a number is entered
     if (element.nextSibling && element.value !== "") {
       element.nextSibling.focus();
     }
@@ -41,7 +39,7 @@ const OTPModal = ({ email }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ otp: enteredOTP, email: email }),
+        body: JSON.stringify({ otp: enteredOTP, email }),
       });
 
       const result = await response.json();
