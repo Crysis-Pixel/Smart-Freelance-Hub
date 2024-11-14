@@ -2,7 +2,7 @@
   "_id": {
     "$oid": "670bbe66f555bb8f3e2b592e"
   },
-  "accountType": "Freelancer",
+  "accountType": "Both",
   "firstName": "Sakibul",
   "lastName": "Alam",
   "email": "sakibulalam36@gmail.com",
@@ -15,9 +15,9 @@
   "fRating": 0,
   "cRating": 0,
   "totalEarnings": 0,
-  "lastActive": "10-11-2024",
+  "lastActive": "12-11-2024",
   "jobsCompleted": 0,
-  "profilePicture": "/uploads/profile-pictures/sakibulalam36@gmail.com-1731226330933.jpg",
+  "profilePicture": "/uploads/profile-pictures/sakibulalam36@gmail.com-1731431369112.jpg",
   "accountCreated": "13-10-2024",
   "otp": "243878",
   "otpExpires": {
@@ -25,7 +25,9 @@
   },
   "isVerified": false,
   "lookingForJob": true,
-  "totalBalance": null
+  "totalBalance": null,
+  "minWage": 0
+
 },
 {
   "_id": {
@@ -53,7 +55,8 @@
     "$numberLong": "1728823906604"
   },
   "isVerified": false,
-  "lookingForJob": true
+  "lookingForJob": true,
+  "minWage": 0
 },
 {
   "_id": {
@@ -81,7 +84,8 @@
     "$numberLong": "1728823987203"
   },
   "isVerified": false,
-  "lookingForJob": true
+  "lookingForJob": true,
+  "minWage": 0
 },
 {
   "_id": {
@@ -109,17 +113,18 @@
     "$numberLong": "1728824128629"
   },
   "isVerified": false,
-  "lookingForJob": true
+  "lookingForJob": true,
+  "minWage": 0
 },
 {
   "_id": {
     "$oid": "670f5ef2ec08ee996ea30875"
   },
-  "accountType": "Freelancer",
+  "accountType": "Both",
   "firstName": "sakibul",
   "lastName": "alam patwary",
   "email": "sakibul.patwary@northsouth.edu",
-  "hashedPassword": "$2b$10$g8JCRmj.2AWIufXMozs.LeR3p83Igg80ZJgSh0gJyl4e/EfZpYAV.",
+  "hashedPassword": "$2b$10$CoEZDuueQBc/OfzY7J7VdOoZC66m7Qwybwa6B6NA1BCMDiMNxm3fO",
   "country": "AF",
   "phoneNumber": "012833246487",
   "fBio": "Hello",
@@ -127,7 +132,7 @@
   "skills": "",
   "cRating": 0,
   "totalEarnings": 0,
-  "lastActive": "10-11-2024",
+  "lastActive": "13-11-2024",
   "jobsCompleted": 0,
   "accountCreated": "16-10-2024",
   "isVerified": true,
@@ -135,5 +140,34 @@
   "fRating": 3.5,
   "numberOfReviews": 2,
   "totalBalance": null,
-  "profilePicture": "/uploads/profile-pictures/sakibul.patwary@northsouth.edu-1731225794977.jpg"
+  "profilePicture": "/uploads/profile-pictures/sakibul.patwary@northsouth.edu-1731480199117.jpg",
+  "minWage": "2"
+},
+{
+  "_id": {
+    "$oid": "6735fbf26aaa1cb63de6ec50"
+  },
+  "accountType": "Both",
+  "firstName": "John",
+  "lastName": "Snow",
+  "email": "johnsnow@gmail.com",
+  "hashedPassword": "$2b$10$1hodtHd/Ax978ff/XyzIe.iOdL1NU4WviWz/akhkd/K26fjDoJVgK",
+  "country": "Afghanistan",
+  "phoneNumber": "01711354494",
+  "fBio": "",
+  "cBio": "",
+  "skills": "",
+  "fRating": 0,
+  "cRating": 0,
+  "totalBalance": 0,
+  "lastActive": "14-11-2024",
+  "jobsCompleted": 0,
+  "profilePicture": "/uploads/profile-pictures/johnsnow@gmail.com-1731591444784.jpg",
+  "accountCreated": "14-11-2024",
+  "lookingForJob": false,
+  "minimumWage": 0,
+  "otp": "333414",
+  "otpExpires": 1731592054156,
+  "isVerified": false,
+  "minWage": "3"
 }]

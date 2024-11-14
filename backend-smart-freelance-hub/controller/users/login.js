@@ -9,7 +9,6 @@ const collection_users = process.env.COLLECTION_USERS;
 
 exports.login = async (req, res) => {
     // Extract data from request body
-    const accountType = req.body.accountType;
     const email = req.body.email;
     const password = req.body.password;
     console.log("Attempting to login")

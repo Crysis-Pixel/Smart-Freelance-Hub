@@ -28,6 +28,7 @@ exports.register = async (req, res) => {
   const profilePicture = "";
   const accountCreated = currentDate();
   const lookingForJob = false;
+  const minWage = 0;
 
   try {
     //email already exists check
@@ -66,6 +67,7 @@ exports.register = async (req, res) => {
       profilePicture: profilePicture,
       accountCreated: accountCreated,
       lookingForJob: lookingForJob,
+      minWage: minWage, // set default minimum wage to 0
       otp, // storing OTP for later verification
       otpExpires: Date.now() + 15 * 60 * 1000, // OTP expiration time (15 minutes)
       isVerified: false, // mark user as not verified yet
