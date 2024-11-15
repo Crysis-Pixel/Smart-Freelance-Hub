@@ -418,6 +418,9 @@ export default function ManageJobs() {
           onClose={() => setIsGigModalOpen(false)}
           freelancers={freelancers}
           jobId={isGigModalOpen}
+          maxBudget={
+            jobs.find((job) => job._id === isGigModalOpen)?.maxBudget || 0
+          }
         />
         <ChatBox
           isOpen={isChatOpen}

@@ -28,6 +28,7 @@ export default function Profile() {
     skills: [],
     totalBalance: 0,
     minWage: 0,
+    isAvailable: true,
   });
 
   const [loading, setLoading] = useState(true);
@@ -46,6 +47,7 @@ export default function Profile() {
   const [isJobOfferModal, setIsJobOfferModal] = useState(false);
   const [jobOffer, setJobOffer] = useState(null);
   const [clientEmail, setClientEmail] = useState(null);
+  const [isAvailable, setIsAvailableJobs] = useState(true);
 
   const availableSkills = [
     "Web-Development",
@@ -122,7 +124,6 @@ export default function Profile() {
         }
 
         const jobsData = await response.json();
-
         setAvailableJobs(jobsData);
       } catch (err) {
         setError(err.message);
@@ -263,7 +264,7 @@ export default function Profile() {
 
   const toggleChat = (email) => {
     setClientEmail(email);
-    console.log(clientEmail);
+
     setIsChatOpen((prev) => !prev);
   };
 
@@ -336,6 +337,7 @@ export default function Profile() {
   const closeJobOfferModal = () => {
     setIsJobOfferModal(false);
   };
+
   return (
     <>
       <Header profilePicture={user.profilePicture} />
@@ -395,9 +397,6 @@ export default function Profile() {
               <p>{user.country || "Country not provided"}</p>
             )}
           </div>
-          {/* <button className="btn btn-success" onClick={toggleChat}>
-            Chat
-          </button> */}
           {availableJob.length === 1 &&
             availableJob[0].status === "pending" && (
               <button
@@ -413,7 +412,7 @@ export default function Profile() {
                 className="btn"
                 onClick={() => toggleChat(availableJob[0].clientEmail)}
               >
-                Contact Freelancer
+                Contact Client
               </button>
             )}
           <button

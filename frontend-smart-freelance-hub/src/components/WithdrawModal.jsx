@@ -48,7 +48,7 @@ const WithdrawModal = ({ onClose }) => {
       }
     };
     checkifPaymentExists();
-  }, [email]);
+  }, []);
 
   const handleTransaction = async () => {
     setLoading(true);

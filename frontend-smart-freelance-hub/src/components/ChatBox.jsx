@@ -21,17 +21,28 @@ const ChatBox = ({ isOpen, onClose, email }) => {
   useEffect(() => {
     socket.emit("join", senderId);
 
-    const fetchUser = async () => {
+    const fetchUser = async (email) => {
       try {
-        const response = await fetch("http://localhost:3000/user/getUsers");
+        const response = await fetch("http://localhost:3000/user/getUser", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch user data");
+        }
+
         const data = await response.json();
-        setUser(data.filter((user) => user.email === recipientId));
-      } catch (error) {
-        console.error("Failed to fetch user list:", error);
+        setUser(data);
+      } catch (err) {
+        console.log("Error fetching user data:", err);
       }
     };
     fetchUser();
-  }, [senderId]);
+  }, [email]);
 
   useEffect(() => {
     const fetchMessages = async () => {

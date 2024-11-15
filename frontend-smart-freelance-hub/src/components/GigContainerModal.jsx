@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
 import FreelancerProfileModal from "./FreelancerProfileModal";
 
-const GigContainerModal = ({ isOpen, onClose, freelancers, jobId }) => {
+const GigContainerModal = ({
+  isOpen,
+  onClose,
+  freelancers,
+  jobId,
+  maxBudget,
+}) => {
   const [page, setPage] = useState(0);
   const [selectedFreelancer, setSelectedFreelancer] = useState(null);
   const [userData, setUserData] = useState(null);
@@ -10,6 +16,7 @@ const GigContainerModal = ({ isOpen, onClose, freelancers, jobId }) => {
 
   const clientAccount = sessionStorage.getItem("user");
   const clientMail = JSON.parse(clientAccount);
+
   const closeModal = () => {
     setPage(0);
     onClose();
@@ -18,17 +25,25 @@ const GigContainerModal = ({ isOpen, onClose, freelancers, jobId }) => {
   if (!isOpen) return null;
 
   const newUsersSorted = [...freelancers.newUsers]
-    .filter(
-      (user) =>
-        user.similarity_value >= 0.5 && user.user.email !== clientMail.email
-    )
+    .filter((user) => {
+      const minWage = Number(user.user.minWage);
+      return (
+        user.similarity_value >= 0.5 &&
+        user.user.email !== clientMail.email &&
+        minWage <= maxBudget
+      );
+    })
     .sort((a, b) => b.similarity_value - a.similarity_value);
 
   const oldUsersSorted = [...freelancers.oldUsers]
-    .filter(
-      (user) =>
-        user.similarity_value >= 0.5 && user.user.email !== clientMail.email
-    )
+    .filter((user) => {
+      const minWage = Number(user.user.minWage);
+      return (
+        user.similarity_value >= 0.5 &&
+        user.user.email !== clientMail.email &&
+        minWage * 1.2 <= maxBudget
+      );
+    })
     .sort((a, b) => b.similarity_value - a.similarity_value);
 
   const combinedUsers = [...newUsersSorted, ...oldUsersSorted];
@@ -127,7 +142,11 @@ const GigContainerModal = ({ isOpen, onClose, freelancers, jobId }) => {
                       <b>Last Active:</b> {freelancer.lastActive}
                     </p>
                     <p className="text-gray-600">
-                      <b>Rate:</b> ${freelancer.minWage}/hr
+                      <b>Rate:</b> $
+                      {isNewUser
+                        ? freelancer.minWage
+                        : freelancer.minWage * 1.2}
+                      /hr
                     </p>
                     <p className="text-gray-600">
                       <b>Skills:</b>{" "}

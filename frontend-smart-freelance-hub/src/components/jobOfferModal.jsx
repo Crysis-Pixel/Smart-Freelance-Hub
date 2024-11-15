@@ -7,6 +7,8 @@ export default function JobOfferModal({ jobOffer, isOpen, onClose }) {
   const [clientMail, setClientMail] = useState("");
   const [userData, setUserData] = useState(null);
 
+  const FreelancerEmail = JSON.parse(sessionStorage.getItem("user")).email;
+
   useEffect(() => {
     if (!isOpen) {
       setUserData(null);
@@ -74,7 +76,7 @@ export default function JobOfferModal({ jobOffer, isOpen, onClose }) {
       }
 
       console.log("Job offer accepted successfully!");
-      onClose(); // Close the modal after accepting
+      onClose();
     } catch (err) {
       console.error("Error accepting job offer:", err.message);
     }

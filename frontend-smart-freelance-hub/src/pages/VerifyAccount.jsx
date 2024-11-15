@@ -1,5 +1,5 @@
 import { useState } from "react";
-import OTPModal from "./components/OTPModal";
+import OTPModal from "../components/OTPModal";
 import VerifyAccountPrompt from "../components/VerifyAccountPrompt";
 
 function VerifyAccount() {

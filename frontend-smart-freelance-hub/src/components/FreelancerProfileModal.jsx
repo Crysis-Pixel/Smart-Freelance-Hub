@@ -10,17 +10,21 @@ const FreelancerProfileModal = ({
   const [offerModalOpen, setOfferModalOpen] = useState(false);
   const [offeredPrice, setOfferedPrice] = useState("");
   const [error, setError] = useState("");
-
+  console.log(freelancer);
   if (!isOpen || !freelancer) return null;
 
-  const minOffer = freelancer.minWage * 0.8;
+  const adjustedMinWage =
+    freelancer.jobsCompleted > 0
+      ? freelancer.minWage * 1.2
+      : freelancer.minWage;
+  const minOffer = adjustedMinWage;
 
   const handleHire = async () => {
     const payload = {
       jobId,
       clientEmail: clientMail,
       freelancerEmail: freelancer.email,
-      offeredPrice: freelancer.minWage,
+      offeredPrice: parseInt(adjustedMinWage),
     };
 
     try {
@@ -108,6 +112,9 @@ const FreelancerProfileModal = ({
               <b>Jobs Completed:</b> {freelancer.jobsCompleted || "New"}
             </p>
             <p className="text-gray-600 mb-4">
+              <b>Hourly rate:</b> ${adjustedMinWage}/hr
+            </p>
+            <p className="text-gray-600 mb-4">
               <b>Skills:</b> {freelancer.skills}
             </p>
             <div className="flex gap-4 mt-4">
@@ -139,9 +146,7 @@ const FreelancerProfileModal = ({
             </button>
 
             <h3 className="text-2xl font-semibold mb-4">Enter Offer Price</h3>
-            <p className="text-gray-600 mb-4">
-              Minimum offer: ${minOffer.toFixed(2)}
-            </p>
+            <p className="text-gray-600 mb-4">Minimum offer: ${minOffer}</p>
             <input
               type="number"
               value={offeredPrice}
@@ -151,7 +156,6 @@ const FreelancerProfileModal = ({
             />
             {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
             <div className="flex justify-end">
-              {" "}
               <button
                 onClick={handleSendOffer}
                 disabled={!offeredPrice || error}
