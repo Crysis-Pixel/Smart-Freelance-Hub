@@ -164,12 +164,11 @@ export default function Signup() {
       sessionStorage.setItem("user", JSON.stringify(userdata));
       // Redirect based on account type
       if (formData.accountType === "Client") {
-        navigate("/profileCl"); // Redirect to Client profile
-        setOpenVerifyModal(true);
+        //navigate("/profileCl"); // Redirect to Client profile
       } else if (formData.accountType === "Freelancer") {
-        navigate("/profile"); // Redirect to Freelancer profile
-        setOpenVerifyModal(true);
+        //navigate("/profile"); // Redirect to Freelancer profile
       }
+      setOpenVerifyModal(true);
     } else {
       alert("Registration failed. Please try again.");
     }
@@ -405,9 +404,12 @@ export default function Signup() {
           </form>
         </div>
       </div>
+      
       <VerifyAccountPrompt
         isOpen={openVerifyModal}
         onClose={closeVerifyModal}
+        email={formData.email}
+        accountType={formData.accountType}
       />
     </>
   );

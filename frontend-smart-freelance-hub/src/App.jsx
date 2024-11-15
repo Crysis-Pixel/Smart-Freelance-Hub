@@ -6,7 +6,7 @@ import Profile from "./pages/profile";
 import Login from "./pages/login";
 import ClientProfile from "./pages/profileCl";
 import ManageJobs from "./pages/manageJobs";
-import Test from "./pages/test";
+import VerifyAccount from "./pages/VerifyAccount";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -48,7 +48,7 @@ function App() {
             <Route path="/manageJobs" element={<ManageJobs />} />
             {/*added by Mostakim */}
             <Route path="/chattest" element={<ChatComponent />} />
-            <Route path="/test" element={<Test />} />
+            <Route path="/verify-account" element={<VerifyAccount />} />
             <Route path="/PaymentPage" element={<PaymentPage />} />
             <Route path="/TransactionPage" element={<TransactionPage />} />
             <Route path="/BalanceTopUp" element={<BalanceTopUp />} />

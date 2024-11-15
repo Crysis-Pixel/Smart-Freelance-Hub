@@ -8,6 +8,7 @@ function generateOTP() {
 // Send OTP email using Mailgun SMTP
 async function sendOTP(email, otp) {
     try {
+        console.log("attempting to send OTP");
         // Configure nodemailer transport using Mailgun SMTP
         const transporter = nodemailer.createTransport({
             host: 'smtp.mailgun.org', // Mailgun SMTP server
