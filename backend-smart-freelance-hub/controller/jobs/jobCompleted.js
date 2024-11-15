@@ -6,7 +6,7 @@ const { ObjectId } = require("mongodb"); // Import ObjectId
 
 exports.assignJob = async (req, res) => {
   // Extract jobId and clientEmail from the request body
-  const { jobId, clientEmail } = req.body;
+  const { jobId, clientEmail, freelancerEmail } = req.body;
 
   try {
     // Find user by email
@@ -18,6 +18,7 @@ exports.assignJob = async (req, res) => {
       const client = await getConnectedClient();
       const db = client.db(process.env.DATABASE_NAME);
       const collection = db.collection(process.env.COLLECTION_JOBS);
+      const UserCollection = db.collection(process.env.COLLECTION_USERS);
 
       // Convert jobId to ObjectId
       const jobObjectId = new ObjectId(jobId);
@@ -27,6 +28,11 @@ exports.assignJob = async (req, res) => {
         { _id: jobObjectId }, // Match job by ObjectId
         { $set: { status: "completed", completedAt: currentDate() } } // Set status to assigned and update timestamp
       );
+
+      const updateUser = await UserCollection.updateOne(
+        { email: freelancerEmail }, // Match user by email
+        { $set: { lookingForJob: true } } // Set jobCompleted to true
+      )
 
       // Check if the update was successful
       if (updateResult.modifiedCount === 0) {

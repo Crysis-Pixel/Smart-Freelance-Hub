@@ -19,6 +19,7 @@ exports.assignJob = async (req, res) => {
       const client = await getConnectedClient();
       const db = client.db(process.env.DATABASE_NAME);
       const collection = db.collection(process.env.COLLECTION_JOBS);
+      const userCollection = db.collection(process.env.COLLECTION_USERS);
 
 
       // Convert jobId to ObjectId
@@ -30,6 +31,10 @@ exports.assignJob = async (req, res) => {
         { $set: { status: "assigned", assignedAt: currentDate() , freelancerEmail: freelancerEmail} } // Set status to assigned and update timestamp
       );
 
+      const userResult = await userCollection.updateOne(
+        { email: freelancerEmail},
+        {$set: {lookingForJob: false}}
+      )
       // Check if the update was successful
       if (updateResult.modifiedCount === 0) {
         return res.status(404).json({ message: "Job not found or already assigned" });

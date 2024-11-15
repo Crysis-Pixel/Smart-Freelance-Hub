@@ -65,10 +65,11 @@ def getUsers():
     users = list(users_collection.find(
         {
             "accountType": {"$in": ["Freelancer", "Both"]},
-            "lookingForJob": True,
+            "lookingForJob": True, "isVerified": True,
         },
         {"_id": 0, "accountType": 1, "email": 1, "skills": 1, "jobsCompleted": 1, 
-        "lastActive": 1, "fRating" : 1, "firstName": 1, "lastName": 1, "profilePicture" : 1, "minWage": 1}
+        "lastActive": 1, "fRating" : 1, "firstName": 1, "lastName": 1, 
+        "profilePicture" : 1, "minWage": 1}
     ))
     # Filter users based on their 'lastActive' date
     filtered_users = []
