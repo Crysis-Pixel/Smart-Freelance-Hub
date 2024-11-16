@@ -100,7 +100,7 @@ export default function JobOfferModal({ jobOffer, isOpen, onClose }) {
       }
 
       console.log("Job offer declined successfully!");
-      onClose(); // Close the modal after declining
+      onClose();
     } catch (err) {
       console.error("Error declining job offer:", err.message);
     }

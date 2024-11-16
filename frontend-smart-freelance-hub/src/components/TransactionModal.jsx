@@ -1,0 +1,228 @@
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
+const TransactionModal = ({ onClose }) => {
+  const [loading, setLoading] = useState(false);
+  const [transactionId, settransactionId] = useState("");
+  const [amount, setAmount] = useState(0);
+  const [otp, setOtp] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const navigate = useNavigate();
+  const paymentreciever = sessionStorage.getItem("paymentreciever");
+  const senderemail = JSON.parse(sessionStorage.getItem("user")).email;
+  const [timeLeft, setTimeLeft] = useState(60); // 60-second countdown
+  const [isTimerActive, setIsTimerActive] = useState(true);
+
+  useEffect(() => {
+    if (otpSent && isTimerActive) {
+      const timer = setInterval(() => {
+        setTimeLeft((prevTime) => {
+          if (prevTime <= 1) {
+            clearInterval(timer);
+            handleTimeout();
+            navigate("/manageJobs"); // Navigate after time is up
+          }
+          return prevTime - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(timer);
+    }
+  }, [otpSent, isTimerActive, navigate]);
+
+  const handleTimeout = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:3000/transactions/update",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ _id: transactionId, status: "Declined" }),
+        }
+      );
+      const result = await response.json();
+      console.log(result);
+    } catch (error) {
+      console.error("Error updating transaction:", error);
+    }
+    alert("OTP timed out!");
+    onClose(); // Close the modal after timeout
+  };
+
+  const handleTransaction = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch("http://localhost:3000/otp/send-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: senderemail }),
+      });
+      const result = await response.json();
+
+      if (result.message === "OTP sent successfully") {
+        setOtpSent(true); // Show OTP input after sending
+      } else {
+        alert(result.error || "Failed to send OTP");
+        onClose();
+      }
+
+      const paymentinsert = await fetch("http://localhost:3000/payments/get", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ useremail: senderemail }),
+      });
+      const result2 = await paymentinsert.json();
+      const paymentId = result2._id;
+
+      const paymentResponse = await fetch(
+        "http://localhost:3000/payments/processTransaction",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            senderemail,
+            paymentId,
+            freelancerEmail: paymentreciever,
+            amount,
+          }),
+        }
+      );
+
+      const paymentResult = await paymentResponse.json();
+      settransactionId(paymentResult.transactionResult.insertedId);
+    } catch (error) {
+      console.error("Error sending OTP:", error);
+      alert("Failed to send OTP");
+      onClose();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifyOTP = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch("http://localhost:3000/otp/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: senderemail, otp }),
+      });
+      const result = await response.json();
+
+      if (result.message === "OTP verified successfully") {
+        setIsTimerActive(false);
+        const userresponse = await fetch("http://localhost:3000/user/getUser", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: senderemail }),
+        });
+        const userinfo = await userresponse.json();
+
+        if (Number(userinfo.totalBalance) - amount < 0) {
+          alert("Insufficient balance!");
+          onClose();
+          return;
+        }
+
+        const paymentResponse = await fetch(
+          "http://localhost:3000/payments/processPayment",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              transactionId,
+              senderemail,
+              freelancerEmail: paymentreciever,
+              amount,
+            }),
+          }
+        );
+        const paymentResult = await paymentResponse.json();
+
+        if (paymentResult.message === "Payment successful") {
+          alert(paymentResult.message);
+          sessionStorage.removeItem("paymentreciever");
+          onClose(); // Close the modal after success
+          navigate("/ProfileCl");
+        } else {
+          alert(paymentResult.error || "Payment failed");
+          onClose();
+          navigate("/manageJobs");
+        }
+      } else {
+        alert(result.error || "OTP verification failed");
+        onClose();
+        navigate("/manageJobs");
+      }
+    } catch (error) {
+      console.error("Verification error:", error);
+      onClose();
+      navigate("/manageJobs");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+      <div className="bg-white p-6 rounded-lg shadow-lg w-80">
+        <h2 className="text-xl font-semibold mb-4">Confirm Payment</h2>
+        <p className="text-gray-600 mb-4">
+          Sending payment from {senderemail} to {paymentreciever}
+        </p>
+
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700">
+            Amount
+          </label>
+          <input
+            type="number"
+            value={amount}
+            onChange={(e) => setAmount(Number(e.target.value))}
+            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            placeholder="Enter amount"
+          />
+        </div>
+
+        {!otpSent ? (
+          <button
+            onClick={handleTransaction}
+            className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"
+            disabled={loading}
+          >
+            {loading ? "Sending OTP..." : "Complete Transaction"}
+          </button>
+        ) : (
+          <div className="mt-4">
+            <p className="text-sm text-gray-600">
+              OTP sent. Time left: {timeLeft} seconds
+            </p>
+            <input
+              type="text"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              className="mt-2 block w-full p-2 border border-gray-300 rounded-md"
+              placeholder="Enter OTP"
+            />
+            <button
+              onClick={handleVerifyOTP}
+              className="w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600 mt-2"
+              disabled={loading}
+            >
+              {loading ? "Verifying OTP..." : "Verify OTP"}
+            </button>
+          </div>
+        )}
+
+        <button
+          onClick={onClose}
+          className="w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600 mt-4"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default TransactionModal;

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import io from "socket.io-client";
 import { useNavigate } from "react-router-dom";
+import TransactionModal from "./TransactionModal";
 
 const socket = io("http://localhost:3000");
 
@@ -17,6 +18,7 @@ const ChatBox = ({ isOpen, onClose, email }) => {
   const messagesEndRef = useRef(null);
   const navigate = useNavigate();
   const recipientId = email;
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     socket.emit("join", senderId);
@@ -203,8 +205,22 @@ const ChatBox = ({ isOpen, onClose, email }) => {
   };
 
   const handleGivePayment = () => {
-    gotoPayment();
-    setDropdownOpen(false);
+    const checkifPaymentExists = async () => {
+      const response = await fetch("http://localhost:3000/payments/get", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ useremail: senderId }),
+      });
+      const result = await response.json();
+
+      if (!(result.message === "Payment not found")) {
+        sessionStorage.setItem("paymentreciever", recipientId);
+        setIsModalOpen(true);
+      } else {
+        alert("You do not have payment set up. Please set payment details.");
+      }
+    };
+    checkifPaymentExists();
   };
 
   const [hoveredMessageIndex, setHoveredMessageIndex] = useState(null);
@@ -340,6 +356,9 @@ const ChatBox = ({ isOpen, onClose, email }) => {
             →
           </button>
         </div>
+        {isModalOpen && (
+          <TransactionModal onClose={() => setIsModalOpen(false)} />
+        )}
       </div>
     )
   );

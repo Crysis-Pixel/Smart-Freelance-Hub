@@ -190,18 +190,15 @@ export default function Profile() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const jobRes = await fetch(
-      "http://localhost:3000/jobs/getfreelancerJob",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          freelancerEmail: JSON.parse(sessionStorage.getItem("user")).email,
-        }),
-      }
-    );
+    const jobRes = await fetch("http://localhost:3000/jobs/getfreelancerJob", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        freelancerEmail: JSON.parse(sessionStorage.getItem("user")).email,
+      }),
+    });
 
     if (!jobRes.status === 200) {
       throw new Error("Failed to fetch user data");
@@ -211,7 +208,10 @@ export default function Profile() {
 
     if (Array.isArray(jobResResult)) {
       for (let i = 0; i < jobResResult.length; i++) {
-        if (jobResResult[i].status === "assigned" && formData.lookingForJob === true) {
+        if (
+          jobResResult[i].status === "assigned" &&
+          formData.lookingForJob === true
+        ) {
           toast.error("Cannot set looking for job while you are doing a job!", {
             position: "top-center",
             autoClose: 2000,
@@ -455,12 +455,14 @@ export default function Profile() {
                 Contact Client
               </button>
             )}
-          <button
-            className="btn btn-secondary ml-4"
-            onClick={openWithdrawModal}
-          >
-            Withdraw
-          </button>
+          {user.totalBalance > 0 && (
+            <button
+              className="btn btn-secondary ml-4"
+              onClick={openWithdrawModal}
+            >
+              Withdraw
+            </button>
+          )}
           <button className="btn ml-auto" onClick={handleEditToggle}>
             {isEditing ? "CANCEL" : "EDIT"}
           </button>
@@ -494,20 +496,40 @@ export default function Profile() {
             </div>
             <div className="flex flex-col gap-10 p-10">
               <div className="flex justify-between">
-                <div>
-                  <h1 className="font-bold">Looking For Job</h1>
-                  {isEditing ? (
-                    <input
-                      type="checkbox"
-                      name="lookingForJob"
-                      checked={formData.lookingForJob}
-                      onChange={handleInputChange}
-                      className="mr-2 "
-                    />
-                  ) : (
-                    <p>{user.lookingForJob ? "Yes" : "No"}</p>
-                  )}
+                <div className="flex justify-between">
+                  <div>
+                    <h1 className="font-bold">
+                      {(() => {
+                        if (!availableJob || !availableJob[0])
+                          return "Looking for Job";
+
+                        const status = availableJob[0].status;
+                        if (status === "pending") return "Offer Pending";
+                        if (status === "assigned") return "Assigend";
+                        return "Looking For Job";
+                      })()}
+                    </h1>
+
+                    {availableJob &&
+                      availableJob[0]?.status !== "pending" &&
+                      availableJob[0]?.status !== "assigned" && (
+                        <>
+                          {isEditing ? (
+                            <input
+                              type="checkbox"
+                              name="lookingForJob"
+                              checked={formData.lookingForJob}
+                              onChange={handleInputChange}
+                              className="mr-2"
+                            />
+                          ) : (
+                            <p>{user.lookingForJob ? "Yes" : "No"}</p>
+                          )}
+                        </>
+                      )}
+                  </div>
                 </div>
+
                 <div>
                   <h1 className="font-bold">Expected Minimum Wage</h1>
                   {isEditing ? (

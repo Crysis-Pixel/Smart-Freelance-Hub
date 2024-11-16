@@ -17,7 +17,7 @@ const FreelancerProfileModal = ({
     freelancer.jobsCompleted > 0
       ? freelancer.minWage * 1.2
       : freelancer.minWage;
-  const minOffer = adjustedMinWage;
+  const minOffer = adjustedMinWage / 1.2;
 
   const handleHire = async () => {
     const payload = {

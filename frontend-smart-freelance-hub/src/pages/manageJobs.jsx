@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import ChatBox from "../components/ChatBox";
 import GigContainerModal from "../components/GigContainerModal";
 import AddOtherSkill from "../components/AddOtherSkill";
+import FinishJobModal from "../components/FinishJobModal.jsx";
 
 export default function ManageJobs() {
   const [jobs, setJobs] = useState([]);
@@ -24,6 +25,10 @@ export default function ManageJobs() {
   const [isGigModalOpen, setIsGigModalOpen] = useState(false);
   const [isOtherSkillModalOpen, setIsOtherSkillModalOpen] = useState(false);
   const [customSkill, setCustomSkill] = useState("");
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingJob, setEditingJob] = useState(null);
+  const [isFinishJobModalOpen, setIsFinishJobModalOpen] = useState(false);
+  const [selectedJob, setSelectedJob] = useState(null);
   const navigate = useNavigate();
 
   const availableSkills = [
@@ -70,6 +75,26 @@ export default function ManageJobs() {
     fetchJobs();
   }, []);
 
+  const handleEdit = (job) => {
+    setEditingJob(job);
+    setNewJob({
+      title: job.title,
+      description: job.description,
+      maxBudget: job.maxBudget,
+    });
+
+    // Check if requirements is an array or string, and handle accordingly
+    if (Array.isArray(job.requirements)) {
+      setSelectedSkills(job.requirements); // Directly use the array if it's already an array
+    } else if (typeof job.requirements === "string") {
+      setSelectedSkills(job.requirements.split(", "));
+    } else {
+      setSelectedSkills([]);
+    }
+
+    setIsEditModalOpen(true);
+  };
+
   const handleModalToggle = () => {
     setIsModalOpen(!isModalOpen);
   };
@@ -115,25 +140,48 @@ export default function ManageJobs() {
       return;
     }
 
+    const jobDetails = {
+      title: newJob.title,
+      description: newJob.description,
+      requirements: selectedSkills.join(", "),
+      maxBudget: newJob.maxBudget,
+      clientEmail: JSON.parse(sessionStorage.getItem("user")).email,
+      jobId: editingJob ? editingJob._id : null,
+    };
+
     try {
-      const response = await fetch("http://localhost:3000/jobs/postJob", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...newJob,
-          requirements: selectedSkills.join(", "),
-          clientEmail: JSON.parse(sessionStorage.getItem("user")).email,
-        }),
-      });
+      let response;
+      if (editingJob) {
+        response = await fetch("http://localhost:3000/jobs/editJob", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(jobDetails),
+        });
+      } else {
+        response = await fetch("http://localhost:3000/jobs/postJob", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(jobDetails),
+        });
+      }
 
       if (response.status !== 200) {
-        throw new Error("Failed to post job");
+        throw new Error("Failed to save job");
       }
 
       const postedJob = await response.json();
-      setJobs((prevJobs) => [postedJob, ...prevJobs]);
+      if (editingJob) {
+        // Replace the edited job in the jobs list
+        setJobs((prevJobs) =>
+          prevJobs.map((job) => (job._id === postedJob._id ? postedJob : job))
+        );
+      } else {
+        setJobs((prevJobs) => [postedJob, ...prevJobs]);
+      }
       setIsModalOpen(false);
       setNewJob({
         title: "",
@@ -142,6 +190,9 @@ export default function ManageJobs() {
         maxBudget: "",
       });
       setSelectedSkills([]);
+      setEditingJob(null);
+
+      window.location.reload();
     } catch (err) {
       setError(err.message);
     }
@@ -207,6 +258,17 @@ export default function ManageJobs() {
     }
   };
 
+  const handleFinishJob = (job) => {
+    setSelectedJob(job);
+    setIsFinishJobModalOpen(true);
+  };
+
+  const handleFinishJobConfirm = (paymentAmount, review) => {
+    console.log("Job Finished!", paymentAmount, review);
+
+    setIsFinishJobModalOpen(false);
+  };
+
   return (
     <>
       <Header
@@ -269,37 +331,53 @@ export default function ManageJobs() {
                     ))}
                   </div>
 
-                  <div className="flex gap-2 mt-3">
-                    <button
-                      className="btn btn-outline"
-                      onClick={() => navigate(`/edit-job/${job.id}`)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="btn btn-error"
-                      onClick={() => handleDelete(job._id)}
-                    >
-                      Delete
-                    </button>
-                    {job.status === "assigned" && (
-                      <button
-                        className="btn btn-success"
-                        onClick={() => toggleChat(job.freelancerEmail)}
-                      >
-                        Contact Freelancer
-                      </button>
-                    )}
+                  <div className="flex justify-between">
+                    <div className="flex gap-2 mt-3">
+                      {job.status === "unassigned" && (
+                        <button
+                          className="btn btn-outline"
+                          onClick={() => handleEdit(job)}
+                        >
+                          Edit
+                        </button>
+                      )}
+                      {job.status === "unassigned" && (
+                        <button
+                          className="btn btn-error"
+                          onClick={() => handleDelete(job._id)}
+                        >
+                          Delete
+                        </button>
+                      )}
+                      {job.status === "assigned" && (
+                        <button
+                          className="btn btn-success"
+                          onClick={() => toggleChat(job.freelancerEmail)}
+                        >
+                          Contact Freelancer
+                        </button>
+                      )}
 
-                    {(job.status === "unassigned" ||
-                      job.status === "declined") && (
-                      <button
-                        className="btn btn-secondary"
-                        onClick={() => handleFindFreelancers(job)}
-                      >
-                        Find Freelancer
-                      </button>
-                    )}
+                      {(job.status === "unassigned" ||
+                        job.status === "declined") && (
+                        <button
+                          className="btn btn-secondary"
+                          onClick={() => handleFindFreelancers(job)}
+                        >
+                          Find Freelancer
+                        </button>
+                      )}
+                    </div>
+                    <div>
+                      {job.status === "assigned" && (
+                        <button
+                          className="btn btn-secondary"
+                          onClick={() => handleFinishJob(job)}
+                        >
+                          Finish Job
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))
@@ -405,6 +483,104 @@ export default function ManageJobs() {
           </div>
         )}
 
+        {isEditModalOpen && editingJob && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+            <div className="bg-white rounded-lg p-8 w-1/2">
+              <h2 className="text-2xl font-semibold mb-5">Edit Job</h2>
+
+              <label className="block mb-3">
+                <span className="text-gray-700">Job Title</span>
+                <input
+                  type="text"
+                  name="title"
+                  value={newJob.title}
+                  onChange={handleInputChange}
+                  className="input input-bordered w-full mt-2"
+                  placeholder="Enter job title"
+                />
+              </label>
+
+              <label className="block mb-3">
+                <span className="text-gray-700">Description</span>
+                <textarea
+                  name="description"
+                  value={newJob.description}
+                  onChange={handleInputChange}
+                  className="textarea textarea-bordered w-full mt-2"
+                  placeholder="Enter job description"
+                />
+              </label>
+
+              <label className="block mb-3">
+                <span className="text-gray-700">Requirements</span>
+                <select
+                  onChange={handleSkillSelect}
+                  className="select select-bordered w-full mt-2"
+                  value=""
+                >
+                  <option value="" disabled>
+                    Select a skill
+                  </option>
+                  {availableSkills
+                    .filter((skill) => !selectedSkills.includes(skill))
+                    .map((skill, index) => (
+                      <option key={index} value={skill}>
+                        {skill}
+                      </option>
+                    ))}
+                </select>
+                <div className="flex flex-wrap mt-2">
+                  {selectedSkills.map((skill, index) => (
+                    <span
+                      key={index}
+                      className="badge badge-primary m-1 bg-blue-100 border-none"
+                    >
+                      {skill}
+                      <button
+                        type="button"
+                        className="ml-2 text-red-500"
+                        onClick={() => handleRemoveSkill(skill)}
+                      >
+                        &#x2715;
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              </label>
+
+              <label className="block mb-3">
+                <span className="text-gray-700">Max Budget</span>
+                <input
+                  type="number"
+                  name="maxBudget"
+                  value={newJob.maxBudget}
+                  onChange={handleInputChange}
+                  min="0"
+                  inputMode="numeric"
+                  className="input input-bordered w-full mt-2"
+                  placeholder="Enter maximum budget"
+                  style={{
+                    "-moz-appearance": "textfield",
+                    "-webkit-appearance": "none",
+                  }}
+                />
+              </label>
+
+              <div className="flex justify-end mt-5">
+                <button
+                  className="btn btn-secondary mr-3"
+                  onClick={() => setIsEditModalOpen(false)}
+                >
+                  Cancel
+                </button>
+                <button className="btn btn-primary" onClick={handlePostJob}>
+                  Update Job
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         <AddOtherSkill
           isOpen={isOtherSkillModalOpen}
           onClose={() => setIsOtherSkillModalOpen(false)}
@@ -426,6 +602,13 @@ export default function ManageJobs() {
           isOpen={isChatOpen}
           onClose={toggleChat}
           email={freelancerEmail}
+        />
+
+        <FinishJobModal
+          isOpen={isFinishJobModalOpen}
+          onClose={() => setIsFinishJobModalOpen(false)}
+          onConfirm={handleFinishJobConfirm}
+          job={selectedJob}
         />
       </div>
     </>
