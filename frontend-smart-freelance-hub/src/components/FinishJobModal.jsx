@@ -1,24 +1,30 @@
 import React, { useState } from "react";
-import ReviewModal from "./ReviewModal"; // Import ReviewModal
+import ReviewModal from "./ReviewModal";
+import TransactionModal from "./TransactionModal";
 
 export default function FinishJobModal({ isOpen, onClose, job }) {
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
 
   const handleOpenReviewModal = () => {
-    setIsReviewModalOpen(true); // Open the ReviewModal when "Review Freelancer" is clicked
+    setIsReviewModalOpen(true);
   };
 
   const handleCloseReviewModal = () => {
-    setIsReviewModalOpen(false); // Close the ReviewModal
+    setIsReviewModalOpen(false);
   };
 
   const handleReviewSubmit = (rating, reviewDescription) => {
     console.log("Review Submitted: ", rating, reviewDescription);
-    setIsReviewModalOpen(false); // Close the ReviewModal after submission
+    setIsReviewModalOpen(false);
   };
 
   const handlePayment = () => {
-    alert("Navigating to pay freelancer...");
+    setIsTransactionModalOpen(true);
+  };
+
+  const handleCloseTransactionModal = () => {
+    setIsTransactionModalOpen(false);
   };
 
   return (
@@ -62,13 +68,16 @@ export default function FinishJobModal({ isOpen, onClose, job }) {
         </div>
       )}
 
-      {/* Review Modal */}
       <ReviewModal
         isOpen={isReviewModalOpen}
         onClose={handleCloseReviewModal}
         job={job}
         onSubmitReview={handleReviewSubmit}
       />
+
+      {isTransactionModalOpen && (
+        <TransactionModal job={job} onClose={handleCloseTransactionModal} />
+      )}
     </>
   );
 }

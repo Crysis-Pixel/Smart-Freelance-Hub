@@ -102,6 +102,22 @@ export default function ClientProfile() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!formData.firstName || !formData.lastName || !formData.cBio) {
+      toast.error("First Name, Last Name, and Bio are required.", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Slide,
+      });
+      return;
+    }
+
     try {
       const updatedData = {
         ...user,
@@ -125,8 +141,6 @@ export default function ClientProfile() {
         user.profilePicture = data.path;
         updatedData.profilePicture = data.path;
         sessionStorage.setItem("user", JSON.stringify(updatedData));
-
-        //delete updatedData.profilePicture;
       } else {
         console.error("Failed to upload profile picture.");
       }

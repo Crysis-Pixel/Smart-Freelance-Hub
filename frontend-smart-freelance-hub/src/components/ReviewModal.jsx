@@ -14,10 +14,10 @@ const ReviewModal = ({ isOpen, onClose, job, onSubmitReview }) => {
 
   const handleSubmit = () => {
     if (rating && review) {
-      onSubmitReview(rating, review); // Call the parent's review submission handler
+      onSubmitReview(rating, review);
       setReview("");
       setRating(0);
-      onClose(); // Close modal after submitting
+      onClose();
     } else {
       alert("Please provide both rating and review description.");
     }
@@ -28,8 +28,6 @@ const ReviewModal = ({ isOpen, onClose, job, onSubmitReview }) => {
       <div className="bg-white rounded-lg p-8 w-1/3">
         <h2 className="text-4xl font-semibold mb-5">Submit Review</h2>
         <h1 className="text-2xl mb-5">Review for {job.freelancerEmail}</h1>
-
-        {/* Rating Section */}
         <div className="mb-5">
           <h3 className="text-lg font-semibold mb-2">Rating</h3>
           <div className="flex gap-2">
@@ -46,8 +44,6 @@ const ReviewModal = ({ isOpen, onClose, job, onSubmitReview }) => {
             ))}
           </div>
         </div>
-
-        {/* Review Description Section */}
         <div className="mb-5">
           <h3 className="text-lg font-semibold mb-2">Review Description</h3>
           <textarea
@@ -59,7 +55,6 @@ const ReviewModal = ({ isOpen, onClose, job, onSubmitReview }) => {
           />
         </div>
 
-        {/* Submit and Cancel buttons */}
         <div className="flex justify-end gap-4 mt-5">
           <button className="btn btn-primary" onClick={handleSubmit}>
             Submit Review

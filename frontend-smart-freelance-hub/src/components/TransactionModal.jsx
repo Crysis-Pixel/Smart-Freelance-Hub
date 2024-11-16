@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-const TransactionModal = ({ onClose }) => {
+const TransactionModal = ({ job, onClose }) => {
   const [loading, setLoading] = useState(false);
-  const [transactionId, settransactionId] = useState("");
-  const [amount, setAmount] = useState(0);
+  const [transactionId, setTransactionId] = useState("");
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const navigate = useNavigate();
-  const paymentreciever = sessionStorage.getItem("paymentreciever");
-  const senderemail = JSON.parse(sessionStorage.getItem("user")).email;
+  const paymentReceiver = job.freelancerEmail;
+  const senderEmail = JSON.parse(sessionStorage.getItem("user")).email;
   const [timeLeft, setTimeLeft] = useState(60); // 60-second countdown
   const [isTimerActive, setIsTimerActive] = useState(true);
+  const amount = job.offeredPrice;
 
   useEffect(() => {
     if (otpSent && isTimerActive) {
@@ -20,7 +20,7 @@ const TransactionModal = ({ onClose }) => {
           if (prevTime <= 1) {
             clearInterval(timer);
             handleTimeout();
-            navigate("/manageJobs"); // Navigate after time is up
+            navigate("/manageJobs");
           }
           return prevTime - 1;
         });
@@ -46,7 +46,7 @@ const TransactionModal = ({ onClose }) => {
       console.error("Error updating transaction:", error);
     }
     alert("OTP timed out!");
-    onClose(); // Close the modal after timeout
+    onClose();
   };
 
   const handleTransaction = async () => {
@@ -55,23 +55,23 @@ const TransactionModal = ({ onClose }) => {
       const response = await fetch("http://localhost:3000/otp/send-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: senderemail }),
+        body: JSON.stringify({ email: senderEmail }),
       });
       const result = await response.json();
 
       if (result.message === "OTP sent successfully") {
-        setOtpSent(true); // Show OTP input after sending
+        setOtpSent(true);
       } else {
         alert(result.error || "Failed to send OTP");
         onClose();
       }
 
-      const paymentinsert = await fetch("http://localhost:3000/payments/get", {
+      const paymentInsert = await fetch("http://localhost:3000/payments/get", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ useremail: senderemail }),
+        body: JSON.stringify({ useremail: senderEmail }),
       });
-      const result2 = await paymentinsert.json();
+      const result2 = await paymentInsert.json();
       const paymentId = result2._id;
 
       const paymentResponse = await fetch(
@@ -80,16 +80,16 @@ const TransactionModal = ({ onClose }) => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            senderemail,
+            senderemail: senderEmail,
             paymentId,
-            freelancerEmail: paymentreciever,
+            freelancerEmail: paymentReceiver,
             amount,
           }),
         }
       );
 
       const paymentResult = await paymentResponse.json();
-      settransactionId(paymentResult.transactionResult.insertedId);
+      setTransactionId(paymentResult.transactionResult.insertedId);
     } catch (error) {
       console.error("Error sending OTP:", error);
       alert("Failed to send OTP");
@@ -105,20 +105,20 @@ const TransactionModal = ({ onClose }) => {
       const response = await fetch("http://localhost:3000/otp/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: senderemail, otp }),
+        body: JSON.stringify({ email: senderEmail, otp }),
       });
       const result = await response.json();
 
       if (result.message === "OTP verified successfully") {
         setIsTimerActive(false);
-        const userresponse = await fetch("http://localhost:3000/user/getUser", {
+        const userResponse = await fetch("http://localhost:3000/user/getUser", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: senderemail }),
+          body: JSON.stringify({ email: senderEmail }),
         });
-        const userinfo = await userresponse.json();
+        const userInfo = await userResponse.json();
 
-        if (Number(userinfo.totalBalance) - amount < 0) {
+        if (Number(userInfo.totalBalance) - amount < 0) {
           alert("Insufficient balance!");
           onClose();
           return;
@@ -131,8 +131,8 @@ const TransactionModal = ({ onClose }) => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               transactionId,
-              senderemail,
-              freelancerEmail: paymentreciever,
+              senderemail: senderEmail,
+              freelancerEmail: paymentReceiver,
               amount,
             }),
           }
@@ -142,7 +142,7 @@ const TransactionModal = ({ onClose }) => {
         if (paymentResult.message === "Payment successful") {
           alert(paymentResult.message);
           sessionStorage.removeItem("paymentreciever");
-          onClose(); // Close the modal after success
+          onClose();
           navigate("/ProfileCl");
         } else {
           alert(paymentResult.error || "Payment failed");
@@ -168,20 +168,16 @@ const TransactionModal = ({ onClose }) => {
       <div className="bg-white p-6 rounded-lg shadow-lg w-80">
         <h2 className="text-xl font-semibold mb-4">Confirm Payment</h2>
         <p className="text-gray-600 mb-4">
-          Sending payment from {senderemail} to {paymentreciever}
+          Sending payment from {senderEmail} to {paymentReceiver}
         </p>
 
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700">
             Amount
           </label>
-          <input
-            type="number"
-            value={amount}
-            onChange={(e) => setAmount(Number(e.target.value))}
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-            placeholder="Enter amount"
-          />
+          <p className="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+            {amount}
+          </p>
         </div>
 
         {!otpSent ? (

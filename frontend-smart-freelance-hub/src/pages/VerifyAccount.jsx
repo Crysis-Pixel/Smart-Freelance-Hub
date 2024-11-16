@@ -28,7 +28,6 @@ function VerifyAccount() {
         Open Verify Account Modal
       </button>
 
-      {/* OTP Modal */}
       {isOTPModalOpen && (
         <OTPModal
           email="abdullahalraiyan4@gmail.com"
@@ -37,7 +36,6 @@ function VerifyAccount() {
         />
       )}
 
-      {/* Verify Account Prompt */}
       {isVerifyModalOpen && (
         <VerifyAccountPrompt
           isOpen={isVerifyModalOpen}
