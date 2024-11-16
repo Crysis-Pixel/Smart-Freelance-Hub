@@ -190,6 +190,46 @@ export default function Profile() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const jobRes = await fetch(
+      "http://localhost:3000/jobs/getfreelancerJob",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          freelancerEmail: JSON.parse(sessionStorage.getItem("user")).email,
+        }),
+      }
+    );
+
+    if (!jobRes.status === 200) {
+      throw new Error("Failed to fetch user data");
+    }
+
+    const jobResResult = await jobRes.json();
+
+    if (Array.isArray(jobResResult)) {
+      for (let i = 0; i < jobResResult.length; i++) {
+        if (jobResResult[i].status === "assigned" && formData.lookingForJob === true) {
+          toast.error("Cannot set looking for job while you are doing a job!", {
+            position: "top-center",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            transition: Slide,
+          });
+          return;
+        }
+      }
+    } else {
+      console.error("jobResResult is not an array:", jobResResult);
+    }
+
     if (
       !formData.firstName ||
       !formData.lastName ||
