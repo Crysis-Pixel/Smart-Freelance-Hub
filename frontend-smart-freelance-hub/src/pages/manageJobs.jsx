@@ -6,6 +6,8 @@ import ChatBox from "../components/ChatBox";
 import GigContainerModal from "../components/GigContainerModal";
 import AddOtherSkill from "../components/AddOtherSkill";
 import FinishJobModal from "../components/FinishJobModal.jsx";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function ManageJobs() {
   const [jobs, setJobs] = useState([]);
@@ -141,20 +143,28 @@ export default function ManageJobs() {
   };
 
   const handlePostJob = async () => {
+    const user = JSON.parse(sessionStorage.getItem("user"));
+
     if (!newJob.title.trim()) {
-      alert("Please enter a job title.");
+      toast.error("Please enter a job title.");
       return;
     }
     if (!newJob.description.trim()) {
-      alert("Please enter a job description.");
+      toast.error("Please enter a job description.");
       return;
     }
     if (selectedSkills.length === 0) {
-      alert("Please select at least one skill.");
+      toast.error("Please select at least one skill.");
       return;
     }
     if (!newJob.maxBudget || newJob.maxBudget <= 0) {
-      alert("Please enter a valid maximum budget greater than 0.");
+      toast.error("Please enter a valid maximum budget greater than 0.");
+      return;
+    }
+    if (parseFloat(newJob.maxBudget) > parseFloat(user.totalBalance)) {
+      toast.error(
+        `The maximum budget cannot exceed your available balance of $${user.totalBalance}.`
+      );
       return;
     }
 
@@ -163,7 +173,7 @@ export default function ManageJobs() {
       description: newJob.description,
       requirements: selectedSkills.join(", "),
       maxBudget: newJob.maxBudget,
-      clientEmail: JSON.parse(sessionStorage.getItem("user")).email,
+      clientEmail: user.email,
       jobId: editingJob ? editingJob._id : null,
     };
 
@@ -193,13 +203,15 @@ export default function ManageJobs() {
 
       const postedJob = await response.json();
       if (editingJob) {
-        // Replace the edited job in the jobs list
         setJobs((prevJobs) =>
           prevJobs.map((job) => (job._id === postedJob._id ? postedJob : job))
         );
+        toast.success("Job updated successfully!");
       } else {
         setJobs((prevJobs) => [postedJob, ...prevJobs]);
+        toast.success("Job posted successfully!");
       }
+
       setIsModalOpen(false);
       setNewJob({
         title: "",
@@ -213,6 +225,7 @@ export default function ManageJobs() {
       window.location.reload();
     } catch (err) {
       setError(err.message);
+      toast.error("An error occurred while posting the job.");
     }
   };
 

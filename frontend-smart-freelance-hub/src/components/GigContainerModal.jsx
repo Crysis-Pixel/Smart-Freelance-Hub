@@ -46,19 +46,22 @@ const GigContainerModal = ({
     })
     .sort((a, b) => b.similarity_value - a.similarity_value);
 
-  const combinedUsers = [...newUsersSorted, ...oldUsersSorted];
+  const combinedUsers = [];
+
+  if (newUsersSorted.length > 0) {
+    combinedUsers.push(newUsersSorted[0]);
+    newUsersSorted.shift();
+  }
+
+  combinedUsers.push(
+    ...[...newUsersSorted, ...oldUsersSorted].sort(
+      (a, b) => b.similarity_value - a.similarity_value
+    )
+  );
+
   const usersPerPage = 3;
-
-  const firstPageUsers =
-    page === 0
-      ? [
-          ...newUsersSorted.slice(0, 2), // Top 2 new freelancers for the first page
-          ...oldUsersSorted.slice(0, usersPerPage - 2), // Fill the rest with top old users
-        ]
-      : combinedUsers;
-
   const startIndex = page * usersPerPage;
-  const paginatedUsers = firstPageUsers.slice(
+  const paginatedUsers = combinedUsers.slice(
     startIndex,
     startIndex + usersPerPage
   );
@@ -122,8 +125,7 @@ const GigContainerModal = ({
                   )}
                   <img
                     src={
-                      freelancer.profilePicture ||
-                      "/images/placeholderPic.jpg"
+                      freelancer.profilePicture || "/images/placeholderPic.jpg"
                     }
                     alt="Profile"
                     className="w-24 h-24 rounded-full mb-4"
@@ -146,7 +148,7 @@ const GigContainerModal = ({
                       {isNewUser
                         ? freelancer.minWage
                         : Math.round(freelancer.minWage * 1.2)}
-                        <h> /Project</h>
+                      <h> /Project</h>
                     </p>
                     <p className="text-gray-600">
                       <b>Skills:</b>{" "}
