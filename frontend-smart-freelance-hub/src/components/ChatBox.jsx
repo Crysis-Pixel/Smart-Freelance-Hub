@@ -10,6 +10,7 @@ const ChatBox = ({ isOpen, onClose, email }) => {
   const [chatMessages, setChatMessages] = useState([]);
   const [user, setUser] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
+  const [isFreelancer, setIsFreelancer] = useState(false);
   const [typingUser, setTypingUser] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const loggedInUser = JSON.parse(sessionStorage.getItem("user"));
@@ -23,14 +24,15 @@ const ChatBox = ({ isOpen, onClose, email }) => {
   useEffect(() => {
     socket.emit("join", senderId);
 
-    const fetchUser = async (email) => {
+    const fetchUser = async () => {
+      const email = JSON.parse(sessionStorage.getItem("user")).email;
       try {
         const response = await fetch("http://localhost:3000/user/getUser", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ email }),
+          body: JSON.stringify({ email: email }),
         });
 
         if (!response.ok) {
@@ -44,7 +46,41 @@ const ChatBox = ({ isOpen, onClose, email }) => {
       }
     };
     fetchUser();
-  }, [email]);
+  }, []);
+
+  useEffect(() => {
+    const fetchFreelancerJob = async () => {
+      try {
+        const userEmail = JSON.parse(sessionStorage.getItem("user")).email;
+
+        const jobRes = await fetch("http://localhost:3000/jobs/getfreelancerJob", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ freelancerEmail: userEmail }),
+        });
+
+        if (jobRes.status !== 200) {
+          throw new Error("Failed to fetch job data");
+        }
+
+        const jobResResult = await jobRes.json();
+        console.log(jobResResult[0]);
+        console.log(userEmail);
+        console.log(jobResResult[0].freelancerEmail);
+
+        // Ensure the response structure matches your backend data
+        if (jobResResult[0].status === "assigned" && jobResResult[0].freelancerEmail === userEmail) {
+          setIsFreelancer(true);
+        }
+      } catch (error) {
+        console.error("Error fetching freelancer job:", error);
+      }
+    };
+
+    fetchFreelancerJob();
+  }, []); // Removed unnecessary dependency on parsed session storage
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -257,8 +293,8 @@ const ChatBox = ({ isOpen, onClose, email }) => {
       >
         <header className="flex justify-between items-center p-3 bg-greenPrimary rounded-t-lg">
           <h2 className="text-white text-lg">
-            {user[0]?.firstName || "first name"}{" "}
-            {user[0]?.lastName || "last name"}
+            {loggedInUser?.firstName || "first name"}{" "}
+            {loggedInUser?.lastName || "last name"}
           </h2>
           <button onClick={onClose} className="text-white">
             X
@@ -322,7 +358,7 @@ const ChatBox = ({ isOpen, onClose, email }) => {
               >
                 Upload File
               </button>
-              {loggedInUser.accountType !== "Freelancer" ? (
+              {!isFreelancer ? (
                 <button
                   onClick={handleGivePayment}
                   className="block px-4 py-2 text-white hover:bg-greenPrimary w-full text-left"

@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const FreelancerProfileModal = ({
   isOpen,
@@ -62,11 +64,11 @@ const FreelancerProfileModal = ({
       });
 
       if (!response.ok) throw new Error("Failed to send custom offer");
-      alert("Offer sent successfully!");
+      toast.success("Offer sent successfully!");
       setOfferModalOpen(false);
       onClose();
     } catch (err) {
-      alert(`Error: ${err.message}`);
+      toast.error(`${err.message}. User is already assigned to a task.`);
     }
   };
 

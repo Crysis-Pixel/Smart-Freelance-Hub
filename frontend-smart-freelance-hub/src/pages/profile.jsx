@@ -723,7 +723,7 @@ export default function Profile() {
         onClose={closeJobOfferModal}
         jobOffer={jobOffer}
       />
-      <ChatBox isOpen={isChatOpen} onClose={toggleChat} email={clientEmail} />
+      <ChatBox isOpen={isChatOpen} onClose={toggleChat} email={JSON.parse(sessionStorage.getItem("user")).email} />
     </>
   );
 }

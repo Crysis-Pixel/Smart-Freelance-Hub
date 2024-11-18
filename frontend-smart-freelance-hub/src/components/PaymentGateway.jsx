@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const PaymentGateway = ({ isOpen, onClose }) => {
   const [paymentMethod, setPaymentMethod] = useState("");
@@ -50,9 +52,9 @@ const PaymentGateway = ({ isOpen, onClose }) => {
       });
       const result = await response.json();
       if (result.message === "Payment created successfully") {
-        alert(result.message);
+        toast.success(result.message);
         onClose();
-        navigate(-1);
+        //navigate("profileCl");
       } else {
         alert(result.error || "Failed to save payment details");
       }
