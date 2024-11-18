@@ -8,6 +8,7 @@ import { toast, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ChatBox from "../components/ChatBox";
 import JobOfferModal from "../components/jobOfferModal.jsx";
+import { Menu } from '@headlessui/react';
 
 export default function Profile() {
   const [user, setUser] = useState({
@@ -48,6 +49,7 @@ export default function Profile() {
   const [jobOffer, setJobOffer] = useState(null);
   const [clientEmail, setClientEmail] = useState(null);
   const [isAvailable, setIsAvailableJobs] = useState(true);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const availableSkills = [
     "Web-Development",
@@ -347,7 +349,9 @@ export default function Profile() {
     }
     return `$${value}`;
   }
-
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen);
+};
   function StarRating({ rating }) {
     const filledStars = Math.floor(rating);
     const hasHalfStar = rating - filledStars >= 0.5;
@@ -575,28 +579,29 @@ export default function Profile() {
 
                 {isEditing ? (
                   <div className="flex flex-col gap-2">
-                    <div className="dropdown">
-                      <button
-                        className="btn btn-secondary"
-                        disabled={selectedSkills.length >= 5}
-                      >
-                        Select Skill
-                      </button>
-                      <ul className="dropdown-content menu p-2 shadow bg-white rounded-box w-52">
-                        {availableSkills
-                          .filter((skill) => !selectedSkills.includes(skill))
-                          .map((skill) => (
-                            <li key={skill}>
-                              <button
-                                type="button"
-                                onClick={() => handleSkillSelect(skill)}
-                              >
-                                {skill}
-                              </button>
-                            </li>
-                          ))}
-                      </ul>
-                    </div>
+                    <Menu as="div" className="relative">
+    <Menu.Button className="btn btn-secondary">
+        Select Skill
+    </Menu.Button>
+    <Menu.Items className="absolute menu p-2 shadow bg-white rounded-box w-52">
+        {availableSkills
+            .filter((skill) => !selectedSkills.includes(skill))
+            .map((skill) => (
+                <Menu.Item key={skill}>
+                    {({ active }) => (
+                        <button
+                            className={`${
+                                active ? 'bg-blue-500 text-white' : 'text-black'
+                            } p-2 w-full text-left`}
+                            onClick={() => handleSkillSelect(skill)}
+                        >
+                            {skill}
+                        </button>
+                    )}
+                </Menu.Item>
+            ))}
+    </Menu.Items>
+</Menu>
 
                     <div className="flex flex-wrap gap-2 mt-2 w-96">
                       {selectedSkills.map((skill) => (
