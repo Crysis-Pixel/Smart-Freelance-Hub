@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import GoogleLoginButton from "../components/GoogleLoginButton";
 import { toast, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ForgotPassModal from "../components/forgotPassModal";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -10,6 +11,7 @@ export default function Login() {
   const [passwordVisible, setPasswordVisible] = useState(false); // State to toggle password visibility
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const [isForgotPassModalOpen, setIsForgotPassModalOpen] = useState(false);
 
   // Redirect user if user info is in sessionStorage
   useEffect(() => {
@@ -19,6 +21,14 @@ export default function Login() {
       return;
     }
   }, [navigate]);
+
+  const openForgotPassModal = () => {
+    setIsForgotPassModalOpen(true);
+  };
+
+  const closeForgotPassModal = () => {
+    setIsForgotPassModalOpen(false);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -225,12 +235,15 @@ export default function Login() {
             <a
               href="#"
               className="text-indigo-600 text-sm hover:text-indigo-800"
+              onClick={openForgotPassModal}
             >
               Forgot your password?
             </a>
           </div>
         </form>
       </div>
+      {isForgotPassModalOpen && <ForgotPassModal onClose={closeForgotPassModal} />}
     </div>
+    
   );
 }
