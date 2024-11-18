@@ -95,7 +95,7 @@ const FreelancerProfileModal = ({
           <div className="flex flex-col items-center text-center">
             <img
               src={
-                freelancer.profilePicture || "https://via.placeholder.com/100"
+                freelancer.profilePicture || "/images/placeholderPic.jpg"
               }
               alt="Profile"
               className="w-32 h-32 rounded-full mb-4"
