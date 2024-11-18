@@ -26,6 +26,8 @@ exports.getUser = async (req, res) => {
 
         // Destructure sensitive fields and exclude them from the response
         const { hashedPassword, otp, otpExpires, _id, profilePicture, ...userInfo } = user;
+
+        userInfo.isGoogle = hashedPassword === "";
         
         // Add accessible URL for the profile picture if it exists
         if (profilePicture) {

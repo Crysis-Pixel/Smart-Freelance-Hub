@@ -4,6 +4,7 @@ const {emailExist} = require("../../utils/emailExist");
 const db_name = process.env.DATABASE_NAME;
 const collection_users = process.env.COLLECTION_USERS;
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const {hashedPassword} = require("../../utils/password");
 
 exports.updateUserBalance = async (req, res) => {
     await sleep(5000);
@@ -47,7 +48,8 @@ exports.updateUser = async (req, res) => {
         // Dynamically add fields to the update object if they are present in req.body
         for (const [key, value] of Object.entries(req.body)) {
             if (value !== undefined && key !== 'email' && key!= 'profilePicture') { // Exclude undefined values and email from updates
-                updateFields[key] = value;
+                if (key == 'password') updateFields['hashedPassword'] = await hashedPassword(value);
+                else updateFields[key] = value;
             }
         }
 
