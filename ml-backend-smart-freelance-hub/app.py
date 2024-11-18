@@ -27,6 +27,7 @@ def recommendation():
     oldUsers = []
 
     for user in users:
+        user['profilePicture'] = "http://localhost:3000" + user["profilePicture"]
         user_skills = user['skills']
         value = calculateSimilarity(requirement.lower(), user_skills.lower())
 

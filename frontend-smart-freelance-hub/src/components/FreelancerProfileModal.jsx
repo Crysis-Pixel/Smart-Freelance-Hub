@@ -114,7 +114,7 @@ const FreelancerProfileModal = ({
               <b>Jobs Completed:</b> {freelancer.jobsCompleted || "New"}
             </p>
             <p className="text-gray-600 mb-4">
-              <b>Hourly rate:</b> ${adjustedMinWage}/hr
+              <b>Rate:</b> ${adjustedMinWage} /Project 
             </p>
             <p className="text-gray-600 mb-4">
               <b>Skills:</b> {freelancer.skills}
