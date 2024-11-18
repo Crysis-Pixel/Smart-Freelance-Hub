@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ReviewModal = ({ isOpen, onClose, job, onSubmitReview }) => {
   const [rating, setRating] = useState(0);
@@ -12,14 +14,62 @@ const ReviewModal = ({ isOpen, onClose, job, onSubmitReview }) => {
     setReview(e.target.value);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async() => {
     if (rating && review) {
+      if (job.clientEmail == JSON.parse(sessionStorage.getItem("user")).email){
+        const reviewUpdateResponse = await fetch("http://localhost:3000/reviews/reviewUser", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ emailOfReviewer: job.clientEmail , emailOfReviewed: job.freelancerEmail, rating: rating, description: review, reviewedType: "F" }),
+        });
+        if (reviewUpdateResponse.status !== 200){
+          toast.error("Failed to add review.");
+          return;
+        }
+        else{
+          console.log(job._id);
+          const jobUpdateResponse = await fetch("http://localhost:3000/jobs/isFreelancerReviewed", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ jobId: job._id}),
+          });
+          if (jobUpdateResponse.status !== 200){
+            toast.error("Failed to add review to jobs.");
+            return;
+          }
+        }
+    }
+    else{
+      const reviewUpdateResponse = await fetch("http://localhost:3000/reviews/reviewUser", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ emailOfReviewer: job.freelancerEmail , emailOfReviewed: job.clientEmail, rating: rating, description: review, reviewedType: "C" }),
+      });
+      if (reviewUpdateResponse.status !== 200){
+        toast.error("Failed to add review.");
+        return;
+      }
+      else{
+        console.log(job._id);
+        const jobUpdateResponse = await fetch("http://localhost:3000/jobs/isClientReviewed", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ jobId: job._id}),
+        });
+        if (jobUpdateResponse.status !== 200){
+          toast.error("Failed to add review to jobs.");
+          return;
+        }
+      }
+    }
+
       onSubmitReview(rating, review);
       setReview("");
       setRating(0);
+      toast.success("Review Added.");
       onClose();
     } else {
-      alert("Please provide both rating and review description.");
+      toast.error("Please provide both rating and review description.");
     }
   };
 
@@ -27,7 +77,7 @@ const ReviewModal = ({ isOpen, onClose, job, onSubmitReview }) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
       <div className="bg-white rounded-lg p-8 w-1/3">
         <h2 className="text-4xl font-semibold mb-5">Submit Review</h2>
-        <h1 className="text-2xl mb-5">Review for {job.freelancerEmail}</h1>
+        <h1 className="text-2xl mb-5">Review for {JSON.parse(sessionStorage.getItem("user")).email === job.freelancerEmail? job.clientEmail : job.freelancerEmail}</h1>
         <div className="mb-5">
           <h3 className="text-lg font-semibold mb-2">Rating</h3>
           <div className="flex gap-2">

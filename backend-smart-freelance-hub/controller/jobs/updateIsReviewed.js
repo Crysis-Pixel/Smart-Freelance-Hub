@@ -52,6 +52,7 @@ exports.isFreelancerReviewed = async (req, res) => {
   
         // Convert jobId to ObjectId
         const jobObjectId = new ObjectId(jobId);
+        console.log("jobobjectid ",jobId);
   
         const findJob = await collection.findOne(jobObjectId);
         if (findJob.isFreelancerReviewed === true) { 

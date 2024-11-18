@@ -290,9 +290,27 @@ export default function ManageJobs() {
     }
   };
 
-  const handleFinishJob = (job) => {
+  const handleFinishJob = async (job) => {
     setSelectedJob(job);
-    setIsFinishJobModalOpen(true);
+    if (job.isPaid===true && job.isFreelancerReviewed ===true){
+      const response = await fetch("http://localhost:3000/jobs/jobCompleted", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ jobId: job._id, clientEmail: job.clientEmail, freelancerEmail: job.freelancerEmail }),
+      });
+
+      if (response.status == 200){
+        setIsFinishJobModalOpen(false);
+        toast.success("Job has been completed. Please refresh webpage.");
+      }
+    }
+    else{
+      setIsFinishJobModalOpen(true);
+    }
+
+    
   };
 
   const handleFinishJobConfirm = (paymentAmount, review) => {

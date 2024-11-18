@@ -9,6 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 import ChatBox from "../components/ChatBox";
 import JobOfferModal from "../components/jobOfferModal.jsx";
 import { Menu } from "@headlessui/react";
+import ReviewModal from "../components/ReviewModal.jsx";
 
 export default function Profile() {
   const [user, setUser] = useState({
@@ -50,6 +51,21 @@ export default function Profile() {
   const [clientEmail, setClientEmail] = useState(null);
   const [isAvailable, setIsAvailableJobs] = useState(true);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [completedJob, setCompletedJob] = useState([]);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+
+  const handleOpenReviewModal = () => {
+    setIsReviewModalOpen(true);
+  };
+
+  const handleCloseReviewModal = () => {
+    setIsReviewModalOpen(false);
+  };
+
+  const handleReviewSubmit = (rating, reviewDescription) => {
+    console.log("Review Submitted: ", rating, reviewDescription);
+    setIsReviewModalOpen(false);
+  };
 
   const availableSkills = [
     "Accounting & Bookkeeping",
@@ -145,12 +161,34 @@ export default function Profile() {
 
         const jobsData = await response.json();
         setAvailableJobs(jobsData);
+
+        const response2 = await fetch(
+          "http://localhost:3000/jobs/getFreelancerCompletedJob",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              freelancerEmail: JSON.parse(sessionStorage.getItem("user")).email,
+            }),
+          }
+        );
+
+        if (!response2.ok) {
+          throw new Error("Failed to fetch jobs");
+        }
+
+        const completedJob = await response2.json();
+        setCompletedJob(completedJob);
       } catch (err) {
         setError(err.message);
       }
     };
     fetchJobs();
   }, []);
+
+  
 
   // Fetch countries from REST Countries API
   useEffect(() => {
@@ -477,6 +515,15 @@ export default function Profile() {
                 Contact Client
               </button>
             )}
+          {completedJob.length === 1 &&
+          completedJob[0].status === "completed" && (
+            <button
+              className="btn"
+              onClick={handleOpenReviewModal}
+            >
+              Give Client Review
+            </button>
+          )}
           {user.totalBalance > 0 && (
             <button
               className="btn btn-secondary ml-4"
@@ -710,7 +757,12 @@ export default function Profile() {
       </div>
       <Footer />
       {isWithdrawModalOpen && <WithdrawModal onClose={closeWithdrawModal} />}
-
+      <ReviewModal
+        isOpen={isReviewModalOpen}
+        onClose={handleCloseReviewModal}
+        job={completedJob[0]}
+        onSubmitReview={handleReviewSubmit}
+      />
       <AddOtherSkill
         isOpen={isOtherModalOpen}
         onClose={() => setIsOtherModalOpen(false)}

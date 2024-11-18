@@ -4,7 +4,6 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const TransactionModal = ({ job, onClose }) => {
-  console.log(job);
   const [loading, setLoading] = useState(false);
   const [transactionId, setTransactionId] = useState("");
   const [otp, setOtp] = useState("");
@@ -54,6 +53,7 @@ const TransactionModal = ({ job, onClose }) => {
 
   const handleTransaction = async () => {
     setLoading(true);
+    
     try {
       const response = await fetch("http://localhost:3000/otp/send-otp", {
         method: "POST",
@@ -122,7 +122,7 @@ const TransactionModal = ({ job, onClose }) => {
         const userInfo = await userResponse.json();
 
         if (Number(userInfo.totalBalance) - amount < 0) {
-          alert("Insufficient balance!");
+          toast.error("Insufficient balance!");
           onClose();
           return;
         }
@@ -143,17 +143,35 @@ const TransactionModal = ({ job, onClose }) => {
         const paymentResult = await paymentResponse.json();
 
         if (paymentResult.message === "Payment successful") {
-          alert(paymentResult.message);
-          sessionStorage.removeItem("paymentreciever");
-          onClose();
-          navigate("/ProfileCl");
+          const jobIsPaidResponse = await fetch(
+            "http://localhost:3000/jobs/isPaid",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                jobId: job._id
+              }),
+            }
+          );
+
+          if (jobIsPaidResponse.status == 200){
+            toast.success(paymentResult.message);
+            sessionStorage.removeItem("paymentreciever");
+            onClose();
+            navigate("/ProfileCl");
+          }
+          else{
+            toast.error(paymentResult.error || "Payment failed");
+            onClose();
+            navigate("/manageJobs");
+          } 
         } else {
-          alert(paymentResult.error || "Payment failed");
+          toast.error(paymentResult.error || "Payment failed");
           onClose();
           navigate("/manageJobs");
         }
       } else {
-        alert(result.error || "OTP verification failed");
+        toast.error(result.error || "OTP verification failed");
         onClose();
         navigate("/manageJobs");
       }
