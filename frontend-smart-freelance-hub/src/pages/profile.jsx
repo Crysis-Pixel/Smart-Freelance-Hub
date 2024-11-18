@@ -60,6 +60,8 @@ export default function Profile() {
     "Data Analyst",
     "Application Developer",
     "SEO Analyst",
+    "Game Developer",
+    "Rizzler",
     "Other",
   ];
 
@@ -583,7 +585,7 @@ export default function Profile() {
     <Menu.Button className="btn btn-secondary">
         Select Skill
     </Menu.Button>
-    <Menu.Items className="absolute menu p-2 shadow bg-white rounded-box w-52">
+    <Menu.Items className="absolute menu p-2 shadow bg-white rounded-box w-52 max-h-52 overflow-y-auto">
         {availableSkills
             .filter((skill) => !selectedSkills.includes(skill))
             .map((skill) => (

@@ -14,17 +14,17 @@ const FreelancerProfileModal = ({
   if (!isOpen || !freelancer) return null;
 
   const adjustedMinWage =
-    freelancer.jobsCompleted > 0
+  Math.round(freelancer.jobsCompleted > 0
       ? freelancer.minWage * 1.2
-      : freelancer.minWage;
-  const minOffer = adjustedMinWage / 1.2;
+      : freelancer.minWage);
+  const minOffer = Math.round(adjustedMinWage / 1.2);
 
   const handleHire = async () => {
     const payload = {
       jobId,
       clientEmail: clientMail,
       freelancerEmail: freelancer.email,
-      offeredPrice: parseInt(adjustedMinWage),
+      offeredPrice: Math.round(adjustedMinWage),
     };
 
     try {

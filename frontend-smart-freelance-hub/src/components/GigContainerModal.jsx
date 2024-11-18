@@ -145,8 +145,8 @@ const GigContainerModal = ({
                       <b>Rate:</b> $
                       {isNewUser
                         ? freelancer.minWage
-                        : freelancer.minWage * 1.2}
-                      /hr
+                        : Math.round(freelancer.minWage * 1.2)}
+                        <h> /Project</h>
                     </p>
                     <p className="text-gray-600">
                       <b>Skills:</b>{" "}
