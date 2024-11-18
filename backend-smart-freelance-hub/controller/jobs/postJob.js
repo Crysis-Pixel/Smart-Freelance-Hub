@@ -31,6 +31,9 @@ exports.postJob = async (req, res) => {
         clientEmail,
         createdAt: currentDate(),
         maxBudget,
+        isFreelancerReviewed: false,
+        isClientReviewed: false,
+        isPaid: false,
       };
         const result = await collection.insertOne(newJob);
 

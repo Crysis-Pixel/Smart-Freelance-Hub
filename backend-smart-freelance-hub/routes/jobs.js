@@ -10,6 +10,8 @@ const {editJob} = require('../controller/jobs/editJob');
 const {jobPending} = require('../controller/jobs/jobPending');
 const {declineJob} = require('../controller/jobs/declineJob');
 const {getFreelancerJob} = require("../controller/jobs/freelancerJob");
+const isReviewed = require("../controller/jobs/updateIsReviewed");
+const {isPaid} = require("../controller/jobs/updateIsPaid");
 
 router.post('/postJob', postJob);
 router.post('/getJobs', getJobs);
@@ -19,6 +21,9 @@ router.post('/editJob', editJob);
 router.post('/jobPending', jobPending);
 router.post('/declineJob', declineJob);
 router.post('/getFreelancerJob', getFreelancerJob);
+router.post('/isClientReviewed', isReviewed.isClientReviewed);
+router.post('/isFreelancerReviewed', isReviewed.isFreelancerReviewed);
+router.post('/isPaid', isPaid);
 
 
 
