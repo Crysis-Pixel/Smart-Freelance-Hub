@@ -123,7 +123,7 @@ const GigContainerModal = ({
                   <img
                     src={
                       freelancer.profilePicture ||
-                      "https://via.placeholder.com/100"
+                      "/images/placeholderPic.jpg"
                     }
                     alt="Profile"
                     className="w-24 h-24 rounded-full mb-4"
@@ -146,7 +146,7 @@ const GigContainerModal = ({
                       {isNewUser
                         ? freelancer.minWage
                         : Math.round(freelancer.minWage * 1.2)}
-                        <span> /Project</span>
+                        <h> /Project</h>
                     </p>
                     <p className="text-gray-600">
                       <b>Skills:</b>{" "}
