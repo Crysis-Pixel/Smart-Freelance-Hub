@@ -2,10 +2,13 @@ import React, { useState, useEffect, useRef } from "react";
 import io from "socket.io-client";
 import { useNavigate } from "react-router-dom";
 import TransactionModal from "./TransactionModal";
+import PaymentGateway from "../components/PaymentGateway.jsx";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const socket = io("http://localhost:3000");
 
-const ChatBox = ({ isOpen, onClose, email }) => {
+const ChatBox = ({ isOpen, onClose, email, type }) => {
   const [message, setMessage] = useState("");
   const [chatMessages, setChatMessages] = useState([]);
   const [user, setUser] = useState([]);
@@ -20,6 +23,10 @@ const ChatBox = ({ isOpen, onClose, email }) => {
   const navigate = useNavigate();
   const recipientId = email;
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [hasPayment, setHasPayment] = useState(false);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
+  const [job, setJob] = useState(null); // assuming you have a job object to pass to TransactionModal
 
   useEffect(() => {
     socket.emit("join", senderId);
@@ -48,39 +55,37 @@ const ChatBox = ({ isOpen, onClose, email }) => {
     fetchUser();
   }, []);
 
-  useEffect(() => {
-    const fetchFreelancerJob = async () => {
-      try {
-        const userEmail = JSON.parse(sessionStorage.getItem("user")).email;
+ 
+  const fetchFreelancerJob = async () => {
+    try {
+      
+      const jobRes = await fetch("http://localhost:3000/jobs/getfreelancerJob", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ freelancerEmail: email }),
+      });
 
-        const jobRes = await fetch("http://localhost:3000/jobs/getfreelancerJob", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ freelancerEmail: userEmail }),
-        });
-
-        if (jobRes.status !== 200) {
-          throw new Error("Failed to fetch job data");
-        }
-
+      if (jobRes.status == 200) {
         const jobResResult = await jobRes.json();
-        console.log(jobResResult[0]);
-        console.log(userEmail);
-        console.log(jobResResult[0].freelancerEmail);
+        console.log(jobResResult);
 
         // Ensure the response structure matches your backend data
-        if (jobResResult[0].status === "assigned" && jobResResult[0].freelancerEmail === userEmail) {
-          setIsFreelancer(true);
+        if (jobResResult.length>0){
+          if (jobResResult[0].status === "assigned" && jobResResult[0].freelancerEmail === email) {
+            setJob(jobResResult[0]);
+            console.log(job);
+            //setIsFreelancer(true);
+          }
         }
-      } catch (error) {
-        console.error("Error fetching freelancer job:", error);
       }
-    };
 
-    fetchFreelancerJob();
-  }, []); // Removed unnecessary dependency on parsed session storage
+    } catch (error) {
+      console.error("Error fetching freelancer job:", error);
+    }
+  };
+
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -205,25 +210,25 @@ const ChatBox = ({ isOpen, onClose, email }) => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatMessages, typingUser]);
 
-  const gotoPayment = async () => {
-    const checkifPaymentExists = async () => {
-      const response = await fetch("http://localhost:3000/payments/get", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ useremail: senderId }),
-      });
-      const result = await response.json();
-      console.log(result);
-      if (!(result.message === "Payment not found")) {
-        sessionStorage.setItem("paymentreciever", recipientId);
-        navigate("/TransactionPage");
-      } else {
-        alert("You do not have payment set up. Please set payment details.");
-        navigate("/PaymentPage");
-      }
-    };
-    checkifPaymentExists();
-  };
+  // const gotoPayment = async () => {
+  //   const checkifPaymentExists = async () => {
+  //     const response = await fetch("http://localhost:3000/payments/get", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ useremail: senderId }),
+  //     });
+  //     const result = await response.json();
+  //     console.log(result);
+  //     if (!(result.message === "Payment not found")) {
+  //       sessionStorage.setItem("paymentreciever", recipientId);
+  //       navigate("/TransactionPage");
+  //     } else {
+  //       alert("You do not have payment set up. Please set payment details.");
+  //       navigate("/PaymentPage");
+  //     }
+  //   };
+  //   checkifPaymentExists();
+  // };
 
   useEffect(() => {
     recipientIdRef.current = recipientId;
@@ -247,17 +252,23 @@ const ChatBox = ({ isOpen, onClose, email }) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ useremail: senderId }),
       });
-      const result = await response.json();
 
-      if (!(result.message === "Payment not found")) {
+      if (response.status === 200) {
         sessionStorage.setItem("paymentreciever", recipientId);
-        setIsModalOpen(true);
+        await fetchFreelancerJob();
+        setHasPayment(true); // Payment exists, show TransactionModal
+        setIsTransactionModalOpen(true);
       } else {
-        alert("You do not have payment set up. Please set payment details.");
+        toast.error("You do not have payment set up. Please set payment details.");
+        setHasPayment(false); // No payment, show PaymentGateway
+        setIsPaymentModalOpen(true);
       }
     };
     checkifPaymentExists();
   };
+
+  const closePaymentGateway = () => setIsPaymentModalOpen(false);
+  const closeTransactionModal = () => setIsTransactionModalOpen(false);
 
   const [hoveredMessageIndex, setHoveredMessageIndex] = useState(null);
   const [timestampVisibleIndex, setTimestampVisibleIndex] = useState(null);
@@ -284,6 +295,13 @@ const ChatBox = ({ isOpen, onClose, email }) => {
     setTimestampVisibleIndex(null);
     clearTimeout(hoverTimeout);
   };
+
+  useEffect(() => {
+    if (job) {
+      console.log("Job has been set:", job); // Log job when it changes
+    }
+  }, [job]); // This will run whenever `job` state changes
+  
 
   return (
     isOpen && (
@@ -358,7 +376,7 @@ const ChatBox = ({ isOpen, onClose, email }) => {
               >
                 Upload File
               </button>
-              {!isFreelancer ? (
+              {type==="Client" ? (
                 <button
                   onClick={handleGivePayment}
                   className="block px-4 py-2 text-white hover:bg-greenPrimary w-full text-left"
@@ -392,8 +410,12 @@ const ChatBox = ({ isOpen, onClose, email }) => {
             →
           </button>
         </div>
-        {isModalOpen && (
-          <TransactionModal onClose={() => setIsModalOpen(false)} />
+        {isPaymentModalOpen && !hasPayment && (
+          <PaymentGateway isOpen={isPaymentModalOpen} onClose={closePaymentGateway} />
+        )}
+
+        {isTransactionModalOpen && hasPayment && (
+          <TransactionModal job={job} onClose={closeTransactionModal} />
         )}
       </div>
     )

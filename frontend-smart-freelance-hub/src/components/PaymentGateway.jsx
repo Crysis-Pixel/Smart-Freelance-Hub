@@ -20,6 +20,7 @@ const PaymentGateway = ({ isOpen, onClose }) => {
 
     const user = JSON.parse(sessionStorage.getItem("user"));
     const checkifPaymentExists = async () => {
+      
       const response = await fetch("http://localhost:3000/payments/get", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

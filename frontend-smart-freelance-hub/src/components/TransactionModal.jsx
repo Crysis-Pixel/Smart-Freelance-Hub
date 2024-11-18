@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const TransactionModal = ({ job, onClose }) => {
+  console.log(job);
   const [loading, setLoading] = useState(false);
   const [transactionId, setTransactionId] = useState("");
   const [otp, setOtp] = useState("");
@@ -45,7 +48,7 @@ const TransactionModal = ({ job, onClose }) => {
     } catch (error) {
       console.error("Error updating transaction:", error);
     }
-    alert("OTP timed out!");
+    toast.error("OTP timed out!");
     onClose();
   };
 
@@ -62,7 +65,7 @@ const TransactionModal = ({ job, onClose }) => {
       if (result.message === "OTP sent successfully") {
         setOtpSent(true);
       } else {
-        alert(result.error || "Failed to send OTP");
+        toast.error(result.error || "Failed to send OTP");
         onClose();
       }
 
@@ -92,7 +95,7 @@ const TransactionModal = ({ job, onClose }) => {
       setTransactionId(paymentResult.transactionResult.insertedId);
     } catch (error) {
       console.error("Error sending OTP:", error);
-      alert("Failed to send OTP");
+      toast.error("Failed to send OTP");
       onClose();
     } finally {
       setLoading(false);

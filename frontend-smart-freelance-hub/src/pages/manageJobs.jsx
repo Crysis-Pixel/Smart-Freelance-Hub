@@ -621,6 +621,7 @@ export default function ManageJobs() {
           isOpen={isChatOpen}
           onClose={toggleChat}
           email={freelancerEmail}
+          type={"Client"}
         />
 
         <FinishJobModal
