@@ -8,7 +8,7 @@ import { toast, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ChatBox from "../components/ChatBox";
 import JobOfferModal from "../components/jobOfferModal.jsx";
-import { Menu } from '@headlessui/react';
+import { Menu } from "@headlessui/react";
 
 export default function Profile() {
   const [user, setUser] = useState({
@@ -52,16 +52,32 @@ export default function Profile() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const availableSkills = [
-    "Web-Development",
-    "Video-Editor",
-    "Photo-Editor",
-    "UI/UX Design",
-    "Graphics Designer",
-    "Data Analyst",
+    "Accounting & Bookkeeping",
+    "AI (Artificial Intelligence)",
     "Application Developer",
-    "SEO Analyst",
+    "Blockchain Development",
+    "Content Writing",
+    "Copywriting",
+    "Data Analyst",
+    "Digital Marketing",
+    "E-commerce",
+    "Financial Analysis",
     "Game Developer",
-    "Rizzler",
+    "Graphics Designer",
+    "IT Support",
+    "Machine Learning",
+    "Mobile App Development",
+    "Photo Editor",
+    "Project Management",
+    "SEO Analyst",
+    "Social Media Marketing",
+    "Technical Writing",
+    "Translation",
+    "UI/UX Design",
+    "Video Editor",
+    "Virtual Assistance",
+    "Web Design",
+    "Web Development",
     "Other",
   ];
 
@@ -353,7 +369,7 @@ export default function Profile() {
   }
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
-};
+  };
   function StarRating({ rating }) {
     const filledStars = Math.floor(rating);
     const hasHalfStar = rating - filledStars >= 0.5;
@@ -582,28 +598,30 @@ export default function Profile() {
                 {isEditing ? (
                   <div className="flex flex-col gap-2">
                     <Menu as="div" className="relative">
-    <Menu.Button className="btn btn-secondary">
-        Select Skill
-    </Menu.Button>
-    <Menu.Items className="absolute menu p-2 shadow bg-white rounded-box w-52 max-h-52 overflow-y-auto">
-        {availableSkills
-            .filter((skill) => !selectedSkills.includes(skill))
-            .map((skill) => (
-                <Menu.Item key={skill}>
-                    {({ active }) => (
-                        <button
-                            className={`${
-                                active ? 'bg-blue-500 text-white' : 'text-black'
-                            } p-2 w-full text-left`}
-                            onClick={() => handleSkillSelect(skill)}
-                        >
-                            {skill}
-                        </button>
-                    )}
-                </Menu.Item>
-            ))}
-    </Menu.Items>
-</Menu>
+                      <Menu.Button className="btn btn-secondary">
+                        Select Skill
+                      </Menu.Button>
+                      <Menu.Items className="absolute menu p-2 shadow bg-white rounded-box w-52 max-h-52 overflow-y-auto">
+                        {availableSkills
+                          .filter((skill) => !selectedSkills.includes(skill))
+                          .map((skill) => (
+                            <Menu.Item key={skill}>
+                              {({ active }) => (
+                                <button
+                                  className={`${
+                                    active
+                                      ? "bg-blue-500 text-white"
+                                      : "text-black"
+                                  } p-2 w-full text-left`}
+                                  onClick={() => handleSkillSelect(skill)}
+                                >
+                                  {skill}
+                                </button>
+                              )}
+                            </Menu.Item>
+                          ))}
+                      </Menu.Items>
+                    </Menu>
 
                     <div className="flex flex-wrap gap-2 mt-2 w-96">
                       {selectedSkills.map((skill) => (
