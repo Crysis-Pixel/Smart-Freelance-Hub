@@ -29,11 +29,6 @@ exports.assignJob = async (req, res) => {
         { $set: { status: "completed", completedAt: currentDate() } } // Set status to assigned and update timestamp
       );
 
-      const updateUser = await UserCollection.updateOne(
-        { email: freelancerEmail }, // Match user by email
-        { $set: { lookingForJob: true } } // Set jobCompleted to true
-      )
-
       // Check if the update was successful
       if (updateResult.modifiedCount === 0) {
         return res.status(404).json({ message: "Job not found or already completed" });
