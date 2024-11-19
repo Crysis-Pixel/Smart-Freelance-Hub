@@ -3,7 +3,6 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import logo from "../assets/SmartFreelanceHubLOGO.png";
-import Marquee from "react-fast-marquee";
 
 function Header({ profilePicture }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
