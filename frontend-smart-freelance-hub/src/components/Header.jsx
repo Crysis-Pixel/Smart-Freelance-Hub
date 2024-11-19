@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import logo from "../assets/SmartFreelanceHubLOGO.png";
+import Marquee from "react-fast-marquee";
 
 function Header({ profilePicture }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -329,8 +330,10 @@ function Header({ profilePicture }) {
           <div>
             {availableJob.length === 1 &&
               availableJob[0].status === "pending" && (
-                <div className="text-center text-xl animate__animated animate__flipInY text-orange-400">
-                  You have a gig offer, visit freelancer profile to check
+                <div className="marquee">
+                  <div className="marquee-content text-center text-xl text-red-500">
+                    You have a gig offer, visit freelancer profile to check
+                  </div>
                 </div>
               )}
           </div>
