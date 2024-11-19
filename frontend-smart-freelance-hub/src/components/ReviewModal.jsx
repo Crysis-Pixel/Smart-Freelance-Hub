@@ -61,11 +61,16 @@ const ReviewModal = ({ isOpen, onClose, job, onSubmitReview }) => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ jobId: job._id}),
         });
-        if (reviewUpdateResponse.status === 400){
+        const lookingForJobSet = await fetch("http://localhost:3000/user/updateUser", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: job.freelancerEmail, lookingForJob: true}),
+        });
+        if (jobUpdateResponse.status === 400){
           toast.error("Already Reviewed!.");
           return;
         }
-        else if (reviewUpdateResponse.status !== 200){
+        else if (jobUpdateResponse.status !== 200){
           toast.error("Failed to add review.");
           return;
         }
