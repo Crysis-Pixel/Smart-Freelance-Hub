@@ -292,25 +292,26 @@ export default function ManageJobs() {
 
   const handleFinishJob = async (job) => {
     setSelectedJob(job);
-    if (job.isPaid===true && job.isFreelancerReviewed ===true){
+    if (job.isPaid === true && job.isFreelancerReviewed === true) {
       const response = await fetch("http://localhost:3000/jobs/jobCompleted", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ jobId: job._id, clientEmail: job.clientEmail, freelancerEmail: job.freelancerEmail }),
+        body: JSON.stringify({
+          jobId: job._id,
+          clientEmail: job.clientEmail,
+          freelancerEmail: job.freelancerEmail,
+        }),
       });
 
-      if (response.status == 200){
+      if (response.status == 200) {
         setIsFinishJobModalOpen(false);
         toast.success("Job has been completed. Please refresh webpage.");
       }
-    }
-    else{
+    } else {
       setIsFinishJobModalOpen(true);
     }
-
-    
   };
 
   const handleFinishJobConfirm = (paymentAmount, review) => {
@@ -357,6 +358,8 @@ export default function ManageJobs() {
                         ? "bg-green-200"
                         : job.status === "declined"
                         ? "bg-red-400"
+                        : job.status === "completed"
+                        ? "bg-greenPrimary"
                         : ""
                     }`}
                   >

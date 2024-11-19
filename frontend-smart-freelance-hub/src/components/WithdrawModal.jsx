@@ -98,7 +98,7 @@ const WithdrawModal = ({ onClose }) => {
         const userinfo = await currentuser.json();
         const currentBalance = userinfo.totalBalance;
 
-        if (currentBalance - amount > 0) {
+        if (currentBalance - amount >= 0) {
           setIsTimerActive(false);
           const userinfo = await fetch(
             "http://localhost:3000/user/updateUserBalance",
@@ -109,10 +109,8 @@ const WithdrawModal = ({ onClose }) => {
             }
           );
           const result2 = await userinfo.json();
-          //console.log(result2);
           if (result2 === "Top up successful") {
             toast.success("Withdraw successful!");
-            console.log("Withdraw successful");
             onClose();
           } else {
             toast.error("Failed to withdraw.");
