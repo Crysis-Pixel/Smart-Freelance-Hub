@@ -1,6 +1,6 @@
-// src/components/ClientProfileModal.jsx
-
-import React from "react";
+import React, { useState } from "react";
+import ReviewsModal from "../components/ReviewsModal.jsx"; // Adjust the path as needed
+import { toast } from "react-toastify"; // Ensure you have toast for error handling
 
 export default function ClientProfileModal({ isOpen, userData, onClose }) {
   if (!isOpen || !userData) return null;
@@ -9,21 +9,47 @@ export default function ClientProfileModal({ isOpen, userData, onClose }) {
     firstName,
     lastName,
     email,
-    accountType,
     accountCreated,
     cBio,
-    fBio,
     country,
-    skills,
     profilePicture,
-    phoneNumber,
-    totalBalance,
     cRating,
-    fRating,
-    jobsCompleted,
-    minWage,
-    lookingForJob,
   } = userData;
+
+  // Reviews State
+  const [isReviewsModalOpen, setIsReviewsModalOpen] = useState(false);
+  const [freelancerReviews, setFreelancerReviews] = useState([]);
+
+  const handleCloseReviewsModal = () => {
+    setIsReviewsModalOpen(false);
+  };
+
+  const handleOpenReviewsModal = async () => {
+    console.log("Fetching reviews...");
+    try {
+      const response = await fetch("http://localhost:3000/reviews/getUserReviews", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          reviewedType: "C",
+        }),
+      });
+
+      if (response.status !== 200) {
+        toast.error("No Reviews Found");
+        throw new Error("Failed to fetch reviews");
+      }
+
+      const data = await response.json();
+      setFreelancerReviews(data);
+      setIsReviewsModalOpen(true);
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
 
   function StarRating({ rating }) {
     const filledStars = Math.floor(rating);
@@ -49,7 +75,7 @@ export default function ClientProfileModal({ isOpen, userData, onClose }) {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md relative z-50">
+      <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md relative">
         <button
           className="absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-2xl font-semibold"
           onClick={onClose}
@@ -73,25 +99,32 @@ export default function ClientProfileModal({ isOpen, userData, onClose }) {
           <p className="text-gray-800">
             <b>Country:</b> {country}
           </p>
-          <div className="mb-4">
-            <p className="text-gray-800">
-              <b>Bio:</b> {cBio || "No client bio available"}
-            </p>
-          </div>
           <p className="text-gray-800">
-            <b>Account Created:</b> {accountCreated}
+            <b>Bio:</b> {cBio || "No client bio available"}
           </p>
           <p className="text-gray-800">
-            <b>Last Active:</b> {userData.lastActive}
+            <b>Account Created:</b> {accountCreated}
           </p>
         </div>
 
         <div className="mb-4">
           <p className="text-gray-800">
-            <b>Client Rating:</b>{" "}
-            {cRating ? <StarRating rating={cRating} /> : "Not Rated"}
+            <b>Rating:</b>
           </p>
+          <div
+            className="flex items-center cursor-pointer"
+            onClick={handleOpenReviewsModal}
+          >
+            {cRating ? <StarRating rating={cRating} /> : "Not Rated"}
+          </div>
         </div>
+
+        {/* Reviews Modal */}
+        <ReviewsModal
+          isOpen={isReviewsModalOpen}
+          onClose={handleCloseReviewsModal}
+          reviews={freelancerReviews}
+        />
       </div>
     </div>
   );
