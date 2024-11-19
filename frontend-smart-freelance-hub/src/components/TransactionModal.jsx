@@ -158,7 +158,7 @@ const TransactionModal = ({ job, onClose }) => {
             toast.success(paymentResult.message);
             sessionStorage.removeItem("paymentreciever");
             onClose();
-            navigate("/ProfileCl");
+            navigate("/manageJobs");
           }
           else{
             toast.error(paymentResult.error || "Payment failed");

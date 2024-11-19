@@ -10,6 +10,7 @@ import ChatBox from "../components/ChatBox";
 import JobOfferModal from "../components/jobOfferModal.jsx";
 import { Menu } from "@headlessui/react";
 import ReviewModal from "../components/ReviewModal.jsx";
+import ReviewsModal from "../components/ReviewsModal.jsx"; // Adjust the path as needed
 
 export default function Profile() {
   const [user, setUser] = useState({
@@ -54,6 +55,42 @@ export default function Profile() {
   const [completedJob, setCompletedJob] = useState([]);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
 
+  //Reviews
+  const [isReviewsModalOpen, setIsReviewsModalOpen] = useState(false);
+  const [freelancerReviews, setFreelancerReviews] = useState([]);
+
+  const handleCloseReviewsModal = () => {
+    setIsReviewsModalOpen(false);
+  };
+  const handleOpenReviewsModal = async () => {
+    console.log("getting reviews");
+    try {
+      const response = await fetch(
+        "http://localhost:3000/reviews/getUserReviews",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: user.email,
+            reviewedType: "F"
+          }),
+        }
+      );
+
+      if (response.status !== 200) {
+        toast.error("No Reviews found");
+        throw new Error("Failed to fetch reviews");
+      }
+
+      const data = await response.json();
+      setFreelancerReviews(data);
+      setIsReviewsModalOpen(true);
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
   const handleOpenReviewModal = () => {
     setIsReviewModalOpen(true);
   };
@@ -187,8 +224,6 @@ export default function Profile() {
     };
     fetchJobs();
   }, []);
-
-  
 
   // Fetch countries from REST Countries API
   useEffect(() => {
@@ -516,14 +551,11 @@ export default function Profile() {
               </button>
             )}
           {completedJob.length === 1 &&
-          completedJob[0].status === "completed" && (
-            <button
-              className="btn"
-              onClick={handleOpenReviewModal}
-            >
-              Give Client Review
-            </button>
-          )}
+            completedJob[0].status === "completed" && (
+              <button className="btn" onClick={handleOpenReviewModal}>
+                Give Client Review
+              </button>
+            )}
           {user.totalBalance > 0 && (
             <button
               className="btn btn-secondary ml-4"
@@ -554,7 +586,10 @@ export default function Profile() {
               </div>
               <div className="stat">
                 <div className="stat-title">Rating</div>
-                <div className="stat-value flex items-center">
+                <div
+                  className="stat-value flex items-center cursor-pointer"
+                  onClick={handleOpenReviewsModal}
+                >
                   {user.fRating ? (
                     <StarRating rating={user.fRating} />
                   ) : (
@@ -562,7 +597,14 @@ export default function Profile() {
                   )}
                 </div>
               </div>
+              {/* Reviews Modal */}
+              <ReviewsModal
+                isOpen={isReviewsModalOpen}
+                onClose={handleCloseReviewsModal}
+                reviews={freelancerReviews}
+              />
             </div>
+
             <div className="flex flex-col gap-10 p-10">
               <div className="flex justify-between">
                 <div className="flex justify-between">
@@ -775,7 +817,12 @@ export default function Profile() {
         onClose={closeJobOfferModal}
         jobOffer={jobOffer}
       />
-      <ChatBox isOpen={isChatOpen} onClose={toggleChat} email={clientEmail} type={"Freelancer"} />
+      <ChatBox
+        isOpen={isChatOpen}
+        onClose={toggleChat}
+        email={clientEmail}
+        type={"Freelancer"}
+      />
     </>
   );
 }

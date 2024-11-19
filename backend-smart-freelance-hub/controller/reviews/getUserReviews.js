@@ -16,8 +16,7 @@ exports.getUserReviews = async (req, res) => {
 
     // Fetch reviews for the specified user by email
     const userReviews = await collection
-      .find({ emailOfReviewed: email, reviewedType: reviewedType }, { projection: { emailOfReviewed: 0 } })
-      .toArray();
+      .find({ emailOfReviewed: email, reviewedType: reviewedType }).toArray();
 
     if (userReviews.length === 0) {
       return res.status(404).json({ message: "No reviews found for this user" });

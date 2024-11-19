@@ -6,6 +6,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ReviewsModal from "../components/ReviewsModal.jsx"; // Adjust the path as needed
+
 
 export default function ClientProfile() {
   const [user, setUser] = useState({
@@ -33,6 +35,45 @@ export default function ClientProfile() {
   const [profilePictureFile, setProfilePictureFile] = useState(null); // Add this line for the profile picture file state
   const navigate = useNavigate();
 
+  //Reviews
+  const [isReviewsModalOpen, setIsReviewsModalOpen] = useState(false);
+  const [freelancerReviews, setFreelancerReviews] = useState([]);
+
+  const handleCloseReviewsModal = () => {
+    setIsReviewsModalOpen(false);
+  };
+  const handleOpenReviewsModal = async () => {
+    console.log("getting reviews");
+    try {
+      const response = await fetch(
+        "http://localhost:3000/reviews/getUserReviews",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: user.email,
+            reviewedType: "C"
+          }),
+        }
+      );
+
+      if (response.status !== 200) {
+        toast.error("No Reviews found")
+        throw new Error("Failed to fetch reviews");
+      }
+
+      const data = await response.json();
+      setFreelancerReviews(data);
+      setIsReviewsModalOpen(true);
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+  const handleOpenReviewModal = () => {
+    setIsReviewModalOpen(true);
+  };
   useEffect(() => {
     const userData = sessionStorage.getItem("user");
     if (!userData) {
@@ -328,15 +369,24 @@ export default function ClientProfile() {
               </div>
 
               <div className="stat">
-                <div className="stat-title">Client Rating</div>
-                <div className="stat-value flex items-center">
-                  {user.fRating ? (
+                <div className="stat-title">Rating</div>
+                <div
+                  className="stat-value flex items-center cursor-pointer"
+                  onClick={handleOpenReviewsModal}
+                >
+                  {user.cRating ? (
                     <StarRating rating={user.cRating} />
                   ) : (
                     "Not Rated"
                   )}
                 </div>
               </div>
+              {/* Reviews Modal */}
+              <ReviewsModal
+                isOpen={isReviewsModalOpen}
+                onClose={handleCloseReviewsModal}
+                reviews={freelancerReviews}
+              />
             </div>
             <div className="flex flex-col gap-10 p-10">
               <div>
