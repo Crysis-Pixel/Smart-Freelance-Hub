@@ -18,6 +18,7 @@ import BalanceTopUp from "./pages/balancetopup";
 import BalanceWithdraw from "./pages/balancewithdraw";
 // Testing
 import ChatComponent from "./components/ChatComponent";
+import "animate.css";
 
 // Import ModalProvider
 import { ModalProvider } from "./contexts/Modalcontext";

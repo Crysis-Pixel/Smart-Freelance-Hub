@@ -36,26 +36,47 @@ export default function FinishJobModal({ isOpen, onClose, job }) {
             <h1 className="text-2xl mb-5">
               To finish the job, you must pay and review the freelancer
             </h1>
-            <p className="text-gray-700 mb-5">Pay: {job.freelancerEmail}</p>
             <p className="text-gray-700 mb-5">
-              Amount to Pay: {job.offeredPrice}
+              Freelancer Email: {job.freelancerEmail}
             </p>
+
+            {job.isPaid ? (
+              <p className="text-green-700 mb-5 text-xl">Payment done ✓</p>
+            ) : (
+              <p className="text-red-500 mb-5 text-xl">
+                Amount to Pay: {job.offeredPrice}
+              </p>
+            )}
+
+            {job.isFreelancerReviewed ? (
+              <p className="text-green-700 mb-5 text-xl">
+                Freelancer Reviewed ✓
+              </p>
+            ) : (
+              <p className="text-red-500 mb-5 text-xl">
+                Freelancer review pending
+              </p>
+            )}
 
             <div className="mb-4">
               <h3 className="text-lg font-semibold">Actions</h3>
               <div className="flex flex-col gap-4">
-                <button
-                  className="btn btn-primary w-full"
-                  onClick={handlePayment}
-                >
-                  Pay Freelancer
-                </button>
-                <button
-                  className="btn btn-secondary w-full"
-                  onClick={handleOpenReviewModal}
-                >
-                  Review Freelancer
-                </button>
+                {!job.isPaid && (
+                  <button
+                    className="btn btn-primary w-full"
+                    onClick={handlePayment}
+                  >
+                    Pay Freelancer
+                  </button>
+                )}
+                {!job.isFreelancerReviewed && (
+                  <button
+                    className="btn btn-secondary w-full"
+                    onClick={handleOpenReviewModal}
+                  >
+                    Review Freelancer
+                  </button>
+                )}
               </div>
             </div>
 

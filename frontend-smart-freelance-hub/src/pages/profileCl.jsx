@@ -8,7 +8,6 @@ import { toast, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ReviewsModal from "../components/ReviewsModal.jsx"; // Adjust the path as needed
 
-
 export default function ClientProfile() {
   const [user, setUser] = useState({
     accountCreated: "",
@@ -43,7 +42,6 @@ export default function ClientProfile() {
     setIsReviewsModalOpen(false);
   };
   const handleOpenReviewsModal = async () => {
-    console.log("getting reviews");
     try {
       const response = await fetch(
         "http://localhost:3000/reviews/getUserReviews",
@@ -54,13 +52,13 @@ export default function ClientProfile() {
           },
           body: JSON.stringify({
             email: user.email,
-            reviewedType: "C"
+            reviewedType: "C",
           }),
         }
       );
 
       if (response.status !== 200) {
-        toast.error("No Reviews found")
+        toast.error("No Reviews found");
         throw new Error("Failed to fetch reviews");
       }
 

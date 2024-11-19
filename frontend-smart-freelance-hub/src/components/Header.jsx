@@ -24,8 +24,9 @@ function Header({ profilePicture }) {
   const [error, setError] = useState(null);
 
   // Verify Account Modal State
-  const [isVerifyAccountModalOpen, setIsVerifyAccountModalOpen] = useState(false);
-  const [otp, setOtp] = useState('');
+  const [isVerifyAccountModalOpen, setIsVerifyAccountModalOpen] =
+    useState(false);
+  const [otp, setOtp] = useState("");
 
   useEffect(() => {
     const userData = sessionStorage.getItem("user");
@@ -196,7 +197,6 @@ function Header({ profilePicture }) {
   };
   const verifyOTP = async () => {
     try {
-  
       // Perform OTP verification fetch request
       const response = await fetch("http://localhost:3000/user/verifyOTP", {
         method: "POST",
@@ -208,7 +208,7 @@ function Header({ profilePicture }) {
           otp,
         }),
       });
-  
+
       const data = await response.json();
       if (response.status === 200) {
         // If OTP is verified successfully
@@ -242,7 +242,7 @@ function Header({ profilePicture }) {
           email: user?.email, // Use the logged-in user's email
         }),
       });
-  
+
       const data = await response.json();
       if (response.status === 200) {
         toast.success("OTP resent successfully.", {
@@ -262,7 +262,7 @@ function Header({ profilePicture }) {
       });
     }
   };
-  
+
   const handlePasswordChange = async () => {
     const passwordPattern = /^(?=.*[a-z])(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordPattern.test(newPassword)) {
@@ -326,10 +326,10 @@ function Header({ profilePicture }) {
               </li>
             </ul>
           </div>
-          <div className="border">
+          <div>
             {availableJob.length === 1 &&
               availableJob[0].status === "pending" && (
-                <div>
+                <div className="text-center text-xl animate__animated animate__flipInY text-orange-400">
                   You have a gig offer, visit freelancer profile to check
                 </div>
               )}
@@ -388,19 +388,19 @@ function Header({ profilePicture }) {
                             Change Password
                           </button>
                         </li>
-                      {!user?.isVerified && (
-                        <li>
-                          <button
-                            onClick={() =>{
-                              setIsVerifyAccountModalOpen(true)
-                              setIsDropdownOpen(false);}
-                            }
-                            className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-200"
-                          >
-                            Verify Account
-                          </button>
-                        </li>
-                      )}
+                        {!user?.isVerified && (
+                          <li>
+                            <button
+                              onClick={() => {
+                                setIsVerifyAccountModalOpen(true);
+                                setIsDropdownOpen(false);
+                              }}
+                              className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-200"
+                            >
+                              Verify Account
+                            </button>
+                          </li>
+                        )}
                         <li>
                           <button
                             onClick={handleLogout}
@@ -516,7 +516,6 @@ function Header({ profilePicture }) {
               placeholder="Enter OTP"
               value={otp} // Bind to state
               onChange={(e) => setOtp(e.target.value)} // Update state on change
-
             />
             <div className="flex justify-end gap-3">
               <button
@@ -533,14 +532,14 @@ function Header({ profilePicture }) {
               </button>
             </div>
             {/* Resend OTP Button */}
-          <div className="flex justify-center mt-4">
-          <button
-            className="btn px-6 py-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold hover:from-blue-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition duration-300"
-            onClick={handleResendOTP}
-          >
-            Resend OTP
-          </button>
-        </div>
+            <div className="flex justify-center mt-4">
+              <button
+                className="btn px-6 py-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold hover:from-blue-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition duration-300"
+                onClick={handleResendOTP}
+              >
+                Resend OTP
+              </button>
+            </div>
           </div>
         </div>
       )}

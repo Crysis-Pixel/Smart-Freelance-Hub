@@ -74,7 +74,7 @@ export default function Profile() {
           },
           body: JSON.stringify({
             email: user.email,
-            reviewedType: "F"
+            reviewedType: "F",
           }),
         }
       );
@@ -535,7 +535,7 @@ export default function Profile() {
           {availableJob.length === 1 &&
             availableJob[0].status === "pending" && (
               <button
-                className="btn"
+                className="btn animate__animated animate__tada"
                 onClick={() => openJobOfferModal(availableJob[0])}
               >
                 View Gig Offer
