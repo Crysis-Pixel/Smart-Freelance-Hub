@@ -38,7 +38,14 @@ const FreelancerProfileModal = ({
       });
 
       if (!response.ok) throw new Error("Failed to send job offer");
-      alert("Hire request sent successfully!");
+      toast.success("Hire request sent successfully!");
+      const mailresponse = await fetch("http://localhost:3000/sendMail", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({email : payload.freelancerEmail}),
+      });
       onClose();
     } catch (err) {
       alert(`Error: ${err.message}`);
@@ -65,6 +72,15 @@ const FreelancerProfileModal = ({
       if (!response.ok) throw new Error("Failed to send custom offer");
       toast.success("Offer sent successfully!");
       setOfferModalOpen(false);
+
+      const mailresponse = await fetch("http://localhost:3000/sendMail", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({email : payload.freelancerEmail}),
+      });
+
       onClose();
     } catch (err) {
       toast.error(`${err.message}. User is already assigned to a task.`);
