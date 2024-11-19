@@ -20,9 +20,13 @@ const ReviewModal = ({ isOpen, onClose, job, onSubmitReview }) => {
         const reviewUpdateResponse = await fetch("http://localhost:3000/reviews/reviewUser", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ emailOfReviewer: job.clientEmail , emailOfReviewed: job.freelancerEmail, rating: rating, description: review, reviewedType: "F" }),
+          body: JSON.stringify({ jobId: job._id, emailOfReviewer: job.clientEmail , emailOfReviewed: job.freelancerEmail, rating: rating, description: review, reviewedType: "F" }),
         });
-        if (reviewUpdateResponse.status !== 200){
+        if (reviewUpdateResponse.status === 400){
+          toast.error("Already Reviewed!.");
+          return;
+        }
+        else if (reviewUpdateResponse.status !== 200){
           toast.error("Failed to add review.");
           return;
         }
@@ -43,7 +47,7 @@ const ReviewModal = ({ isOpen, onClose, job, onSubmitReview }) => {
       const reviewUpdateResponse = await fetch("http://localhost:3000/reviews/reviewUser", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ emailOfReviewer: job.freelancerEmail , emailOfReviewed: job.clientEmail, rating: rating, description: review, reviewedType: "C" }),
+        body: JSON.stringify({ jobId: job._id, emailOfReviewer: job.freelancerEmail , emailOfReviewed: job.clientEmail, rating: rating, description: review, reviewedType: "C" }),
       });
       if (reviewUpdateResponse.status !== 200){
         toast.error("Failed to add review.");
@@ -56,8 +60,12 @@ const ReviewModal = ({ isOpen, onClose, job, onSubmitReview }) => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ jobId: job._id}),
         });
-        if (jobUpdateResponse.status !== 200){
-          toast.error("Failed to add review to jobs.");
+        if (reviewUpdateResponse.status === 400){
+          toast.error("Already Reviewed!.");
+          return;
+        }
+        else if (reviewUpdateResponse.status !== 200){
+          toast.error("Failed to add review.");
           return;
         }
       }
