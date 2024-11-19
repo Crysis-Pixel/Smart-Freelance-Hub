@@ -12,7 +12,6 @@ const FreelancerProfileModal = ({
   const [offerModalOpen, setOfferModalOpen] = useState(false);
   const [offeredPrice, setOfferedPrice] = useState("");
   const [error, setError] = useState("");
-  console.log(freelancer);
   if (!isOpen || !freelancer) return null;
 
   const adjustedMinWage =
