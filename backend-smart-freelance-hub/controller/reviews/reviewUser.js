@@ -10,6 +10,7 @@ exports.reviewUser = async (req, res) => {
     req.body;
   const rating = parseFloat(req.body.rating);
   console.log("Attempting to post review");
+  console.log("Rating recieved: ", rating);
   let client;
   const jobObjectId = new ObjectId(jobId);
   try {
@@ -55,6 +56,8 @@ exports.reviewUser = async (req, res) => {
       reviewedType,
       jobId,
     };
+
+    console.log(newReview);
 
     const reviewResult = await reviewsCollection.insertOne(newReview);
 

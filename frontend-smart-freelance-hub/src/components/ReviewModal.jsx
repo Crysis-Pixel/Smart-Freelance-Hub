@@ -17,6 +17,7 @@ const ReviewModal = ({ isOpen, onClose, job, onSubmitReview }) => {
   const handleSubmit = async() => {
     if (rating && review) {
       if (job.clientEmail == JSON.parse(sessionStorage.getItem("user")).email){
+        console.log("Rating given: ", rating);
         const reviewUpdateResponse = await fetch("http://localhost:3000/reviews/reviewUser", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
