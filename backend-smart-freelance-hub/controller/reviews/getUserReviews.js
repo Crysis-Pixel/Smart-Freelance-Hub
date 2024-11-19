@@ -3,7 +3,7 @@ require("dotenv").config();
 const { findUserByEmail } = require("../../utils/findUserByEmail");
 
 exports.getUserReviews = async (req, res) => {
-  const { email } = req.body; // Expect email in request body
+  const { email, reviewedType } = req.body; // Expect email in request body
 
   if (!email) {
     return res.status(400).json({ message: "Email is required" });
@@ -16,7 +16,7 @@ exports.getUserReviews = async (req, res) => {
 
     // Fetch reviews for the specified user by email
     const userReviews = await collection
-      .find({ emailOfReviewed: email }, { projection: { emailOfReviewed: 0 } })
+      .find({ emailOfReviewed: email, reviewedType: reviewedType }, { projection: { emailOfReviewed: 0 } })
       .toArray();
 
     if (userReviews.length === 0) {

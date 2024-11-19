@@ -4,8 +4,8 @@ const { findUserByEmail } = require("../../utils/findUserByEmail");
 const { currentDate } = require("../../utils/date");
 
 exports.reviewUser = async (req, res) => {
-    const { emailOfReviewer, emailOfReviewed, rating, description, reviewedType } = req.body;
-
+    const { emailOfReviewer, emailOfReviewed, description, reviewedType } = req.body;
+    const rating = parseFloat(req.body.rating);
     console.log("Attempting to post review");
 
     let client;
@@ -29,6 +29,7 @@ exports.reviewUser = async (req, res) => {
             rating,
             description,
             reviewDate: currentDate(),
+            reviewedType,
         };
 
         const reviewResult = await reviewsCollection.insertOne(newReview);
@@ -52,23 +53,41 @@ exports.reviewUser = async (req, res) => {
             await reviewsCollection.deleteOne({ _id: reviewResult.insertedId });
             throw new Error("User not found for rating update; review insertion rolled back");
         }
-
+        
         // Retrieve and calculate the new average rating
-        const numberOfReviews = userToUpdate.numberOfReviews || 0;
+        const numberOfReviews = reviewedType === "F" ? userToUpdate.numberOfFreelancerReviews : reviewedType === "C" ? userToUpdate.numberOfClientReviews : 0;
         const existingRating = userToUpdate[updateField] || 0;
-        let updatedRating = (existingRating * numberOfReviews + rating) / (numberOfReviews + 1);
+        const newNumberOfReviews = numberOfReviews + 1;
+        console.log(newNumberOfReviews);
+        console.log(existingRating + "*" + numberOfReviews + "+" + rating + "/" + newNumberOfReviews);
+        let updatedRating = (existingRating * numberOfReviews + rating) / (parseInt(newNumberOfReviews));
         updatedRating = Math.round(updatedRating * 10) / 10
+        console.log(updatedRating);
         // Update user rating and increment review count
-        const userUpdateResult = await usersCollection.updateOne(
-            { email: emailOfReviewed },
-            {
-                $set: { [updateField]: updatedRating },
-                $inc: { numberOfReviews: 1 }
-            }
-        );
+        let userUpdateResult;
+        if(reviewedType == "F"){
+            userUpdateResult = await usersCollection.updateOne(
+                { email: emailOfReviewed },
+                {
+                    $set: { [updateField]: updatedRating },
+                    $inc: { numberOfFreelancerReviews: 1 }
+                }
+            );
+        } else if (reviewedType === "C"){
+            userUpdateResult = await usersCollection.updateOne(
+                { email: emailOfReviewed },
+                {
+                    $set: { [updateField]: updatedRating },
+                    $inc: { numberOfClientReviews: 1 }
+                }
+            );
+        } else{
+            await reviewsCollection.deleteOne({ _id: reviewResult.insertedId });
+            throw new Error("Invalid reviewedType; review insertion rolled back");
+        }
 
         // Roll back the review if the rating update fails
-        if (userUpdateResult.modifiedCount === 0) {
+        if (!userUpdateResult) {
             await reviewsCollection.deleteOne({ _id: reviewResult.insertedId });
             throw new Error("Failed to update user rating; review insertion rolled back");
         }
