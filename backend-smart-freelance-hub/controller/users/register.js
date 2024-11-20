@@ -67,6 +67,8 @@ exports.register = async (req, res) => {
       profilePicture: profilePicture,
       accountCreated: accountCreated,
       lookingForJob: lookingForJob,
+      numberOfClientReviews: 0,
+      numberOfFreelancerReviews: 0,
       minWage: minWage, // set default minimum wage to 0
       otp, // storing OTP for later verification
       otpExpires: Date.now() + 15 * 60 * 1000, // OTP expiration time (15 minutes)

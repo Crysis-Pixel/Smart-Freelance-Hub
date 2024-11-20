@@ -274,7 +274,7 @@ export default function Signup() {
                 onChange={handleInputChange}
                 required
                 minLength="6"
-                // pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$" // Remove later
+                pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$" // Remove later
                 title="Password must be at least 8 characters long, contain at least one lowercase letter, one uppercase letter, one number, and one special character (!@#$%^&*)."
               />
 
