@@ -53,7 +53,7 @@ const TransactionModal = ({ job, onClose }) => {
 
   const handleTransaction = async () => {
     setLoading(true);
-    
+
     try {
       const response = await fetch("http://localhost:3000/otp/send-otp", {
         method: "POST",
@@ -149,22 +149,34 @@ const TransactionModal = ({ job, onClose }) => {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                jobId: job._id
+                jobId: job._id,
               }),
             }
           );
 
-          if (jobIsPaidResponse.status == 200){
+          if (jobIsPaidResponse.status == 200) {
             toast.success(paymentResult.message);
+
+            const updatesession = await fetch(
+              "http://localhost:3000/user/getUser",
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: senderEmail }),
+              }
+            );
+            const result3 = await updatesession.json();
+
+            sessionStorage.setItem("user", JSON.stringify(result3));
+
             sessionStorage.removeItem("paymentreciever");
             onClose();
             navigate("/manageJobs");
-          }
-          else{
+          } else {
             toast.error(paymentResult.error || "Payment failed");
             onClose();
             navigate("/manageJobs");
-          } 
+          }
         } else {
           toast.error(paymentResult.error || "Payment failed");
           onClose();

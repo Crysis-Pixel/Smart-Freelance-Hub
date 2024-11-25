@@ -111,6 +111,7 @@ const GigContainerModal = ({
               const freelancer = item.user;
               const isNewUser = freelancers.newUsers.includes(item);
               const matchScore = (item.similarity_value * 100).toFixed(0);
+              const displayScore = (item.match_value * 100).toFixed(0);
 
               return (
                 <div
@@ -135,7 +136,7 @@ const GigContainerModal = ({
                   </p>
                   <div className="">
                     <p className="text-gray-600">
-                      <b>Match Score:</b> {matchScore}%
+                      <b>Match Score:</b> {displayScore}%
                     </p>
                     <p className="text-gray-600">
                       <b>Rating:</b> {freelancer.fRating}
