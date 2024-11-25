@@ -101,6 +101,18 @@ const TopUpModal = ({ onClose }) => {
 
         if (result2 === "Top up successful") {
           toast.success(`Balance updated successfully by ${amount}!`);
+
+          const updatesession = await fetch("http://localhost:3000/user/getUser",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email: email}),
+            }
+          );
+          const result3 = await updatesession.json();
+          
+          sessionStorage.setItem("user",JSON.stringify(result3));
+
           onClose();
         } else {
           toast.error("Failed to update balance.");
