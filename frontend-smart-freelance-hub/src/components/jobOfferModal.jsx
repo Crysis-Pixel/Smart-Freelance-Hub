@@ -132,7 +132,7 @@ export default function JobOfferModal({ jobOffer, isOpen, onClose }) {
               </p>
             </div>
             <p className="text-gray-600">
-              <b>Created At:</b> {new Date(createdAt).toLocaleDateString()}
+              <b>Created At:</b> {createdAt}
             </p>
             <p className="text-gray-600">
               <b>Description:</b> {description}
