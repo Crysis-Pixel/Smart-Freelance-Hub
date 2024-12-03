@@ -31,7 +31,7 @@ exports.sendOTP = async (req, res) => {
     // Send OTP email
     const msg = {
         to: email,
-        from: 'smartfreelancehub@gmail.com', // Your verified SendGrid sender
+        from: process.env.SENDGRID_EMAIL, // Your verified SendGrid sender
         subject: 'Your OTP Code',
         html: `
         <html>
